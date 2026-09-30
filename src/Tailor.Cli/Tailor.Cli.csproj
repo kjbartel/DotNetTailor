@@ -20,6 +20,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.CommandLine" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Tailor.Analysis\Tailor.Analysis.csproj" />
     <ProjectReference Include="..\Tailor.Validation\Tailor.Validation.csproj" />
     <ProjectReference Include="..\Tailor.Planning\Tailor.Planning.csproj" />

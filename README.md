@@ -7,7 +7,7 @@ The .NET Tailor tool customises and alters .NET applications to fit your operati
 
 ## Status
 
-Pre-release. The repository contains the empty solution scaffold (WU-000); no features are implemented yet. Progress is tracked per work unit in the [plan](Docs/Plans/Tailor.plan.md#work-unit-status).
+Pre-release. The repository contains the project scaffold and the initial `dotnet-tailor` CLI command surface; analysis and transformation verbs remain staged work. Progress is tracked per work unit in the [plan](Docs/Plans/Tailor.plan.md#work-unit-status).
 
 ## Prerequisites
 

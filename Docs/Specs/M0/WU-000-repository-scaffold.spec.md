@@ -54,7 +54,7 @@ Create the git repository and an empty, compiling, testable solution that matche
 | `tests/Directory.Build.props` | Imports root props; for test projects (every project except `Tailor.Testing`) sets `IsTestProject=true`, `OutputType=Exe`, xUnit v3 package reference, `Using Xunit` and a `ProjectReference` to `tests/Tailor.Testing`; suppresses `CS1591` only (CA1707 is **not** suppressed) |
 | `Tailor.slnx` | All 29 projects below, solution folders `src` and `tests` |
 | `src/Tailor.<P>/Tailor.<P>.csproj` | `P` ∈ `Core`, `Specifications`, `Inspection`, `Model`, `Analysis`, `Validation`, `Planning`, `Transforms`, `Acquisition`, `Execution`, `Platform.Abstractions`, `Platform.Windows`, `Cli` |
-| `src/Tailor.Cli/Program.cs` | Top-level `return 0;` only (an Exe needs an entry point). Csproj: `OutputType=Exe`, `IsPackable=true`, `PackAsTool=true`, `ToolCommandName=dotnet-tailor`, `PackageId=Tailor.Tool` |
+| `src/Tailor.Cli/Program.cs` | CLI entry point. Csproj: `OutputType=Exe`, `IsPackable=true`, `PackAsTool=true`, `ToolCommandName=dotnet-tailor`, `PackageId=dotnet-tailor` |
 | `tests/Tailor.<P>.Tests/` | One per `src` project, referencing that project; `ScaffoldTests.cs` |
 | `tests/Tailor.IntegrationTests/`, `tests/Tailor.RegressionTests/` | Reference `Tailor.Cli`; `ScaffoldTests.cs` |
 | `tests/Tailor.Testing/Tailor.Testing.csproj` | Test-support class library, empty (the `Golden` helper arrives in WU-100): `IsTestProject=false`, `OutputType=Library`, no package or project references, no `ScaffoldTests` |
@@ -111,7 +111,7 @@ AC-10's `lf` expectation for `*.csproj`/`*.md` is superseded by AC-14; AC-6's pr
 - [x] AC-6 `Tailor.slnx` lists exactly the 13 `src` and 15 `tests` projects named in Deliverables.
 - [x] AC-7 `dotnet list <each src csproj> reference` matches the project-reference table exactly.
 - [x] AC-8 No `PackageReference` has a `Version` attribute (`Select-String -Path **/*.csproj -Pattern 'PackageReference[^>]+Version='` returns nothing).
-- [x] AC-9 `dotnet pack src/Tailor.Cli -c Release -o artifacts/pkg` produces `Tailor.Tool.*.nupkg` containing `tools/net10.0/any/DotnetToolSettings.xml` with command `dotnet-tailor`.
+- [x] AC-9 `dotnet pack src/Tailor.Cli -c Release -o artifacts/pkg` produces `dotnet-tailor.*.nupkg` containing `tools/net10.0/any/DotnetToolSettings.xml` with command `dotnet-tailor`.
 - [x] AC-10 ~~`git check-attr eol -- src/Tailor.Core/Tailor.Core.csproj Docs/Plans/Tailor.plan.md` reports `lf`~~ (superseded by AC-14; both now report `crlf`); `git check-attr binary -- x.dll` reports `set` (re-checked after D4: still `set`).
 - [x] AC-11 `git status --ignored` after build shows `bin/`, `obj/` ignored; `.gitignore` contains `artifacts/` and `.repack/`.
 - [x] AC-12 README.md, CONTRIBUTING.md and LICENSE exist; README links resolve to existing files.
@@ -171,7 +171,7 @@ Post-review deltas (see [Post-review changes](#post-review-changes)):
 - **Selected checks**: `AC-9 pack + DotnetToolSettings.xml inspection`
 - **Excluded checks**: `none`
 - **Command**: `cd E:\Tailor; dotnet pack src/Tailor.Cli -c Release -o artifacts/pkg`
-- **Result**: `pass — exit 0; Tailor.Tool.1.0.0.nupkg; tools/net10.0/any/DotnetToolSettings.xml contains <Command Name="dotnet-tailor" EntryPoint="Tailor.Cli.dll" Runner="dotnet" />`
+- **Result**: `pass — exit 0; dotnet-tailor.1.0.0.nupkg; tools/net10.0/any/DotnetToolSettings.xml contains <Command Name="dotnet-tailor" EntryPoint="Tailor.Cli.dll" Runner="dotnet" />`
 - **Evidence source**: `run by Implementer`
 - **Rerun reason**: `none`
 
@@ -181,7 +181,7 @@ Post-review deltas (see [Post-review changes](#post-review-changes)):
 - **Impact**: `AC-1/2/6/7/8/9/10/11/12 static and git checks; no code executed`
 - **Selected checks**: `git history/commit contents, global.json, slnx project list, ProjectReference sets of all 28 csproj, AC-8 pattern, nupkg entry read, check-attr, git status --ignored, README/CONTRIBUTING relative link resolution`
 - **Excluded checks**: `build/test/format/pack — covered by matching inherited records`
-- **Command**: `cd E:\Tailor; Get-FunctionalState.ps1; git log --oneline; git show --name-only ee00d6c/311b2c3; dotnet --version; git check-attr eol -- src/Tailor.Core/Tailor.Core.csproj Docs/Plans/Tailor.plan.md; git check-attr binary -- x.dll; git status --ignored --short; Select-String -Path (all *.csproj) -Pattern 'PackageReference[^>]+Version='; ProjectReference XML parse per csproj; ZipFile read of artifacts/pkg/Tailor.Tool.1.0.0.nupkg; Test-Path on README/CONTRIBUTING link targets`
+- **Command**: `cd E:\Tailor; Get-FunctionalState.ps1; git log --oneline; git show --name-only ee00d6c/311b2c3; dotnet --version; git check-attr eol -- src/Tailor.Core/Tailor.Core.csproj Docs/Plans/Tailor.plan.md; git check-attr binary -- x.dll; git status --ignored --short; Select-String -Path (all *.csproj) -Pattern 'PackageReference[^>]+Version='; ProjectReference XML parse per csproj; ZipFile read of artifacts/pkg/dotnet-tailor.1.0.0.nupkg; Test-Path on README/CONTRIBUTING link targets`
 - **Result**: `pass — 2 commits (311b2c3: 72 files all Docs/**; ee00d6c: 55 files, none under Docs/); SDK 10.0.401; runner MTP; slnx 13 src + 15 tests; refs match spec table exactly; AC-8 no matches; eol lf/lf, binary set; bin/ obj/ artifacts/ ignored; 12/12 links resolve; DotnetToolSettings.xml Command Name="dotnet-tailor"`
 - **Evidence source**: `run by Verifier`
 - **Rerun reason**: `none`

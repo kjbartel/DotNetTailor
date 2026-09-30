@@ -72,7 +72,7 @@ Ship `analyze` (alias `analyse`) and `validate` end to end: correct spec and art
 - [ ] AC-9 `validation-report.json` written by `validate` contains `specHash`, `treeFingerprint`, `state`.
 - [ ] AC-10 Nonexistent `appDir` exits 2 with `RPK0401`; single-file bundle fixture exits 1.
 - [ ] AC-11 A multi-document AppSpec (`includes`) validates identically to its flattened equivalent.
-- [ ] AC-12 `dotnet pack src/Tailor.Cli` produces `Tailor.Tool`; `dotnet tool install --tool-path <tmp> --add-source <nupkgDir> Tailor.Tool` succeeds and `dotnet-tailor --help` exits 0 (integration test).
+- [ ] AC-12 `dotnet pack src/Tailor.Cli` produces `dotnet-tailor`; `dotnet tool install --tool-path <tmp> --add-source <nupkgDir> dotnet-tailor` succeeds and `dotnet-tailor --help` exits 0 (integration test).
 
 ## Test Requirements
 

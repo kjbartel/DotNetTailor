@@ -207,7 +207,7 @@ flowchart LR
 - [ ] `analyze` leaves the input tree unchanged apart from sidecars (test-enforced). A read-only input requires `--spec-out`.
 - [ ] The validation report contains the spec hash, tree fingerprint and state.
 - [ ] `inspect` shows every derived artefact and graph (text and JSON), including `--plugin` scoping (WU-406).
-- [ ] `dotnet pack` produces `Tailor.Tool`, which installs with `dotnet tool install --add-source` and runs (WU-404 local smoke). The tag-triggered release workflow publishes v0.1.0-preview (WU-1002).
+- [ ] `dotnet pack` produces `dotnet-tailor`, which installs with `dotnet tool install --add-source` and runs (WU-404 local smoke). The tag-triggered release workflow publishes v0.1.0-preview (WU-1002).
 
 ### M5 Transformation Planning & Dry-run
 
@@ -363,7 +363,7 @@ Provisional defaults apply until the user decides.
 
 | Question | Provisional default | Affected WUs |
 |---|---|---|
-| Final product name, tool command, namespace and package id | Working names (`Tailor`, `dotnet-tailor`, `Tailor.Tool`) | WU-000, WU-105, WU-1002 |
+| Final product name, tool command, namespace and package id | Working names (`Tailor`, `dotnet-tailor`, `dotnet-tailor`) | WU-000, WU-105, WU-1002 |
 | Licence | Placeholder; nuget.org publishing blocked until set | WU-000, WU-1002 |
 | `knownUnresolved` references in the AppSpec (architecture §19 item 20) | Implement; mark dependent ACs `Blocked (#20)` if rejected | WU-101, WU-303, WU-401 |
 | Own apphost patcher relying on the undocumented placeholder format (architecture §19 item 12) | Accept, isolated in `Platform.Windows`, per-major tests | WU-005, WU-800 |

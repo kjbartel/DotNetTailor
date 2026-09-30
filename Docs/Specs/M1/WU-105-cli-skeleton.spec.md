@@ -28,8 +28,8 @@ Provide the `dotnet-tailor` command host on System.CommandLine 2.0 with every v1
 ## Scope
 
 **In**
-- Root command, verbs `analyze` (alias `analyse`), `validate`, `plan`, `apply`, `inspect`, `schema export`, with arguments/options exactly as [§14](../../Architecture/Tailor.architecture.md#14-cli).
-- Global options: `--verbosity`, `--strict`, `--permissive`, `--artifacts <dir>`, `--offline`, `--var name=value` (repeatable).
+- Root command, verbs `analyse` (alias `analyze`), `validate`, `plan`, `apply`, `inspect`, `schema export`, with arguments/options exactly as [§14](../../Architecture/Tailor.architecture.md#14-cli).
+- Global options: `--verbosity`, `--strict`, `--permissive`, `--artefacts <dir>` (alias `--artifacts`), `--offline`, `--var name=value` (repeatable), and `--version`.
 - `@file` response files (System.CommandLine built-in).
 - Diagnostic console rendering; exit-code mapping; unhandled-exception handling.
 - DI composition root (`Microsoft.Extensions.DependencyInjection`).
@@ -57,7 +57,7 @@ Namespace `Tailor.Cli`.
 | `DiagnosticRenderer` | Writes `"{severity} {code}: {message} [{location}]"` lines to stderr; honours `--verbosity` |
 | `CliDiagnostics` | `RPK0100`–`RPK0199` |
 
-`Tailor.Cli.csproj`: `OutputType=Exe`, `PackAsTool=true`, `ToolCommandName=dotnet-tailor`, `PackageId=Tailor.Tool`, `AssemblyName=dotnet-tailor` (or keep default and rely on `ToolCommandName`), references `System.CommandLine` 2.0.x and `Microsoft.Extensions.DependencyInjection` via CPM, `ProjectReference` to Core and Specifications only at this stage.
+`Tailor.Cli.csproj`: `OutputType=Exe`, `PackAsTool=true`, `ToolCommandName=dotnet-tailor`, `PackageId=dotnet-tailor`, `AssemblyName=dotnet-tailor` (or keep default and rely on `ToolCommandName`), references `System.CommandLine` 2.0.x and `Microsoft.Extensions.DependencyInjection` via CPM, `ProjectReference` to Core and Specifications only at this stage.
 
 Diagnostics (minimum):
 
@@ -79,7 +79,7 @@ Diagnostics (minimum):
 - `--strict`/`--permissive` map to `Core.Policies.FailureMode` (semantics in WU-100 and architecture §13); `ExitCodeMapper` returns 3 when `Strict` and only warnings are present, 1 for validation/structural errors.
 - `--var` accepts repeated `name=value`; value may contain `=`; names validated with WU-104's rule (`^[A-Za-z_][A-Za-z0-9_]*$`, duplicated locally if WU-104 is not merged, then switched to `VariableSyntax.IsValidName`).
 - `schema export`: without a kind, exports all available kinds; `--output` default = current directory; writes `<dir>/<kind>/v1/<kind>.schema.json`, byte-identical to the committed `schemas/` files (same `SchemaGenerator`). `plan` → `RPK0104` until WU-506.
-- `analyze` alias `analyse` via `Command.Aliases.Add("analyse")`.
+- `analyse` alias `analyze` via `Command.Aliases.Add("analyze")`.
 - No Windows-specific types in Cli beyond composition ([§12](../../Architecture/Tailor.architecture.md#12-platform-abstraction)); `Platform.Windows` registration is added when that project has content.
 - Exceptions: catch at `CliApplication`, render `RPK0199`, return 70; `OperationCanceledException` from Ctrl+C returns 130 (`ExitCodes.Cancelled`) with a cancellation message.
 
@@ -95,7 +95,7 @@ Diagnostics (minimum):
 - [ ] AC-8 `schema export --output <tmp>` writes `appspec/v1/appspec.schema.json` and `transformspec/v1/transformspec.schema.json` byte-identical to `schemas/…` in the repo; `schema export plan` → 2 (`RPK0104`). *(requires WU-101, WU-102 Done)*
 - [ ] AC-9 `ExitCodeMapper` unit tests cover: no diagnostics → 0; warnings + `Default` → 0; warnings + `Strict` → 3; error → 1; category hints `Environment` → 4, `Execution` → 5.
 - [ ] AC-10 An injected throwing command returns 70 with `RPK0199`; no stack trace at `normal` verbosity, stack trace at `diagnostic`. An injected command that observes a cancelled token returns 130.
-- [ ] AC-11 `dotnet pack src/Tailor.Cli` produces `Tailor.Tool.<version>.nupkg` whose `DotnetToolSettings.xml` declares command `dotnet-tailor` (test or scripted check recorded in Test Evidence).
+- [ ] AC-11 `dotnet pack src/Tailor.Cli` produces `dotnet-tailor.<version>.nupkg` whose `DotnetToolSettings.xml` declares command `dotnet-tailor` (test or scripted check recorded in Test Evidence).
 - [ ] AC-12 All CLI tests run in-process through `CliApplication.RunAsync` with captured writers; no child process is spawned.
 
 ## Test Requirements

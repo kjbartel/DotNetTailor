@@ -56,7 +56,7 @@ Ship user guides and reusable TransformSpec templates, including `enterprise-win
 
 - [Architecture §19 item 4](../../Architecture/Tailor.architecture.md): English-only and other-RID removal are **not** defaults; they live in this template.
 - Reuse the WU-903 TS §33 fixture for the combination recipe. Do not maintain two copies: the recipe links to or includes the same file, verified by test.
-- Use American spelling for CLI terms (`analyze`) to match the CLI ([Architecture §14](../../Architecture/Tailor.architecture.md)).
+- Use Australian spelling for canonical CLI terms (`analyse`); retain `analyze` only as a compatibility alias ([Architecture §14](../../Architecture/Tailor.architecture.md)).
 - Keep the schemas normative. Guides show examples and explain, but do not redefine members.
 
 ## Acceptance Criteria

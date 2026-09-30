@@ -8,7 +8,7 @@ Tailor is a binary-first .NET CLI tool. It analyses, validates and transforms co
 
 | Item | Value |
 |---|---|
-| Working names (placeholder, see [§20](#20-open-questions)) | Product `Tailor`, command `dotnet-tailor`, root namespace `Tailor`, package id `Tailor.Tool` |
+| Working names (placeholder, see [§20](#20-open-questions)) | Product `Tailor`, command `dotnet-tailor`, root namespace `Tailor`, package id `dotnet-tailor` |
 | Tool runtime | `net10.0` (LTS), C#, packaged with `dotnet tool`, SemVer ([RQ §10](../Requirements/Repackage_tool_Requirements_v1.1.md), [RQ §11](../Requirements/Repackage_tool_Requirements_v1.1.md)) |
 | Target runtimes | Configured independently of the tool runtime: `net8.0` and later |
 | Platform v1 | Windows host, `win-x64` output. Linux and other RIDs are possible later through the platform abstraction ([AS §8.3](../Requirements/Application_Specification.md)) |
@@ -180,7 +180,7 @@ Each artefact has a separate concern ([AS §22](../Requirements/Application_Spec
 | Execution report | `execution-report.json` (actual actions, tool outputs, timings) | No | Yes, except timings |
 | Logs | `repack.log` | No | No |
 
-- Artefacts go to `--artifacts <dir>`. The default is `.repack/` next to the AppSpec. **Decided (provisional).**
+- Artefacts go to `--artefacts <dir>` (`--artifacts` remains a compatibility alias). The default is `.repack/` next to the AppSpec. **Decided (provisional).**
 - Canonical JSON rules: UTF-8 without BOM, LF line endings (deliberate, see [§15](#15-determinism)), 2-space indentation, stable property order from the model, sorted collections, no timestamps. Informational timestamps ([AS §5.2](../Requirements/Application_Specification.md)) are never emitted in canonical artefacts.
 - The validation state is a separate report, not embedded in the AppSpec (see [§19](#19-resolved--open-inconsistencies) item 1). States: `Unvalidated | Validated | ValidatedWithWarnings | Invalid` ([AS §20.2](../Requirements/Application_Specification.md)). `apply` always re-validates.
 
@@ -406,18 +406,19 @@ public interface ITransformationHandler
 
 ## 14. CLI
 
-The CLI follows dotnet conventions, uses American spelling, and accepts `analyse` as an alias ([RQ §10](../Requirements/Repackage_tool_Requirements_v1.1.md)).
+The CLI follows dotnet conventions, uses Australian spelling for canonical repository-owned names, and accepts the American spelling as a compatibility alias ([RQ §10](../Requirements/Repackage_tool_Requirements_v1.1.md)).
 
 | Verb | Synopsis |
 |---|---|
-| `analyze` | `dotnet-tailor analyze <appDir> [--spec-out <file>]` |
+| `analyse` | `dotnet-tailor analyse <appDir> [--spec-out <file>]` |
 | `validate` | `dotnet-tailor validate <appDir> --spec <file>` |
 | `plan` | `dotnet-tailor plan <appDir> --spec <file> --transform <file> [--out-plan <file>]` |
 | `apply` | `dotnet-tailor apply <appDir> --spec <file> --transform <file> --output <dir> [--dry-run] [--spec-out <file>] [--symbols-output <path>]` |
 | `inspect` | `dotnet-tailor inspect <appDir> --spec <file> [inventory\|classification\|assemblies\|graph\|plugins\|runtime] [--plugin <id>]` |
 | `schema export` | `dotnet-tailor schema export [appspec\|transformspec\|plan] [--output <dir>]` |
 
-- Global options: `--verbosity`, `--strict`/`--permissive`, `--artifacts <dir>`, `--offline`, `--var name=value`, and `@file` response files (built into System.CommandLine).
+- Global options: `--verbosity`, `--strict`/`--permissive`, `--artefacts <dir>` (with `--artifacts` compatibility alias), `--offline`, `--var name=value`, and `@file` response files (built into System.CommandLine).
+- `analyze` is a compatibility alias for canonical `analyse`; `--version` reports the packaged tool version.
 - Verbs that are declared but not implemented yet return exit code 70 with `RPK0100`.
 - Tool config file (M10, WU-1000): `dotnet-tailor.json`. Precedence ([CK §3.2](../Requirements/Read_to_run_Cake.md)):
   1. CLI arguments, with `@file` response files expanded inline (same layer, token order applies).

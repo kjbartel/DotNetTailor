@@ -28,7 +28,7 @@ Make `dotnet-tailor` a releasable `dotnet tool`: SemVer from git tags, a tag-tri
 ## Scope
 
 **In**
-- Tool packaging: `PackAsTool=true`, `ToolCommandName=dotnet-tailor`, `PackageId=Tailor.Tool` (placeholders per [Architecture §1](../../Architecture/Tailor.architecture.md)), `TargetFramework=net10.0`, package readme, `PackageLicenseExpression` (placeholder until licence decided), repository metadata, SourceLink, `ContinuousIntegrationBuild=true` in CI, symbols package (`.snupkg`).
+- Tool packaging: `PackAsTool=true`, `ToolCommandName=dotnet-tailor`, `PackageId=dotnet-tailor`, `TargetFramework=net10.0`, package readme, `PackageLicenseExpression=Apache-2.0`, repository metadata, SourceLink, `ContinuousIntegrationBuild=true` in CI, symbols package (`.snupkg`).
 - Versioning: MinVer from tags `v<semver>` (e.g. `v0.1.0-preview.1`, `v1.0.0`). Untagged builds get a height-based prerelease. `dotnet-tailor --version` shows the package version.
 - CI (`ci.yml`): pack on every PR, install the package from a local folder feed with `dotnet tool install --tool-path` and run `--version` and `--help`.
 - Release workflow (`release.yml`), triggered by `v*` tag push:
@@ -56,7 +56,7 @@ Make `dotnet-tailor` a releasable `dotnet tool`: SemVer from git tags, a tag-tri
 
 ## Acceptance Criteria
 
-- [ ] AC-1 `dotnet pack` produces `Tailor.Tool.<version>.nupkg` and `.snupkg`. The nuspec has `packageType DotnetTool`, readme, repository URL/commit and licence metadata.
+- [ ] AC-1 `dotnet pack` produces `dotnet-tailor.<version>.nupkg` and `.snupkg`. The nuspec has `packageType DotnetTool`, readme, repository URL/commit and licence metadata.
 - [ ] AC-2 On a commit tagged `v0.1.0-preview.1`, the package version is exactly `0.1.0-preview.1`. On an untagged commit it is a prerelease higher than the last tag (MinVer), and `dotnet-tailor --version` prints it.
 - [ ] AC-3 CI installs the packed tool from a local folder feed with `dotnet tool install --tool-path` and runs `--version` and `--help` successfully on `windows-latest`.
 - [ ] AC-4 `release.yml` runs only on `v*` tags, uses the `release` environment, has least-privilege permissions per job, and pins every third-party action by full commit SHA (checked by a CI lint step or `zizmor`).
