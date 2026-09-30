@@ -6,6 +6,8 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>dotnet-tailor</ToolCommandName>
     <PackageId>dotnet-tailor</PackageId>
+    <Title>.NET Tailor</Title>
+    <Description>Binary-first .NET tool that measures, validates, plans, and transforms compiled .NET application folder trees into a new output tree and Application Specification.</Description>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Authors>Kuan Bartel</Authors>
