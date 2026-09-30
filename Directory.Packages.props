@@ -8,7 +8,6 @@
   <ItemGroup Label="Testing">
     <!-- xunit.v3 4.x targets Microsoft.Testing.Platform v2 (depends on xunit.v3.mtp-v2). -->
     <PackageVersion Include="xunit.v3" Version="4.0.1" />
-    <PackageVersion Include="Verify.XunitV3" Version="33.2.0" />
   </ItemGroup>
 
 </Project>

@@ -1,16 +1,28 @@
-* text=auto eol=lf
+* text=auto eol=crlf
 
-*.cs      text eol=lf
-*.csproj  text eol=lf
-*.props   text eol=lf
-*.targets text eol=lf
-*.slnx    text eol=lf
-*.json    text eol=lf
-*.md      text eol=lf
-*.yml     text eol=lf
-*.ps1     text eol=lf
-*.xml     text eol=lf
-*.resx    text eol=lf
+*.cs           text eol=crlf
+*.csproj       text eol=crlf
+*.props        text eol=crlf
+*.targets      text eol=crlf
+*.slnx         text eol=crlf
+*.sln          text eol=crlf
+*.json         text eol=crlf
+*.md           text eol=crlf
+*.yml          text eol=crlf
+*.yaml         text eol=crlf
+*.xml          text eol=crlf
+*.resx         text eol=crlf
+*.ps1          text eol=crlf
+*.cmd          text eol=crlf
+*.bat          text eol=crlf
+.editorconfig  text eol=crlf
+.gitattributes text eol=crlf
+
+# LF exceptions: must follow the CRLF lines so they win.
+*.sh                       text eol=lf
+tests/**/Golden/**         text eol=lf
+schemas/**                 text eol=lf
+Docs/Guides/diagnostics.md text eol=lf
 
 *.dll   binary
 *.exe   binary

@@ -4,13 +4,26 @@ root = true
 [*]
 indent_style = space
 indent_size = 4
-end_of_line = lf
+end_of_line = crlf
 charset = utf-8
 insert_final_newline = true
 trim_trailing_whitespace = true
 
 [*.md]
 trim_trailing_whitespace = false
+
+# LF exceptions (mirror .gitattributes)
+[*.sh]
+end_of_line = lf
+
+[tests/**/Golden/**]
+end_of_line = lf
+
+[schemas/**]
+end_of_line = lf
+
+[Docs/Guides/diagnostics.md]
+end_of_line = lf
 
 # Xml files
 [*.xml]

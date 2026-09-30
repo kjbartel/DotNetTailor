@@ -28,6 +28,7 @@
     <Project Path="tests/DotNetRepack.Platform.Windows.Tests/DotNetRepack.Platform.Windows.Tests.csproj" />
     <Project Path="tests/DotNetRepack.RegressionTests/DotNetRepack.RegressionTests.csproj" />
     <Project Path="tests/DotNetRepack.Specifications.Tests/DotNetRepack.Specifications.Tests.csproj" />
+    <Project Path="tests/DotNetRepack.Testing/DotNetRepack.Testing.csproj" />
     <Project Path="tests/DotNetRepack.Transforms.Tests/DotNetRepack.Transforms.Tests.csproj" />
     <Project Path="tests/DotNetRepack.Validation.Tests/DotNetRepack.Validation.Tests.csproj" />
   </Folder>
