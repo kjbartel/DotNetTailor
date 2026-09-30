@@ -70,7 +70,7 @@ Discover the application's execution model from an unknown tree — entry points
 - [ ] AC-4 Framework names and versions equal the runtimeconfig values for every matrix entry (WindowsDesktop for WinForms/WPF).
 - [ ] AC-5 TFM equals `net8.0*`/`net10.0*` per matrix entry.
 - [ ] AC-6 RID is `win-x64` (`Explicit`) for SC entries and `win-x64` (`Inferred`) for FD entries with a x64 apphost.
-- [ ] AC-7 Every fact in `ExecutionModelResult` carries a confidence and a source (snapshot).
+- [ ] AC-7 Every fact in `ExecutionModelResult` carries a confidence and a source (golden file).
 - [ ] AC-8 Conflicting runtimeconfig vs host files yields `RPK4002` and `Inferred` confidence (synthetic).
 - [ ] AC-9 A single-file bundle fixture yields the bundle Error diagnostic and no entry points.
 - [ ] AC-10 Tree fingerprint before and after analysis is unchanged (physical test).
@@ -78,7 +78,7 @@ Discover the application's execution model from an unknown tree — entry points
 ## Test Requirements
 
 - Unit: `tests/DotNetRepack.Analysis.Tests/Execution/` with synthetic trees and fake facts; trait `WU=400`.
-- Integration: `tests/DotNetRepack.IntegrationTests/Analysis/ExecutionModelTests` over the full matrix; Verify snapshot per entry (framework patch versions scrubbed only if the WU-003 manifest marks them volatile); trait `Category=Integration`, `Category=Matrix`, `WU=400`.
+- Integration: `tests/DotNetRepack.IntegrationTests/Analysis/ExecutionModelTests` over the full matrix; golden file per entry (framework patch versions scrubbed only if the WU-003 manifest marks them volatile); trait `Category=Integration`, `Category=Matrix`, `WU=400`.
 - Run: `dotnet test --project tests/DotNetRepack.Analysis.Tests --filter-trait "WU=400"`; `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=400"`.
 - Record Test Evidence in the PR.
 

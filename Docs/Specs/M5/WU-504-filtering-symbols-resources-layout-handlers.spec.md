@@ -79,7 +79,7 @@ Namespace `DotNetRepack.Transforms`.
 
 ## Acceptance Criteria
 
-- [ ] AC-1 With an empty `rules[]` and all sections absent, the handlers add no intents and every file is `Preserve` (plan snapshot).
+- [ ] AC-1 With an empty `rules[]` and all sections absent, the handlers add no intents and every file is `Preserve` (plan golden file).
 - [ ] AC-2 `exclude` with `association: xmlDoc` removes every `.xml` doc and nothing else on the ConsoleApp net10 FD matrix entry.
 - [ ] AC-3 `exclude` of `ConsoleApp.Library.dll` with default `group` mode removes its `.pdb`, `.xml` and satellites. `primaryOnly` removes only the DLL and yields `RPK5403` for the orphans.
 - [ ] AC-4 `defaults.cultures: ["en", "en-*"]` removes `de/` and `fr/` satellites and keeps neutral resources, on net8 and net10 FD/SC matrix entries.
@@ -90,7 +90,7 @@ Namespace `DotNetRepack.Transforms`.
 - [ ] AC-9 `layout` with `destination: lib` moves the selected assemblies to `lib/…`; their PDB/XML follow. `flatten` produces `lib/<name>`.
 - [ ] AC-10 An exclude with `not: {rid: "win-x64"}` on `ConsoleApp/<tfm>-fdportable-il` removes only non-compatible `runtimes/<rid>/…` files. Without such a rule, no `runtimes/` file is removed.
 - [ ] AC-11 Two layout rules that flatten two files with the same name into one folder yield `RPK5301` (from WU-503).
-- [ ] AC-12 Plans for the filtering, symbols, docs and resources scenarios are Verify-snapshotted and byte-identical across two runs.
+- [ ] AC-12 Plans for the filtering, symbols, docs and resources scenarios match committed golden files and are byte-identical across two runs.
 
 ## Test Requirements
 

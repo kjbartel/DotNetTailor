@@ -13,7 +13,7 @@ DotNetRepack is a binary-first .NET CLI tool. It analyses, validates and transfo
 | Target runtimes | Configured independently of the tool runtime: `net8.0` and later |
 | Platform v1 | Windows host, `win-x64` output. Linux and other RIDs are possible later through the platform abstraction ([AS §8.3](../Requirements/Application_Specification.md)) |
 | Hosting | GitHub + GitHub Actions |
-| Tests | xUnit v3 on Microsoft Testing Platform (MTP), Verify.XunitV3, sample apps built from source in the repo |
+| Tests | xUnit v3 on Microsoft Testing Platform (MTP), in-repo golden-file helper (`tests/DotNetRepack.Testing`, [§16](#16-testing-strategy)), sample apps built from source in the repo |
 
 ### 1.1 Source authority
 
@@ -68,7 +68,8 @@ src/
 tests/
   DotNetRepack.<Project>.Tests/         One xUnit v3 project per src project
   DotNetRepack.IntegrationTests/        CLI + pipeline over the published test-app matrix
-  DotNetRepack.RegressionTests/         Snapshot (Verify) regression over the matrix
+  DotNetRepack.RegressionTests/         Golden-file regression over the matrix
+  DotNetRepack.Testing/                 Test-support class library (golden-file helper); referenced by test projects, not a test project
   TestApps/                             Source for the sample apps (see §16)
 build/Build-TestApps.ps1                Publishes the matrix into artifacts/testapps (git-ignored) + manifest
 schemas/{appspec,transformspec,plan}/v1/  Generated JSON Schemas, committed
@@ -180,7 +181,7 @@ Each artefact has a separate concern ([AS §22](../Requirements/Application_Spec
 | Logs | `repack.log` | No | No |
 
 - Artefacts go to `--artifacts <dir>`. The default is `.repack/` next to the AppSpec. **Decided (provisional).**
-- Canonical JSON rules: UTF-8 without BOM, LF line endings, 2-space indentation, stable property order from the model, sorted collections, no timestamps. Informational timestamps ([AS §5.2](../Requirements/Application_Specification.md)) are never emitted in canonical artefacts.
+- Canonical JSON rules: UTF-8 without BOM, LF line endings (deliberate, see [§15](#15-determinism)), 2-space indentation, stable property order from the model, sorted collections, no timestamps. Informational timestamps ([AS §5.2](../Requirements/Application_Specification.md)) are never emitted in canonical artefacts.
 - The validation state is a separate report, not embedded in the AppSpec (see [§19](#19-resolved--open-inconsistencies) item 1). States: `Unvalidated | Validated | ValidatedWithWarnings | Invalid` ([AS §20.2](../Requirements/Application_Specification.md)). `apply` always re-validates.
 
 ## 6. Specification Documents
@@ -431,15 +432,19 @@ The CLI follows dotnet conventions, uses American spelling, and accepts `analyse
 - Enumeration is sorted ordinal-ignore-case. Dictionaries are serialised sorted, and JSON is canonical.
 - There are no timestamps, machine paths or GUIDs in canonical artefacts. The tree fingerprint is a hash over the sorted `(relativePath, size, sha256)` entries.
 - External inputs (package versions and hashes, crossgen2 version) are pinned in the plan. Equal inputs plus an equal environment produce byte-identical plans and artefacts ([TS §3.6](../Requirements/Transformation_Specification.md), [CK §4.3](../Requirements/Read_to_run_Cake.md)).
+- Line endings of tool-generated artefacts (AppSpec and TransformSpec canonical writes, plans, reports, derived artefacts) are always LF with a fixed canonical form, independent of host OS and git settings. This keeps bytes and hashes identical across machines and platforms; Windows tooling (VS, VS Code, Notepad, PowerShell) reads LF JSON fine. **Decided (provisional)**, [§19](#19-resolved--open-inconsistencies) item 38.
+- Repository source files are the opposite: CRLF in the working tree (Windows-first), LF in the git index. `.gitattributes` forces `eol=crlf` per source extension so checkout is CRLF regardless of `core.autocrlf`, keeping `dotnet format` and byte-level diffs consistent on every machine and CI runner. Exceptions forced to LF: `*.sh` and golden files under `tests/**/Golden/**`, which must byte-match canonical tool output. `.editorconfig` mirrors this (`end_of_line = crlf` at root; `lf` for `[*.sh]` and `[tests/**/Golden/**]`). Delivered by WU-000.
 
 ## 16. Testing Strategy
 
-- Unit tests: one xUnit v3 project per src project. Verify snapshots are used for models, plans and artefacts.
+- Unit tests: one xUnit v3 project per src project. Golden files are used for models, plans and artefacts.
+- Golden-file helper (`tests/DotNetRepack.Testing`, class library; project delivered by WU-000, helper by WU-100): `Golden.AssertMatches(string actual, string name, [CallerFilePath] string callerPath = "")`. Golden files live next to the test class under `Golden/<TestClass>/<name>.golden.json` (or `.golden.txt`) and are committed, always LF. Comparison is ordinal text equality after applying only test-supplied scrubbers (e.g. temp paths → `{TEMP}`, repo root → `{REPO}`). On mismatch the actual output is written to `<name>.received.json` (git-ignored) and the assertion message shows a unified diff summary. `DOTNET_REPACK_UPDATE_GOLDEN=1` overwrites golden files instead of failing; it is never set in CI, and CI asserts it is unset. No third-party snapshot library ([§19](#19-resolved--open-inconsistencies) item 37).
 - Test apps (`tests/TestApps/`): console, WinForms, WPF, a plugin host with a one-way plugin chain, a deliberately cyclic plugin variant, satellite resources, native DLLs, a multi-RID `runtimes/` folder, and mixed-mode (C++/CLI, optional).
 - Matrix built by `build/Build-TestApps.ps1`: `{net8.0, net10.0} × {FD, SC} × {R2R off, on}`. Output goes to `artifacts/testapps/` with `manifest.json`. CI caches it, keyed on the TestApps source hash and SDK version.
 - Integration and regression tests: CLI end-to-end over the matrix, dry-run no-mutation enforcement (filesystem snapshot before and after), determinism (two runs, byte comparison), and launch smoke tests for outputs. Launch smoke tests are test-harness only, not a tool feature ([RQ §2.2](../Requirements/Repackage_tool_Requirements_v1.1.md)).
 - Matrix fixtures flagged `expectedInvalid` in `manifest.json` (e.g. the cyclic plugin app) are excluded from "zero errors" checks and must instead produce their listed diagnostics.
 - Conventions: every test carries `[Trait("WU", "<id>")]`. Run one WU with `dotnet test --project <test project path> --filter-trait "WU=<id>"` (MTP mode, no `--` separator). `Category` traits (combinable): `Integration` (cross-project in-process pipeline/CLI tests), `Matrix` (needs `artifacts/testapps`; skips with a reason locally when absent, never in CI), `Network` (external feeds; skipped unless `DOTNET_REPACK_TEST_NETWORK=1`, run nightly), `Launch` (starts produced apps). The default run makes no network calls.
+- Naming: standard .NET naming, no underscores. Test classes are `<TypeUnderTest>Tests`; test methods are PascalCase `<Subject><Condition><ExpectedResult>`, e.g. `ReferencedAssemblyLoads`, `ParseRejectsAbsolutePath`, `ClassifyReturnsCatchAllForUnknownFile`. CA1707 is not suppressed.
 
 ## 17. Security
 
@@ -492,6 +497,8 @@ The CLI follows dotnet conventions, uses American spelling, and accepts `analyse
 | 34 | M4 "zero errors across the matrix" vs the deliberately cyclic plugin app | Fixtures flagged `expectedInvalid` in the manifest are excluded and must produce their expected diagnostics ([§16](#16-testing-strategy)) | Negative fixtures stay in the matrix | Decided |
 | 35 | SDK-equivalence of converted runtimeconfig/deps.json vs RID-specific asset flattening in SDK SC publishes | Documented normalisation (RID-specific package asset flattening, property ordering) defined in WU-805 | Tool preserves assets by default (item 4) | Decided |
 | 36 | Runtime (`matchTarget`, …) and library (`patch`, `minor`, …) version policies mixed in one type | Separate types; Acquisition exposes one generic range resolver both map onto ([§10](#10-acquisition)) | Different semantics, one resolution mechanism | Decided |
+| 37 | Snapshot testing library | Snapshot testing library deferred; in-repo golden-file helper used ([§16](#16-testing-strategy)). Alternatives considered: Verify (licence/sponsorship check SC021 required), Shouldly `ShouldMatchApproved` (MIT, approval-file style), Snapshooter (MIT, JSON snapshots), ApprovalTests.Net (Apache-2.0, less active). May be revisited | No licence or sponsorship dependency; canonical JSON already gives stable text | Decided (provisional) |
+| 38 | Windows-first repository (CRLF working tree) vs byte-stable generated artefacts | Tool-generated artefacts are always LF in a fixed canonical form; repo sources are CRLF in the working tree; golden files and `*.sh` are LF ([§15](#15-determinism)) | Byte-level determinism and hashing across machines/platforms; Windows tools handle LF JSON | Decided (provisional) — revisit if users need CRLF output; would be a single canonical-writer setting |
 
 ## 20. Open Questions
 
@@ -511,6 +518,8 @@ Awaiting user decision (provisional defaults apply until decided):
 Owned by work units or deferred:
 
 - JSON Schema validator library (JsonSchema.Net licence vs Corvus.JsonSchema vs NJsonSchema). Decided by WU-007.
+- Snapshot testing library: deferred; in-repo golden-file helper used ([§19](#19-resolved--open-inconsistencies) item 37). Alternatives: Verify (SC021 licence/sponsorship check required), Shouldly `ShouldMatchApproved`, Snapshooter, ApprovalTests.Net. May be revisited.
+- **Resolved** — committed tool-generated files are LF-exempt like golden files: `.gitattributes` adds `schemas/** text eol=lf` and `Docs/Guides/diagnostics.md text eol=lf`; `.editorconfig` mirrors them. Drift tests stay byte-wise. Any future committed generated file gets the same exception (WU-000 D4).
 - `$schema` URI hosting (repo raw URL vs versioned docs site).
 - Should `apply --plan <file>` replay a pinned plan exactly (stronger reproducibility, [TS §3.6](../Requirements/Transformation_Specification.md))? Not in v1 scope.
 - Default artefacts location for `apply` when the AppSpec lives in the read-only input: provisional `<output>.repack/` sibling of the output.

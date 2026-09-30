@@ -39,7 +39,7 @@ Prove M8 end to end through the CLI: FD⇄SC for console, WinForms and WPF (net8
 ## Deliverables
 
 - TransformSpec fixtures (`to-sc.transform.json`, `to-fd.transform.json`, same-model variants), each stating an explicit runtime version or policy (e.g. `matchSource`), plus one negative fixture without it (validation error, exit 1).
-- Integration tests + Verify snapshots; normalised comparers reused from WU-801/802.
+- Integration tests + golden files; normalised comparers reused from WU-801/802.
 - Defect fixes in owning `src` projects with focused unit tests.
 
 ## Design Notes
@@ -69,7 +69,7 @@ Prove M8 end to end through the CLI: FD⇄SC for console, WinForms and WPF (net8
 
 ## Test Requirements
 
-- xUnit v3 + Verify in `tests/DotNetRepack.IntegrationTests/`, tagged `Category=Integration`, `Category=Matrix` and `Category=Launch`; trait `WU=805`.
+- xUnit v3 + golden files in `tests/DotNetRepack.IntegrationTests/`, tagged `Category=Integration`, `Category=Matrix` and `Category=Launch`; trait `WU=805`.
 - Run: `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=805"`.
 - `LocalPackageFeedFixture` with isolated cache seeded from `Build-TestApps.ps1`; no network in default runs.
 - Record Test Evidence (scenario matrix, fingerprints, allowlist) in the PR.

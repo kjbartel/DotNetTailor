@@ -93,7 +93,7 @@ Namespace `DotNetRepack.Planning.Precedence`.
 - [ ] AC-7 Reversing the document order of two conflicting rules yields byte-identical diagnostics. Reversing two agreeing rules yields the same winner (permutation test).
 - [ ] AC-8 Artefacts with no intents resolve to `preserve` at `Baseline`. `defaults.include: exclude` is overridden by any level ≥ 1 include.
 - [ ] AC-9 `PolicyEvaluator` (WU-100) cannot downgrade any `RPK51xx` code under `Permissive` or with any condition policy (test).
-- [ ] AC-10 Verify snapshot of `IntentResolution` for a synthetic spec with 3 levels and 2 conflicts is byte-stable across two runs.
+- [ ] AC-10 Golden file of `IntentResolution` for a synthetic spec with 3 levels and 2 conflicts is byte-stable across two runs.
 
 ## Test Requirements
 

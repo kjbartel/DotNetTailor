@@ -79,8 +79,8 @@ Fixtures (`Fixtures/TransformSpec/`): `minimal`, `architecture-example` ([§6.3]
 ## Acceptance Criteria
 
 - [ ] AC-1 The model covers every row of the member table; a reflection test asserts each JSON member name exists in the generated schema.
-- [ ] AC-2 Round-trip (read → write → read) over all valid fixtures is lossless and the second write is byte-identical (Verify snapshot per fixture).
-- [ ] AC-3 `ts33-conceptual-example.transform.json` is schema-valid; its snapshot contains a rule or operation for each of the 12 TS §33 bullets (checklist test mapping bullet → JSON pointer).
+- [ ] AC-2 Round-trip (read → write → read) over all valid fixtures is lossless and the second write is byte-identical (golden file per fixture).
+- [ ] AC-3 `ts33-conceptual-example.transform.json` is schema-valid; its golden file contains a rule or operation for each of the 12 TS §33 bullets (checklist test mapping bullet → JSON pointer).
 - [ ] AC-4 `${targetTfm}` values survive round-trip unchanged.
 - [ ] AC-5 `wrong-kind` → `RPK1003`; `major-2` → `RPK1005`; `unknown-member` → `RPK1010` with a JSON pointer (e.g. `/rules/0/selct`).
 - [ ] AC-6 `credential-in-url`, `duplicate-rule-id`, `empty-selector` each yield a distinct `RPK12xx` error with a JSON pointer; `unknown-policy-condition` yields a schema or `RPK12xx` error.
@@ -92,7 +92,7 @@ Fixtures (`Fixtures/TransformSpec/`): `minimal`, `architecture-example` ([§6.3]
 
 ## Test Requirements
 
-- xUnit v3 + Verify.XunitV3 in `tests/DotNetRepack.Specifications.Tests/`, namespace `…Tests.TransformSpec`. Fixtures copied to output. Trait `WU=102`.
+- xUnit v3 + golden files (`DotNetRepack.Testing.Golden`) in `tests/DotNetRepack.Specifications.Tests/`, namespace `…Tests.TransformSpec`. Fixtures copied to output. Trait `WU=102`.
 - Run: `dotnet test --project tests/DotNetRepack.Specifications.Tests --filter-trait "WU=102"`.
 - Record Test Evidence below and in the PR.
 

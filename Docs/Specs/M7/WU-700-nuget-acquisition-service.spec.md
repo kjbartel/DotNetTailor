@@ -90,7 +90,7 @@ Provide a deterministic, credential-safe NuGet acquisition service that resolves
 
 ## Test Requirements
 
-- xUnit v3 (MTP) in `tests/DotNetRepack.Acquisition.Tests/`; Verify snapshots for canonical provenance JSON.
+- xUnit v3 (MTP) in `tests/DotNetRepack.Acquisition.Tests/`; golden files for canonical provenance JSON.
 - `LocalPackageFeedFixture`: temp folder feed, temp global packages folder and temp `nuget.config`; never touches the user's cache. Synthetic packages built with `NuGet.Packaging.PackageBuilder`; optional seeding of real packs from the global packages folder populated by `build/Build-TestApps.ps1`.
 - `Category=Network` tests (nightly only; skipped unless `DOTNET_REPACK_TEST_NETWORK=1`): resolve and acquire `Microsoft.NETCore.App.Host.win-x64` `8.0.*` from nuget.org.
 - Run: `dotnet test --project tests/DotNetRepack.Acquisition.Tests --filter-trait "WU=700"`.

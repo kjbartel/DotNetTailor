@@ -78,7 +78,7 @@ Resolve every managed assembly reference from declared, ordered reference roots 
 ## Test Requirements
 
 - Unit: `tests/DotNetRepack.Model.Tests/References/`, synthetic trees with fake identity facts (no real PE needed); trait `WU=303`.
-- One integration smoke over the plugin host FD/SC matrix entries: zero `RPK3301` with a hand-authored spec (full matrix snapshots in WU-305).
+- One integration smoke over the plugin host FD/SC matrix entries: zero `RPK3301` with a hand-authored spec (full matrix golden files in WU-305).
 - Run: `dotnet test --project tests/DotNetRepack.Model.Tests --filter-trait "WU=303"`.
 - Record Test Evidence in the PR.
 

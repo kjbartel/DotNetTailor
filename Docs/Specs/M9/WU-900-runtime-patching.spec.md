@@ -52,7 +52,7 @@ Implement the `Patch.Runtime` handler. It moves an app to another runtime patch 
 - RuntimeList diff service (or extension of the WU-701 catalogue) returning a sorted, deterministic diff.
 - R2R version-bubble facts in `Inspection` (only if WU-200 did not add them): composite component flag, multi-module version bubble flag, manifest assembly list.
 - Fixtures: an SC app pinned to an older same-major patch (e.g. `RuntimeFrameworkVersion=8.0.13`) and an R2R input-bubble/composite variant including the framework. Add them to `build/Build-TestApps.ps1` and `manifest.json`.
-- Unit, snapshot and integration tests (see Test Requirements).
+- Unit, golden-file and integration tests (see Test Requirements).
 
 ## Design Notes
 
@@ -81,7 +81,7 @@ Implement the `Patch.Runtime` handler. It moves an app to another runtime patch 
 
 ## Test Requirements
 
-- xUnit v3 on MTP. Verify snapshots for plans (normalised) and diffs.
+- xUnit v3 on MTP. Golden files for plans (normalised) and diffs.
 - Offline local package feed fixture: a folder feed with two same-major runtime pack versions (NETCore + WindowsDesktop `win-x64`) plus crossgen2, referenced by a test `nuget.config`. It is populated by a build script and CI cache, never committed.
 - Integration over `artifacts/testapps/` (pinned-patch SC console, WPF, R2R bubble variant). Launch smoke only in the test harness.
 - Record Test Evidence: commands, TRX, feed package list with hashes, and plan hashes of both runs.

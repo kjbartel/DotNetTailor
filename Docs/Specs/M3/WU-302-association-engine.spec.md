@@ -60,13 +60,13 @@ Link associated files (symbols, XML docs, `.config`, runtimeconfig, deps.json, s
 - [ ] AC-6 Equal-priority competing primaries produce `RPK3202`.
 - [ ] AC-7 Patterns containing `..` or absolute segments produce `RPK3203`.
 - [ ] AC-8 Associated files retain their WU-301 classification (e.g. `App.pdb` → `symbols`).
-- [ ] AC-9 Output ordering is deterministic (Verify snapshot of a synthetic plugin-style tree).
+- [ ] AC-9 Output ordering is deterministic (golden file of a synthetic plugin-style tree).
 
 ## Test Requirements
 
 - Unit only: `tests/DotNetRepack.Model.Tests/Associations/`, synthetic `InMemoryAppTree` + fake facts; trait `WU=302`.
 - Run: `dotnet test --project tests/DotNetRepack.Model.Tests --filter-trait "WU=302"`.
-- Matrix coverage is exercised by WU-305 snapshots.
+- Matrix coverage is exercised by WU-305 golden files.
 - Record Test Evidence in the PR.
 
 ## Definition of Done

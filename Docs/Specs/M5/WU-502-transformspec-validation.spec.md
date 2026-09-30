@@ -95,7 +95,7 @@ Turn a loaded TransformSpec plus a validated input AppSpec into a `ValidatedTran
 - [ ] AC-6 `RPK4405` stays `Error` under `--permissive` and with any `defaults.policies` entry (test).
 - [ ] AC-7 `defaults.policies` that set a structural condition, or an unsupported mode, yield `RPK4404`.
 - [ ] AC-8 A rule selector that matches nothing yields `RPK4408` as a warning by default, as an error with `selectorMatchesNothing: error`, is suppressed with `skip`, and is escalated to failure under `--strict`.
-- [ ] AC-9 `ValidatedTransformSpec` contains a compiled selector and a precedence level for every selector-bearing member. Its Verify snapshot for the TS §33 fixture over the matrix PluginHost net8 FD entry is byte-stable across two runs.
+- [ ] AC-9 `ValidatedTransformSpec` contains a compiled selector and a precedence level for every selector-bearing member. Its golden file for the TS §33 fixture over the matrix PluginHost net8 FD entry is byte-stable across two runs.
 - [ ] AC-10 `DotNetRepack.Validation` has no reference to `DotNetRepack.Planning` (assembly-reference test).
 
 ## Test Requirements

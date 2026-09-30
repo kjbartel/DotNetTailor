@@ -77,7 +77,7 @@ Diagnostics (minimum):
 - [ ] AC-3 SC runtimeconfig (`includedFrameworks`) → `IsSelfContained = true`, entries read.
 - [ ] AC-4 `rollForward`, `applyPatches` and `configProperties` (bool, string, number) are read; properties sorted ordinally.
 - [ ] AC-5 Comments/trailing commas tolerated; malformed JSON → `RPK2201`; both `framework` and `frameworks` → `RPK2202`.
-- [ ] AC-6 deps.json fixtures (FD, SC with `runtimepack.*`, with `runtimes/win-x64/native` and `runtimes/linux-x64/lib` assets, with resource assemblies) → `RuntimeTargetName`, `RuntimeTargetRid`, libraries, per-RID assets and cultures match Verify snapshots; malformed → `RPK2210`.
+- [ ] AC-6 deps.json fixtures (FD, SC with `runtimepack.*`, with `runtimes/win-x64/native` and `runtimes/linux-x64/lib` assets, with resource assemblies) → `RuntimeTargetName`, `RuntimeTargetRid`, libraries, per-RID assets and cultures match committed golden files; malformed → `RPK2210`.
 - [ ] AC-7 Synthetic apphost-like PE with an embedded bound path `Viewer.dll` → `Bound`, path `Viewer.dll`; with the placeholder still present → `Unbound` + `RPK2221`; bound path `..\x.dll` → `RPK2222`.
 - [ ] AC-8 Matrix (`Category=Matrix`): for net8 and net10 × FD and SC apphosts in the matrix, `BoundAssemblyPath` equals `<AppName>.dll` and subsystem matches the app type (M2 criterion).
 - [ ] AC-9 Matrix: every `*.runtimeconfig.json` and `*.deps.json` in the matrix reads without error; `IsSelfContained` matches the matrix manifest's FD/SC flag.
@@ -85,7 +85,7 @@ Diagnostics (minimum):
 
 ## Test Requirements
 
-- xUnit v3 + Verify.XunitV3 in `tests/DotNetRepack.Inspection.Tests/`.
+- xUnit v3 + golden files (`DotNetRepack.Testing.Golden`) in `tests/DotNetRepack.Inspection.Tests/`.
 - Unit fixtures: small hand-written runtimeconfig/deps.json files under `Fixtures/Runtime/` modelled on SDK output; synthetic apphost PE via `SyntheticPe` helper. Trait `WU=202`.
 - Matrix tests (AC-8, AC-9) in `tests/DotNetRepack.IntegrationTests/Inspection/RuntimeConfigMatrixTests` over `artifacts/testapps/manifest.json`; traits `Category=Integration`, `Category=Matrix`, `WU=202`; skip with reason locally when absent, CI must not skip.
 - Run: `dotnet test --project tests/DotNetRepack.Inspection.Tests --filter-trait "WU=202"`; `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=202"`.

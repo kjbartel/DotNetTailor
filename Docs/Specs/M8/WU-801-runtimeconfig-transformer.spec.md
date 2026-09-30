@@ -72,7 +72,7 @@ Pure, deterministic transformation of `*.runtimeconfig.json` between FD and SC s
 
 ## Test Requirements
 
-- xUnit v3 + Verify in `tests/DotNetRepack.Transforms.Tests/Configuration/`.
+- xUnit v3 + golden files in `tests/DotNetRepack.Transforms.Tests/Configuration/`.
 - Matrix comparisons (`Category=Matrix`) read `artifacts/testapps`; unit fixtures are small checked-in JSON files.
 - Run: `dotnet test --project tests/DotNetRepack.Transforms.Tests --filter-trait "WU=801"`.
 - No network. Record Test Evidence in the PR.

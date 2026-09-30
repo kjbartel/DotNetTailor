@@ -63,7 +63,7 @@ Pure, deterministic transformation of `*.deps.json` between FD and SC: set the `
 
 ## Test Requirements
 
-- xUnit v3 + Verify in `tests/DotNetRepack.Transforms.Tests/Configuration/`.
+- xUnit v3 + golden files in `tests/DotNetRepack.Transforms.Tests/Configuration/`.
 - Matrix comparisons under `Category=Matrix`; runtime packs via `LocalPackageFeedFixture`; no network.
 - Run: `dotnet test --project tests/DotNetRepack.Transforms.Tests --filter-trait "WU=802"`.
 - Record Test Evidence in the PR.

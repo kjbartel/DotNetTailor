@@ -74,7 +74,7 @@ Validate an AppSpec against a physical tree covering every check in AS §20.3, c
 - [ ] AC-8 Warnings-only input → `ValidatedWithWarnings` (default), `Invalid` + `WarningsAsErrors` (strict).
 - [ ] AC-9 Permissive downgrades exactly the descriptors flagged `IsPolicyConfigurable`; a structural code stays an error (theory test).
 - [ ] AC-10 Unloadable spec → `Unvalidated` with the loader diagnostics.
-- [ ] AC-11 `validation-report.json` contains `specHash`, `treeFingerprint`, `state`, `mode`; byte-identical across two runs; Verify snapshot committed.
+- [ ] AC-11 `validation-report.json` contains `specHash`, `treeFingerprint`, `state`, `mode`; byte-identical across two runs; golden file committed.
 - [ ] AC-12 Editing a sidecar does not change `treeFingerprint`; editing an in-scope file does.
 - [ ] AC-13 Hand-authored matrix AppSpecs (WU-305) validate as `Validated` or `ValidatedWithWarnings` for every matrix entry except variants flagged `expectedInvalid` in the WU-003 manifest (the cyclic plugin variant: `Invalid`, exactly `RPK3401`).
 

@@ -42,7 +42,7 @@ Prove M7 end to end through the CLI: `plan` and `apply` with an R2R TransformSpe
 ## Deliverables
 
 - TransformSpec fixtures (R2R all app/plugin assemblies; exclusion variant; composite SC variant if applicable).
-- Integration tests + Verify snapshots of plans and eligibility reports.
+- Integration tests + golden files of plans and eligibility reports.
 - Defect fixes in the owning `src` project with focused unit tests.
 
 ## Design Notes
@@ -70,7 +70,7 @@ Prove M7 end to end through the CLI: `plan` and `apply` with an R2R TransformSpe
 
 ## Test Requirements
 
-- xUnit v3 + Verify in `tests/DotNetRepack.IntegrationTests/`, tagged `Category=Integration`, `Category=Matrix` (and `Category=Launch` for smoke runs so CI can tier them); trait `WU=704`.
+- xUnit v3 + golden files in `tests/DotNetRepack.IntegrationTests/`, tagged `Category=Integration`, `Category=Matrix` (and `Category=Launch` for smoke runs so CI can tier them); trait `WU=704`.
 - Run: `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=704"`.
 - `LocalPackageFeedFixture` with an isolated global packages folder seeded from `Build-TestApps.ps1` restores; no network in default runs.
 - Record Test Evidence (scenario list, fingerprints, results) in the PR.

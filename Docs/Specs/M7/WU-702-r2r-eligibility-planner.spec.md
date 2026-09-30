@@ -78,7 +78,7 @@ Every managed assembly in the projected output gets exactly one entry. Non-manag
 
 ## Acceptance Criteria
 
-- [ ] AC-1 On eligibility fixtures (IL-only, mixed-mode, reference assembly, satellite, composite component, x86-only, already-R2R app assembly, runtime-pack assembly, unselected), each assembly gets the state and reason in the Eligibility Model table (snapshot-verified).
+- [ ] AC-1 On eligibility fixtures (IL-only, mixed-mode, reference assembly, satellite, composite component, x86-only, already-R2R app assembly, runtime-pack assembly, unselected), each assembly gets the state and reason in the Eligibility Model table (golden file).
 - [ ] AC-2 For every matrix app, every managed assembly in the projected output has exactly one eligibility entry (coverage test).
 - [ ] AC-3 Each planned unit's references include the implementation assemblies (incl. `System.Private.CoreLib.dll`) of the **target** runtime pack version, for FD and SC targets.
 - [ ] AC-4 For the plugin test app, a plugin unit references its upstream plugins and the host, never a downstream plugin, and contains a single input assembly.
@@ -93,7 +93,7 @@ Every managed assembly in the projected output gets exactly one entry. Non-manag
 
 ## Test Requirements
 
-- xUnit v3 + Verify in `tests/DotNetRepack.Transforms.Tests/`; plan snapshots per scenario.
+- xUnit v3 + golden files in `tests/DotNetRepack.Transforms.Tests/`; plan golden files per scenario.
 - Eligibility fixtures from `artifacts/testapps` (`Category=Matrix`) plus small checked-in or build-time generated assemblies for edge cases.
 - Runtime packs and crossgen2 packages via `LocalPackageFeedFixture` (offline); no network in default runs.
 - Run: `dotnet test --project tests/DotNetRepack.Transforms.Tests --filter-trait "WU=702"`.

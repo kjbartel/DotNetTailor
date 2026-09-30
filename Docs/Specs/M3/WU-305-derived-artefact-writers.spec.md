@@ -28,7 +28,7 @@ Compose the M3 stages into one `EffectiveApplicationModel` build and write the s
 
 ## Scope
 
-**In**: model orchestration (match → classify → associate → identities → references → graphs), tree fingerprint (sidecar exclusion over `Core.Hashing.TreeFingerprint`), spec hash, deterministic deployment-model/framework/TFM detection primitives (`Model.Execution`, consumed by WU-400 and WU-403), six artefact writers, hand-authored AppSpecs + snapshots for the matrix.
+**In**: model orchestration (match → classify → associate → identities → references → graphs), tree fingerprint (sidecar exclusion over `Core.Hashing.TreeFingerprint`), spec hash, deterministic deployment-model/framework/TFM detection primitives (`Model.Execution`, consumed by WU-400 and WU-403), six artefact writers, hand-authored AppSpecs + golden files for the matrix.
 
 **Out**: `validation-report.json` (WU-403), `capabilities.json` (WU-402), CLI wiring (WU-404), artefact JSON Schemas.
 
@@ -62,8 +62,8 @@ Compose the M3 stages into one `EffectiveApplicationModel` build and write the s
 - [ ] AC-2 The app-tree fingerprint (via `Core.Hashing.TreeFingerprint`) changes when a file's content, size or path changes and is unchanged when only sidecars change (unit tests).
 - [ ] AC-3 All six artefacts are written with the common header; each is canonical JSON (UTF-8 no BOM, LF, 2-space) — verified by a canonical-form test.
 - [ ] AC-4 No artefact contains the absolute root path, machine name or a timestamp (test greps outputs against the temp root path and `Environment.MachineName`).
-- [ ] AC-5 Verify snapshots of all six artefacts for a synthetic tree are committed.
-- [ ] AC-6 Hand-authored AppSpecs exist for every WU-003 app × {FD, SC}; building the EAM over every matrix entry yields zero errors, except variants flagged `expectedInvalid` in the WU-003 manifest (the cyclic plugin variant), which yield exactly their listed codes (`RPK3401`), and artefacts match committed snapshots (known non-deterministic files from the WU-003 manifest are scrubbed).
+- [ ] AC-5 Golden files of all six artefacts for a synthetic tree are committed.
+- [ ] AC-6 Hand-authored AppSpecs exist for every WU-003 app × {FD, SC}; building the EAM over every matrix entry yields zero errors, except variants flagged `expectedInvalid` in the WU-003 manifest (the cyclic plugin variant), which yield exactly their listed codes (`RPK3401`), and artefacts match committed golden files (known non-deterministic files from the WU-003 manifest are scrubbed).
 - [ ] AC-7 Two consecutive runs over every matrix entry produce byte-identical artefacts.
 - [ ] AC-8 Coverage: for every matrix entry, `classification-map.json` lists every in-scope file exactly once.
 - [ ] AC-9 `RuntimeFactsDetector` reports the correct deployment model, frameworks and TFM for every matrix entry (FD/SC per the manifest) and is referenced by `runtime-inventory.json`; Model has no reference to Analysis or Validation.
@@ -71,7 +71,7 @@ Compose the M3 stages into one `EffectiveApplicationModel` build and write the s
 ## Test Requirements
 
 - Unit: `tests/DotNetRepack.Model.Tests/Artefacts/` with synthetic trees; trait `WU=305`.
-- Integration: `tests/DotNetRepack.IntegrationTests/Model/DerivedArtefactSnapshotTests` over `artifacts/testapps/manifest.json`; trait `Category=Integration`, `Category=Matrix`, `WU=305`. CI must not skip.
+- Integration: `tests/DotNetRepack.IntegrationTests/Model/DerivedArtefactGoldenTests` over `artifacts/testapps/manifest.json`; trait `Category=Integration`, `Category=Matrix`, `WU=305`. CI must not skip.
 - Run: `dotnet test --project tests/DotNetRepack.Model.Tests --filter-trait "WU=305"`; `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=305"`.
 - Record Test Evidence (including matrix `manifest.json` hash) in the PR.
 
@@ -81,7 +81,7 @@ Compose the M3 stages into one `EffectiveApplicationModel` build and write the s
 
 ## Agent Notes
 
-- Framework patch versions in matrix runtimeconfigs follow the SDK used by WU-003; snapshots will change on SDK bumps — keep scrubbers minimal and documented.
+- Framework patch versions in matrix runtimeconfigs follow the SDK used by WU-003; golden files will change on SDK bumps — keep scrubbers minimal and documented.
 - Keep writers thin: map model → DTO records → canonical writer. No logic in writers.
 
 ## Open Questions

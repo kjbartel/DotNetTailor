@@ -61,7 +61,7 @@ Assess which transformations appear possible for the analysed state and write an
 - [ ] AC-3 R2R-off entries report `readyToRun` = `Supported`; R2R-on entries report `Unsupported` or `Conditional` with `alreadyReadyToRun` reasons naming paths.
 - [ ] AC-4 A synthetic .NET Framework TFM yields `retarget` = `Unsupported`; unknown TFM yields `Unknown`.
 - [ ] AC-5 A synthetic mixed-mode assembly appears under an `ineligibleMixedMode` reason for `readyToRun`.
-- [ ] AC-6 `capabilities.json` is canonical and byte-identical across two runs; Verify snapshot per matrix entry.
+- [ ] AC-6 `capabilities.json` is canonical and byte-identical across two runs; golden file per matrix entry.
 - [ ] AC-7 Serialising a draft AppSpec for any matrix entry contains no capability members (test).
 
 ## Test Requirements

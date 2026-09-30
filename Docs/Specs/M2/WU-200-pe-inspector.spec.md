@@ -75,14 +75,14 @@ Diagnostics (minimum):
 - [ ] AC-5 Malformed fixtures — truncated after DOS header, truncated after COFF header, bad `e_lfanew`, CLI header RVA out of range, R2R header pointer out of range, metadata stream truncated — each produce a `RPK200x` diagnostic and no exception (theory test; fuzz loop over 1,000 random truncations/bit-flips of a valid assembly also throws nothing).
 - [ ] AC-6 Synthetic assembly with `[assembly: ReferenceAssembly]` → `IsReferenceAssembly = true`; without it → `false`.
 - [ ] AC-7 Synthetic apphost-like PE containing the bundle marker with non-zero offset → `IsSingleFileBundle = true` and `RPK2010` error; marker with zero offset → `false`.
-- [ ] AC-8 Matrix (`Category=Matrix`): for every PE file listed in `artifacts/testapps/manifest.json`, `PeFacts` (excluding R2R minor version) matches a Verify snapshot; R2R-on builds report `ReadyToRun != null` for app assemblies and R2R-off builds report `null`; SC builds report framework assemblies as R2R.
+- [ ] AC-8 Matrix (`Category=Matrix`): for every PE file listed in `artifacts/testapps/manifest.json`, `PeFacts` (excluding R2R minor version) matches a committed golden file; R2R-on builds report `ReadyToRun != null` for app assemblies and R2R-off builds report `null`; SC builds report framework assemblies as R2R.
 - [ ] AC-9 Matrix: the native `e_sqlite3.dll` shipped with `ConsoleApp` variants is `Native`; apphosts are `Native` with subsystem `WindowsGui` for WinForms/WPF and `WindowsCui` for console.
 - [ ] AC-10 `PeInspector` is safe for concurrent use (parallel inspection of the same set yields identical results).
 - [ ] AC-11 A committed real single-file bundle fixture (`Fixtures/Pe/singlefile-fd-net8.exe`, framework-dependent, < 1 MB, with a `README.md` giving the exact regeneration command) is reported with `IsSingleFileBundle = true` and `RPK2010`; the ordinary matrix apphosts report `false` (M2 criterion).
 
 ## Test Requirements
 
-- xUnit v3 + Verify.XunitV3 in `tests/DotNetRepack.Inspection.Tests/`.
+- xUnit v3 + golden files (`DotNetRepack.Testing.Golden`) in `tests/DotNetRepack.Inspection.Tests/`.
 - Unit tests in `tests/DotNetRepack.Inspection.Tests/Pe/` use synthetic in-memory PE images built with `System.Reflection.Metadata.Ecma335.MetadataBuilder` + `ManagedPEBuilder`/`PEBuilder`; add a small `SyntheticPe` builder in `tests/DotNetRepack.Inspection.Tests/Infrastructure/` (shared with WU-201/WU-202). Trait `WU=200`.
 - Matrix tests (AC-8, AC-9) in `tests/DotNetRepack.IntegrationTests/Inspection/PeInspectionMatrixTests` read `artifacts/testapps/manifest.json` (WU-003); traits `Category=Integration`, `Category=Matrix`, `WU=200`. Skip with an explicit reason locally when the matrix is absent; CI must not skip.
 - Malformed-PE and single-file fixtures are owned by this WU ([WU-003](../M0/WU-003-test-app-suite.spec.md) Out of scope).
@@ -97,7 +97,7 @@ Diagnostics (minimum):
 ## Agent Notes
 
 - Read the WU-005 spike report/ADR for the bundle marker and any per-major differences before implementing AC-7.
-- Snapshot only stable facts; SDK patch updates may change R2R minor versions.
+- Golden files hold only stable facts; SDK patch updates may change R2R minor versions.
 - `Inspection` references only `Core` ([§3.1](../../Architecture/DotNetRepack.architecture.md#31-project-responsibilities-and-allowed-dependencies)).
 
 ## Open Questions

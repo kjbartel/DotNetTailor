@@ -72,7 +72,7 @@ Create and rebind Windows apphosts without the SDK: patch the app-DLL placeholde
 
 ## Test Requirements
 
-- xUnit v3 + Verify in `tests/DotNetRepack.Platform.Windows.Tests/` (Windows-only; tests skip with explicit reason on non-Windows) and `tests/DotNetRepack.Transforms.Tests/` for the resolver.
+- xUnit v3 + golden files in `tests/DotNetRepack.Platform.Windows.Tests/` (Windows-only; tests skip with explicit reason on non-Windows) and `tests/DotNetRepack.Transforms.Tests/` for the resolver.
 - Signed fixture: synthetic security-directory blob is sufficient; real signing optional.
 - Host packs via `LocalPackageFeedFixture` (offline); `Category=Network` only for extra versions. Matrix hosts under `Category=Matrix`; launch under `Category=Launch`.
 - Run: `dotnet test --project tests/DotNetRepack.Platform.Windows.Tests --filter-trait "WU=800"`; `dotnet test --project tests/DotNetRepack.Transforms.Tests --filter-trait "WU=800"`.

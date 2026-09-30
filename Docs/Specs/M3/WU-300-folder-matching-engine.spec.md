@@ -84,12 +84,12 @@ Match every folder of an application tree to exactly one effective folder defini
 - [ ] AC-10 Masks containing `..`, absolute paths, drive letters or `\` produce `RPK3001` before any traversal.
 - [ ] AC-11 A junction/symlink resolving outside the root produces `RPK3006`; one resolving inside produces `RPK3007` and is not traversed (physical-tree test creating links in a temp dir; skipped with explicit reason only if link creation is not permitted).
 - [ ] AC-12 The AppSpec file and `.repack/` inside the root are absent from `FolderMatchResult` and produce no diagnostics.
-- [ ] AC-13 Matching the same tree twice yields equal results; a Verify snapshot of the canonical result for the FS-equivalent layout ([folderspec.json](../../Requirements/folderspec.json) translated to canonical form) is committed.
+- [ ] AC-13 Matching the same tree twice yields equal results; a golden file of the canonical result for the FS-equivalent layout ([folderspec.json](../../Requirements/folderspec.json) translated to canonical form) is committed.
 - [ ] AC-14 The engine performs no writes (test: physical tree fingerprint before/after equal).
 
 ## Test Requirements
 
-- xUnit v3 + Verify.XunitV3 in `tests/DotNetRepack.Model.Tests/Folders/`; tag tests `[Trait("WU", "300")]`.
+- xUnit v3 + golden files (`DotNetRepack.Testing.Golden`) in `tests/DotNetRepack.Model.Tests/Folders/`; tag tests `[Trait("WU", "300")]`.
 - Unit tests use `InMemoryAppTree` synthetic trees only; physical tests (AC-11, AC-14) use temp dirs and clean up.
 - Run: `dotnet test --project tests/DotNetRepack.Model.Tests --filter-trait "WU=300"`.
 - No matrix (`artifacts/testapps`) dependency in this WU.

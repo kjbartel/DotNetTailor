@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-900, WU-901, WU-902, WU-704 |
 | Parallel with | WU-1000–WU-1002 |
-| Target project(s)/paths | `tests/DotNetRepack.IntegrationTests/` (TS §33 scenario, fixtures under `Fixtures/Ts33/`), `tests/DotNetRepack.RegressionTests/` (snapshots). Production code only for defects found (see Scope) |
+| Target project(s)/paths | `tests/DotNetRepack.IntegrationTests/` (TS §33 scenario, fixtures under `Fixtures/Ts33/`), `tests/DotNetRepack.RegressionTests/` (golden files). Production code only for defects found (see Scope) |
 | Size | M |
 
 ## Goal
@@ -57,14 +57,14 @@ Prove that the [TS §33](../../Requirements/Transformation_Specification.md) con
 ## Deliverables
 
 - `tests/DotNetRepack.IntegrationTests/Fixtures/Ts33/ts33.transform.json` (+ README comment block mapping the TS §33 bullets, if the JSON reader tolerates comments).
-- Integration test class `Ts33CombinedTransformTests` and Verify snapshots of the normalised plan, projected AppSpec and output AppSpec.
+- Integration test class `Ts33CombinedTransformTests` and golden files of the normalised plan, projected AppSpec and output AppSpec.
 - Any local feed additions needed (net10 runtime/host/crossgen2 packs, library versions).
 
 ## Design Notes
 
 - Input: the net8 FD WPF plugin host from `artifacts/testapps/` (plugin chain + satellites + multi-RID `runtimes/` + a library dependency). If a TS §33 facet is missing from the test app (e.g. a nameable R2R exclusion target, a patchable library, non-`en` satellites), extend the test app source and `Build-TestApps.ps1` in this WU.
 - The AppSpec comes from `analyze` and is committed as a fixture after review (not regenerated per run) so that the TransformSpec selectors bind to stable ids.
-- Normalise machine paths and timings before snapshotting. Canonical artefacts must not need normalisation.
+- Normalise machine paths and timings before comparing against golden files. Canonical artefacts must not need normalisation.
 - Spike reports/ADRs override the architecture where they differ (notably WU-004 R2R determinism fallback).
 
 ## Acceptance Criteria
@@ -82,7 +82,7 @@ Prove that the [TS §33](../../Requirements/Transformation_Specification.md) con
 
 ## Test Requirements
 
-- xUnit v3 on MTP, Verify. Tests run offline against the local package feed fixture (net10 runtime, WindowsDesktop, host, crossgen2 packs; library versions).
+- xUnit v3 on MTP, golden files. Tests run offline against the local package feed fixture (net10 runtime, WindowsDesktop, host, crossgen2 packs; library versions).
 - Mark the class `Category=Integration`, `Category=Matrix`, `Category=Launch` (nightly if CI time requires, plan risk R7) but runnable locally with one command: `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=903"`.
 - Record Test Evidence: commands, TRX, output hash manifests of both runs, and launch log.
 
@@ -94,7 +94,7 @@ Prove that the [TS §33](../../Requirements/Transformation_Specification.md) con
 
 ## Agent Notes
 
-- Do the dry-run first and review the plan snapshot before running `apply`. Most failures show up as ordering or selector-binding issues.
+- Do the dry-run first and review the plan golden file before running `apply`. Most failures show up as ordering or selector-binding issues.
 - If a TS §33 intent cannot be expressed with the current schema, stop and raise it as an Open Question. Do not add ad-hoc schema members here.
 
 ## Open Questions

@@ -74,7 +74,7 @@ Implement the `Patch.Library` handler. It updates **explicitly selected** non-co
 
 ## Test Requirements
 
-- xUnit v3 on MTP. Verify for plans and deps.json diffs.
+- xUnit v3 on MTP. Golden files for plans and deps.json diffs.
 - Offline local package feed fixture built by a script from checked-in `.nuspec` + generated minimal assemblies, or copied from the CI package cache. Use an authenticated-feed mock only if WU-700 provides one.
 - Integration over the library test app in `artifacts/testapps/`. Launch smoke only in the harness.
 - Record Test Evidence: commands, TRX, feed package hashes and plan hashes.

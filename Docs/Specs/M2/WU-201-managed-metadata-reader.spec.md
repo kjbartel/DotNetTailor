@@ -71,13 +71,13 @@ Diagnostics (minimum): `RPK2101` PE has no assembly manifest (netmodule/native);
 - [ ] AC-4 Malformed TFM attribute blob → `RPK2103` warning, `TargetFramework = null`, identity still returned.
 - [ ] AC-5 Synthetic `Contoso.Lib.resources` with culture `de` → `IsSatellite = true`; neutral `Contoso.Lib.resources` → `false`; `Contoso.Lib` with culture `de` → `false`.
 - [ ] AC-6 Native PE / non-PE input → `RPK2101`/`RPK2102`, no exception; truncation/bit-flip fuzz loop (1,000 iterations) over a valid assembly throws nothing.
-- [ ] AC-7 `ExternalReferenceScanner` on a synthetic assembly calling `System.Console.WriteLine(string)` and referencing type `System.Runtime.Serialization.Formatters.Binary.BinaryFormatter` lists both under their resolution-scope assembly with stable signature strings (Verify snapshot).
+- [ ] AC-7 `ExternalReferenceScanner` on a synthetic assembly calling `System.Console.WriteLine(string)` and referencing type `System.Runtime.Serialization.Formatters.Binary.BinaryFormatter` lists both under their resolution-scope assembly with stable signature strings (golden file).
 - [ ] AC-8 `AssemblyIdentity` equality treats `contoso.lib`/`Contoso.Lib` as equal and differs on token/version/culture; ordering is total and stable (property test).
-- [ ] AC-9 Matrix (`Category=Matrix`): identity, references and TFM of every managed file in every matrix app match a Verify snapshot; satellite assemblies in the satellite test app are flagged; net8 and net10 app assemblies report `net8.0*`/`net10.0*` TFMs.
+- [ ] AC-9 Matrix (`Category=Matrix`): identity, references and TFM of every managed file in every matrix app match a committed golden file; satellite assemblies in the satellite test app are flagged; net8 and net10 app assemblies report `net8.0*`/`net10.0*` TFMs.
 
 ## Test Requirements
 
-- xUnit v3 + Verify.XunitV3 in `tests/DotNetRepack.Inspection.Tests/`.
+- xUnit v3 + golden files (`DotNetRepack.Testing.Golden`) in `tests/DotNetRepack.Inspection.Tests/`.
 - Unit tests use synthetic assemblies built with `MetadataBuilder`/`ManagedPEBuilder` via the shared `SyntheticPe` helper (coordinate with WU-200; whichever lands first creates it). Trait `WU=201`.
 - Matrix test (AC-9) in `tests/DotNetRepack.IntegrationTests/Inspection/MetadataMatrixTests` over `artifacts/testapps/manifest.json`; traits `Category=Integration`, `Category=Matrix`, `WU=201`; skip with reason locally when absent, CI must not skip.
 - Run: `dotnet test --project tests/DotNetRepack.Inspection.Tests --filter-trait "WU=201"`; `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=201"`.
@@ -92,7 +92,7 @@ Diagnostics (minimum): `RPK2101` PE has no assembly manifest (netmodule/native);
 
 - Do not load assemblies with `Assembly.Load*` or `MetadataLoadContext`; `System.Reflection.Metadata` only.
 - Keep `ExternalReferenceScanner` allocation-light; WU-901 will run it over whole apps.
-- Snapshot scrubbing: MVIDs differ between builds — exclude `Mvid` from matrix snapshots.
+- Golden-file scrubbing: MVIDs differ between builds — exclude `Mvid` from matrix golden files.
 
 ## Open Questions
 

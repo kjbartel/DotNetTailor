@@ -54,7 +54,7 @@ Build the assembly dependency graph and the plugin graph from resolved reference
 - [ ] AC-2 Plugin units: `Plugins/*` explicit matches become units; recursed subfolders belong to their unit; nested plugins are distinct units with `ParentPluginId`.
 - [ ] AC-3 One-way chain `A → B → C` yields a DAG with no diagnostics.
 - [ ] AC-4 Mutual `A ↔ B` and 3-cycle `A → B → C → A` each yield exactly one `RPK3401` with the cycle path and the contributing assembly paths.
-- [ ] AC-5 Integration: the cyclic-plugin test app (WU-003) yields `RPK3401` listing the full cycle path; snapshot of the diagnostic committed.
+- [ ] AC-5 Integration: the cyclic-plugin test app (WU-003) yields `RPK3401` listing the full cycle path; golden file of the diagnostic committed.
 - [ ] AC-6 Integration: the one-way plugin chain test app yields no `RPK3401`.
 - [ ] AC-7 SCC implementation is iterative and handles a 10 000-node chain without stack overflow (unit test).
 - [ ] AC-8 Graph output is identical across two builds (equality test) and independent of input enumeration order (test shuffles inputs).

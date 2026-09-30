@@ -79,7 +79,7 @@ In phase 9, derive the projected output AppSpec (state only, no history) from th
 
 ## Acceptance Criteria
 
-- [ ] AC-1 For a plan with only `Preserve` actions, the projected AppSpec equals the flattened input AppSpec, except for `generator` (Verify snapshot).
+- [ ] AC-1 For a plan with only `Preserve` actions, the projected AppSpec equals the flattened input AppSpec, except for `generator` (golden file).
 - [ ] AC-2 The projected AppSpec contains no `includes`, no validation state, and no plan, rule or provenance data (JSON walk test against a forbidden-member list).
 - [ ] AC-3 Excluding all PDBs sets `required: false` on a previously required `symbols` association. The projected AppSpec then validates with no `RPK3201`.
 - [ ] AC-4 A layout move of `ConsoleApp.Library.dll` to a folder outside the entry assembly's reference roots yields `RPK5501` wrapping `RPK3301`.

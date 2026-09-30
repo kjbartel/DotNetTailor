@@ -81,7 +81,7 @@ Implement the `Retarget` handler. It changes the TFM (e.g. `net8.0` → `net10.0
 
 ## Test Requirements
 
-- xUnit v3 on MTP. Verify snapshots for compatibility reports and normalised plans.
+- xUnit v3 on MTP. Golden files for compatibility reports and normalised plans.
 - Offline local package feed fixture with net8 + net10 runtime packs, host packs and crossgen2 packs (`win-x64`). Populated by script/CI cache.
 - Integration over `artifacts/testapps/` net8 FD/SC console, WinForms and WPF. Launch smoke only in the harness.
 - Unit tests for the analyser against small synthetic metadata (no network).

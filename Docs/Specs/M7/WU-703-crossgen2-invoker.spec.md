@@ -63,7 +63,7 @@ Execute `Optimise` actions: locate crossgen2 in the pinned package, verify it, g
 - [ ] AC-1 Locator finds `crossgen2.exe` in a synthetic .NET 8+ layout and `crossgen2.dll` in a dll-only layout; both-or-neither layouts yield the documented result or an `RPK73xx` diagnostic.
 - [ ] AC-2 A crossgen2 package whose major differs from the unit's target runtime major is rejected before any process starts.
 - [ ] AC-3 A package whose `.nupkg` SHA-512 differs from the plan provenance is rejected before any process starts.
-- [ ] AC-4 `.rsp` files for an FD unit and an SC composite unit match Verify snapshots (staging root normalised).
+- [ ] AC-4 `.rsp` files for an FD unit and an SC composite unit match committed golden files (staging root normalised).
 - [ ] AC-5 The process is started with `UseShellExecute = false`, the crossgen2 path as `FileName` and `ArgumentList == ["@<rsp>"]` (fake `IProcessRunner`).
 - [ ] AC-6 Non-zero exit under `error` fails the action; under `warning` the IL file is kept and a warning is emitted; under `skip` the IL file is kept with an info diagnostic.
 - [ ] AC-7 Timeout and cancellation terminate the crossgen2 process tree and leave no temp output.
@@ -73,7 +73,7 @@ Execute `Optimise` actions: locate crossgen2 in the pinned package, verify it, g
 
 ## Test Requirements
 
-- xUnit v3 + Verify in `tests/DotNetRepack.Execution.Tests/`.
+- xUnit v3 + golden files in `tests/DotNetRepack.Execution.Tests/`.
 - Unit tests use a fake `IProcessRunner` and synthetic package layouts.
 - Real crossgen2 tests (`Category=Matrix`) use `LocalPackageFeedFixture` seeded from the global packages folder populated by `Build-TestApps.ps1` R2R publishes; no network. `Category=Network` only for fetching packages not in the seed.
 - Run: `dotnet test --project tests/DotNetRepack.Execution.Tests --filter-trait "WU=703"`.

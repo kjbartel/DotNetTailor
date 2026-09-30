@@ -85,9 +85,9 @@ Diagnostics (minimum):
 
 ## Acceptance Criteria
 
-- [ ] AC-1 `dotnet-repack --help` exits 0 and lists `analyze`, `validate`, `plan`, `apply`, `inspect`, `schema` and all global options (Verify snapshot of help text).
+- [ ] AC-1 `dotnet-repack --help` exits 0 and lists `analyze`, `validate`, `plan`, `apply`, `inspect`, `schema` and all global options (golden file of help text).
 - [ ] AC-2 `analyse --help` resolves to the `analyze` command.
-- [ ] AC-3 Each verb's `--help` shows the arguments/options from [§14](../../Architecture/DotNetRepack.architecture.md#14-cli) (snapshot per verb).
+- [ ] AC-3 Each verb's `--help` shows the arguments/options from [§14](../../Architecture/DotNetRepack.architecture.md#14-cli) (golden file per verb).
 - [ ] AC-4 Invoking `analyze`, `validate`, `plan`, `apply`, `inspect` with valid arguments writes `RPK0100` to stderr and returns `ExitCodes.NotImplemented`.
 - [ ] AC-5 Unknown option, missing required argument, unknown verb each return exit code 2 with `RPK0105` on stderr.
 - [ ] AC-6 `--strict --permissive` → 2 (`RPK0103`); `--var 1x=a` and `--var novalue` → 2 (`RPK0101`); `--var a=1 --var a=2` → 2 (`RPK0102`); `--var a=b=c` parses to `a` → `b=c`.
@@ -100,7 +100,7 @@ Diagnostics (minimum):
 
 ## Test Requirements
 
-- xUnit v3 + Verify.XunitV3 in `tests/DotNetRepack.Cli.Tests/`; in-process invocation only; temp directories via a per-test disposable helper. Trait `WU=105`.
+- xUnit v3 + golden files (`DotNetRepack.Testing.Golden`, `.golden.txt` for help text) in `tests/DotNetRepack.Cli.Tests/`; in-process invocation only; temp directories via a per-test disposable helper. Trait `WU=105`.
 - Run: `dotnet test --project tests/DotNetRepack.Cli.Tests --filter-trait "WU=105"` · focused: `--filter-class "*SchemaExportTests"`.
 - Record Test Evidence (including the AC-11 pack check) below and in the PR.
 
@@ -111,7 +111,7 @@ Diagnostics (minimum):
 
 ## Agent Notes
 
-- Help-text snapshots will churn as later WUs add options; keep them in one test class so updates are cheap.
+- Help-text golden files will churn as later WUs add options; keep them in one test class so updates are cheap (`DOTNET_REPACK_UPDATE_GOLDEN=1` locally). Captured console text uses `Environment.NewLine` (CRLF on Windows) while golden files are LF: capture with an LF writer or supply a `\r\n` → `\n` scrubber.
 - Keep verb option definitions in their command classes so WU-404/WU-506/WU-603 only replace the action.
 - If WU-101/WU-102 are not merged, implement everything else and leave AC-8 with the status `Blocked (WU-101/WU-102)`.
 

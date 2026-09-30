@@ -99,7 +99,7 @@ Serialise planning results into deterministic artefacts (`*.plan.json` with sche
 
 ## Agent Notes
 
-- Reuse the WU-404 CLI in-process helpers and `TreeFingerprint`. Build the directory-snapshot helper for AC-6 in a shared test-support folder so that WU-603 and WU-704 can reuse it.
+- Reuse the WU-404 CLI in-process helpers and `TreeFingerprint`. Build the directory-snapshot helper for AC-6 in `tests/DotNetRepack.Testing` so that WU-603 and WU-704 can reuse it.
 - Register `NoAcquisitionPlanner` in the Cli composition for v0.2.0.
 
 ## Open Questions

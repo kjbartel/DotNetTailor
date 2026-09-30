@@ -74,7 +74,7 @@ Plan framework-dependent → self-contained conversion for `win-x64`: add runtim
 
 ## Test Requirements
 
-- xUnit v3 + Verify in `tests/DotNetRepack.Transforms.Tests/DeploymentModel/`; plan snapshots per scenario.
+- xUnit v3 + golden files in `tests/DotNetRepack.Transforms.Tests/DeploymentModel/`; plan golden files per scenario.
 - Matrix inputs under `Category=Matrix`, launch under `Category=Launch`; packs via `LocalPackageFeedFixture`; no network.
 - Run: `dotnet test --project tests/DotNetRepack.Transforms.Tests --filter-trait "WU=803"`.
 - Record Test Evidence in the PR.

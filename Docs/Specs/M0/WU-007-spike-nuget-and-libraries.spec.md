@@ -48,7 +48,7 @@ Prove package acquisition with NuGet.Protocol/NuGet.Configuration (config hierar
 | Q6 | Offline: resolve id/version from the global packages folder only; `latestPatch` with `--offline` picks the latest cached version and warns (architecture §19 item 18). |
 | Q7 | Version listing for `latestPatch`/`range`: `GetAllVersionsAsync`, prerelease exclusion, unlisted packages, caching (`SourceCacheContext`) and determinism (pin in plan). |
 | Q8 | JSON Schema validator: compare JsonSchema.Net, Corvus.JsonSchema, NJsonSchema (and any other viable candidate) on licence (current terms, verified at source), draft 2020-12 support (dialect emitted by `JsonSchemaExporter`), System.Text.Json native, error output with JSON pointer (needed for `RPK1xxx`), performance, maintenance. |
-| Q9 | Library baseline: licence and version table for every planned third-party package (NuGet.Protocol, NuGet.Configuration, System.CommandLine, Microsoft.Extensions.DependencyModel, Microsoft.Extensions.FileSystemGlobbing, Microsoft.Extensions.DependencyInjection, xUnit v3, Verify.XunitV3, the chosen validator, WU-003's native-asset package). Flag any licence incompatible with an undecided product licence. |
+| Q9 | Library baseline: licence and version table for every planned third-party package (NuGet.Protocol, NuGet.Configuration, System.CommandLine, Microsoft.Extensions.DependencyModel, Microsoft.Extensions.FileSystemGlobbing, Microsoft.Extensions.DependencyInjection, xUnit v3, the chosen validator, WU-003's native-asset package). Flag any licence incompatible with an undecided product licence. |
 
 ## Deliverables
 

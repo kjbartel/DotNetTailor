@@ -68,13 +68,13 @@ Produce a concise, human-editable draft AppSpec from an unknown tree: assign fol
 - [ ] AC-6 Folder-definition count for each matrix draft is ≤ the number of distinct role structures + 2 (root, catch-all) (computed test).
 - [ ] AC-7 Drafts are deterministic: two generations are byte-identical after canonical serialisation.
 - [ ] AC-8 Self-check: the EAM built from each matrix draft has zero error diagnostics (warnings such as `RPK3302` allowed), except variants flagged `expectedInvalid` in the WU-003 manifest (the cyclic plugin variant), whose only error is `RPK3401`.
-- [ ] AC-9 Drafts carry confidence annotations for execution, framework contexts and inferred roles, and contain `idRef`, recursion and a catch-all where the layout allows (Verify snapshot per matrix entry, reviewed in PR).
+- [ ] AC-9 Drafts carry confidence annotations for execution, framework contexts and inferred roles, and contain `idRef`, recursion and a catch-all where the layout allows (golden file per matrix entry, reviewed in PR).
 - [ ] AC-10 A plugin-host draft classifies each plugin folder as `plugin` and the plugin graph matches the WU-003 intended topology.
 
 ## Test Requirements
 
 - Unit: `tests/DotNetRepack.Analysis.Tests/Heuristics/` and `/Compaction/` with synthetic trees; trait `WU=401`.
-- Integration: `tests/DotNetRepack.IntegrationTests/Analysis/DraftAppSpecTests` over the full matrix; Verify snapshots of drafts; trait `Category=Integration`, `Category=Matrix`, `WU=401`.
+- Integration: `tests/DotNetRepack.IntegrationTests/Analysis/DraftAppSpecTests` over the full matrix; golden files of drafts; trait `Category=Integration`, `Category=Matrix`, `WU=401`.
 - Run: `dotnet test --project tests/DotNetRepack.Analysis.Tests --filter-trait "WU=401"`; `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=401"`.
 - Record Test Evidence in the PR.
 
@@ -85,7 +85,7 @@ Produce a concise, human-editable draft AppSpec from an unknown tree: assign fol
 ## Agent Notes
 
 - Keep heuristics as independent, individually tested rules returning evidence; compaction must not depend on heuristic internals.
-- Snapshot review is the human-editability gate: keep drafts short enough to read in one screen for regular apps.
+- Golden-file review is the human-editability gate: keep drafts short enough to read in one screen for regular apps.
 
 ## Open Questions
 

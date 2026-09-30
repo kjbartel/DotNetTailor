@@ -87,12 +87,12 @@ Diagnostics (minimum):
 - [ ] AC-7 Duplicate `id` inside one document's keyed array is an error even when another document defines the same id.
 - [ ] AC-8 An AppSpec including a TransformSpec yields `RPK1303`; an include with major `2.0` under a `1.0` root yields `RPK1005` or `RPK1306`.
 - [ ] AC-9 `ProvenanceMap.Resolve` returns the originating document and pointer for a merged rule and for a nested member of a replaced keyed item.
-- [ ] AC-10 Loading is deterministic: the canonical write of `Effective` is byte-identical across two loads and independent of `IDocumentSource` enumeration order (Verify snapshot).
+- [ ] AC-10 Loading is deterministic: the canonical write of `Effective` is byte-identical across two loads and independent of `IDocumentSource` enumeration order (golden file).
 - [ ] AC-11 The same `SpecificationLoader` code path loads both kinds (test with one AppSpec and one TransformSpec multi-document fixture set).
 
 ## Test Requirements
 
-- xUnit v3 + Verify.XunitV3; prefer `InMemoryDocumentSource` for unit tests; one on-disk fixture set under `Fixtures/Includes/` to exercise `FileSystemDocumentSource` and relative resolution. Trait `WU=103`.
+- xUnit v3 + golden files (`DotNetRepack.Testing.Golden`); prefer `InMemoryDocumentSource` for unit tests; one on-disk fixture set under `Fixtures/Includes/` to exercise `FileSystemDocumentSource` and relative resolution. Trait `WU=103`.
 - Run: `dotnet test --project tests/DotNetRepack.Specifications.Tests --filter-trait "WU=103"`.
 - Record Test Evidence below and in the PR.
 

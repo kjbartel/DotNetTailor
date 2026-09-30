@@ -107,7 +107,7 @@ Namespace `DotNetRepack.Planning`.
 - [ ] AC-1 `PlanPhase` has exactly the 9 phases of architecture §4 in that order. Handlers run strictly by phase (a test with fake handlers records the call sequence).
 - [ ] AC-2 A fake category registered via DI and referenced in `operations.extensions["test.noop"]` participates without any change to Planning code. An unregistered extension category yields `RPK5304`.
 - [ ] AC-3 With no active handlers, every in-scope file of a synthetic tree gets exactly one `Preserve` action (coverage test), and sidecars get none.
-- [ ] AC-4 Two fake handlers in the same phase, registered in either order, produce byte-identical `PlanResult` (Verify snapshot).
+- [ ] AC-4 Two fake handlers in the same phase, registered in either order, produce byte-identical `PlanResult` (golden file).
 - [ ] AC-5 Every action carries `Phase`, `Order`, `Provenance.Handler`, and, when rule-derived, `RuleId`, `Document`, `JsonPointer` and `PrecedenceLevel`.
 - [ ] AC-6 Two actions targeting `Lib/A.dll` and `lib/a.DLL` in the primary root yield `RPK5301` naming both sources (structural, not downgradable).
 - [ ] AC-7 Removing `ConsoleApp.Library.dll` while `ConsoleApp.dll` is retained yields `RPK5302`. Adding a replacement with the same simple name at the same path clears it.

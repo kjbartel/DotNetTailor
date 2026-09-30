@@ -62,7 +62,7 @@ Parse `data/RuntimeList.xml` of runtime packs into a deterministic catalogue: pe
 
 ## Acceptance Criteria
 
-- [ ] AC-1 Parsing the `RuntimeList.xml` of NETCore, WindowsDesktop and AspNetCore packs for one net8 and one net10 version matches Verify snapshots (counts per `Type`, profiles, cultures, sample entries).
+- [ ] AC-1 Parsing the `RuntimeList.xml` of NETCore, WindowsDesktop and AspNetCore packs for one net8 and one net10 version matches committed golden files (counts per `Type`, profiles, cultures, sample entries).
 - [ ] AC-2 Every listed file resolves to an existing pack file; a fixture with a missing file yields an `RPK71xx` diagnostic.
 - [ ] AC-3 Malformed, truncated and DTD-bearing XML fixtures produce diagnostics without exceptions; no external entity is resolved.
 - [ ] AC-4 `System.Private.CoreLib.dll`, `hostfxr.dll` and `hostpolicy.dll` are present in the NETCore catalogue with app-root destinations; CoreLib is in `ReferenceAssemblies`.
@@ -71,13 +71,13 @@ Parse `data/RuntimeList.xml` of runtime packs into a deterministic catalogue: pe
 - [ ] AC-7 `Subset(WPF)` excludes `WindowsForms`-only files and vice versa; files without `Profile` are in both.
 - [ ] AC-8 Resource files map to `<culture>/<name>.resources.dll`.
 - [ ] AC-9 `TryGetOwner` is ordinal-ignore-case and returns the owning framework and version.
-- [ ] AC-10 `Diff` between two NETCore 8.0 patch versions reports added/removed/changed entries, sorted, snapshot-verified.
+- [ ] AC-10 `Diff` between two NETCore 8.0 patch versions reports added/removed/changed entries, sorted, matching a committed golden file.
 - [ ] AC-11 Two catalogue serialisations of the same pack are byte-identical.
 - [ ] AC-12 `RuntimeListFrameworkCatalogue` answers WU-303 `TryGetFrameworkAssembly` for `System.Runtime` in NETCore 8.0.x (hit) and an unknown name (miss); with the pack absent and `--offline`, it reports a miss so the Model falls back to `framework-provided (unverified)`.
 
 ## Test Requirements
 
-- xUnit v3 + Verify; parser unit tests with small synthetic `RuntimeList.xml` fixtures under `tests/DotNetRepack.Acquisition.Tests/Fixtures/RuntimeList/`.
+- xUnit v3 + golden files; parser unit tests with small synthetic `RuntimeList.xml` fixtures under `tests/DotNetRepack.Acquisition.Tests/Fixtures/RuntimeList/`.
 - Real-pack tests use `LocalPackageFeedFixture` (WU-700) seeded from the global packages folder populated by `Build-TestApps.ps1` (SC publishes restore runtime packs); tag `Category=Matrix`. Network download only under `Category=Network`.
 - AC-5/AC-6 compare against `artifacts/testapps/manifest.json`.
 - Run: `dotnet test --project tests/DotNetRepack.Acquisition.Tests --filter-trait "WU=701"`.

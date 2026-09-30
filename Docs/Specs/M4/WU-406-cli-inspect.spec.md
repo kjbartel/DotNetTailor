@@ -58,8 +58,8 @@ Ship the `inspect` verb: show the derived artefacts and graphs of an application
 
 ## Acceptance Criteria
 
-- [ ] AC-1 `inspect --help` matches the architecture §14 synopsis plus `--format` (Verify snapshot).
-- [ ] AC-2 Each view (`inventory`, `classification`, `assemblies`, `graph`, `plugins`, `runtime`) renders text for a matrix ConsoleApp and PluginHost copy (Verify snapshots).
+- [ ] AC-1 `inspect --help` matches the architecture §14 synopsis plus `--format` (golden file).
+- [ ] AC-2 Each view (`inventory`, `classification`, `assemblies`, `graph`, `plugins`, `runtime`) renders text for a matrix ConsoleApp and PluginHost copy (golden files).
 - [ ] AC-3 `--format json` output for each view is byte-identical to the corresponding artefact written by `analyze` for the same AppSpec and tree.
 - [ ] AC-4 `inspect … plugins --plugin PluginA` on PluginHost lists only PluginA and its upstream closure; an unknown id exits 2 with `RPK0421`.
 - [ ] AC-5 An unknown view name exits 2 with `RPK0420`.

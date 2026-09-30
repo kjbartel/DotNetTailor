@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-000 |
 | Parallel with | WU-001–WU-007 |
-| Target project(s)/paths | `src/DotNetRepack.Core/`, `tests/DotNetRepack.Core.Tests/` |
+| Target project(s)/paths | `src/DotNetRepack.Core/`, `tests/DotNetRepack.Core.Tests/`, `tests/DotNetRepack.Testing/` |
 | Size | L |
 
 ## Goal
@@ -37,6 +37,7 @@ Provide the dependency-free primitives every other project builds on: root-confi
 - `SchemaVersion` + `SchemaCompatibility` (kind-agnostic; used by WU-101/WU-102).
 - `ContentHash` (SHA-256), `ContentHasher`, `TreeFingerprint` (single implementation; WU-305 consumes it and only adds sidecar exclusion).
 - `IPackageLocator` contract (architecture §3.2): implemented by Acquisition (WU-700), consumed by Execution (WU-601, WU-703), wired by the Cli.
+- `Golden` golden-file test helper in `tests/DotNetRepack.Testing` (architecture [§16](../../Architecture/DotNetRepack.architecture.md#16-testing-strategy)); WU-100 is its first consumer and owns canonical JSON.
 
 **Out**
 - Reparse-point / junction canonicalisation (Platform, WU-600/WU-800).
@@ -61,6 +62,15 @@ Namespace root `DotNetRepack.Core`. The project references no other repo project
 | `.Hashing` | `readonly struct ContentHash` (32 bytes, `ToString()` = 64 lowercase hex, `Parse`); `static ContentHasher`: `Compute(ReadOnlySpan<byte>)`, `ComputeAsync(Stream, CancellationToken)`, `ComputeFileAsync(string, CancellationToken)`; `sealed record TreeEntry(RelativePath Path, long Size, ContentHash Hash)`; `static TreeFingerprint.Compute(IEnumerable<TreeEntry>, PathPolicy) → ContentHash`. |
 | `.Packages` | `interface IPackageLocator { Result<string> GetPackageRoot(string id, string version, string sha512); }` (contract only; no implementation in Core). |
 
+Test support (`tests/DotNetRepack.Testing`, namespace `DotNetRepack.Testing`; no package or project references; not referenced by any `src` project):
+
+| Type | API |
+|---|---|
+| `static class Golden` | `AssertMatches(string actual, string name, GoldenOptions? options = null, [CallerFilePath] string callerPath = "")`. Resolves `<dir of callerPath>/Golden/<caller file name without .cs>/<name>.golden<ext>`; `name` may contain `/`-separated segments (no `..`, not rooted). Update mode when `DOTNET_REPACK_UPDATE_GOLDEN=1`. Delegates to `GoldenStore`. |
+| `sealed record GoldenOptions` | `Extension` (`.json` default, `.txt` for text); `Scrubbers` (ordered ordinal literal `(find, replacement)` pairs applied to `actual` only); `WithTemp(string tempRoot)` → `{TEMP}`, `WithRepoRoot()` → `{REPO}` (directory containing `DotNetRepack.slnx`, found upward from `callerPath`); path scrubbers match both the raw and the JSON-escaped (`\\`) form. |
+| `sealed class GoldenStore` | `GoldenStore(bool update)`; `AssertMatches(string actual, string goldenPath, GoldenOptions?)`. Testable without the env var. |
+| `sealed class GoldenMismatchException : Exception` | Message: golden path, received path, unified diff summary (first differing hunks, capped). |
+
 Diagnostic codes owned: `RPK0001`–`RPK0099` (core). Code sub-range convention for M1/M2 (recorded here, enforced by `DiagnosticRegistry` only at category level):
 
 | Range | Owner |
@@ -81,9 +91,10 @@ Diagnostic codes owned: `RPK0001`–`RPK0099` (core). Code sub-range convention 
 - Structural descriptors (`IsStructural = true`, [TS §24.4](../../Requirements/Transformation_Specification.md)) always remain `Error` regardless of policy or mode. `IsStructural` and `IsPolicyConfigurable` are mutually exclusive (registry rejects both set).
 - Failure modes ([§13](../../Architecture/DotNetRepack.architecture.md#13-diagnostics-failure-policy-and-exit-codes)): `Default` — warnings never count as failures. `Strict` — warnings count as failures (exit 3, mapped by WU-105). `Permissive` — warnings never count as failures, and `Error` diagnostics whose descriptor is `IsPolicyConfigurable` ([TS §24.2](../../Requirements/Transformation_Specification.md)) are downgraded to `Warning`; structural and other errors are unaffected. An explicit TransformSpec condition policy takes precedence over the mode for policy-configurable descriptors.
 - Diagnostic sort order: `Location.Document`, `Location.JsonPointer`, `Location.Path` (policy comparer), `Code`, `Message` — all ordinal/total.
-- Canonical JSON: UTF-8 without BOM, LF, 2-space indent, trailing LF at EOF, property order = model declaration order, dictionaries serialised with ordinal key order, no timestamps. `UnsafeRelaxedJsonEscaping` is acceptable because output is never HTML-embedded; keeps `<culture>` readable.
+- Canonical JSON: UTF-8 without BOM, LF (deliberate for cross-machine byte stability, architecture [§15](../../Architecture/DotNetRepack.architecture.md#15-determinism), [§19](../../Architecture/DotNetRepack.architecture.md#19-resolved--open-inconsistencies) item 38), 2-space indent, trailing LF at EOF, property order = model declaration order, dictionaries serialised with ordinal key order, no timestamps. `UnsafeRelaxedJsonEscaping` is acceptable because output is never HTML-embedded; keeps `<culture>` readable.
 - `TreeFingerprint`: entries sorted with `OrdinalIgnoreCaseThenOrdinalComparer`; per entry UTF-8 bytes of `{path}\0{size}\0{hash}\n`; SHA-256 over the concatenation. Duplicate paths under the policy comparer throw `ArgumentException`.
 - All types are immutable and thread-safe (parallel inspection, risk R12).
+- `Golden` comparison is ordinal text equality after applying only the supplied scrubbers; nothing else is normalised (a `\r\n` in `actual` fails unless the test supplies a scrubber for it). Golden files are read and written as UTF-8 without BOM, LF (`.gitattributes` forces LF under `tests/**/Golden/**`). On mismatch or missing golden: write `<name>.received<ext>` beside the golden path (git-ignored) and throw `GoldenMismatchException`. On match: delete a stale received file. Update mode writes the golden file and passes; CI never sets it (WU-002 guard).
 
 ## Acceptance Criteria
 
@@ -96,16 +107,23 @@ Diagnostic codes owned: `RPK0001`–`RPK0099` (core). Code sub-range convention 
 - [ ] AC-7 `Diagnostic.Create` formats messages with invariant culture (test under `de-DE` current culture with a numeric argument).
 - [ ] AC-8 `PolicyEvaluator` matrix test: every `ConditionPolicy` × `FailureMode` × `{structural, policy-configurable, other}` combination yields the documented outcome; structural diagnostics are always `Error`; under `Permissive` a policy-configurable `Error` becomes `Warning` and no warning counts as a failure.
 - [ ] AC-9 `DiagnosticBag.ToSortedList()` is identical for any insertion order (permutation test).
-- [ ] AC-10 `CanonicalJson.Serialize` output: no BOM, contains no `\r`, 2-space indentation, ends with exactly one `\n`, dictionary keys ordinal-sorted; Verify snapshot of a sample model is byte-stable across two calls.
+- [ ] AC-10 `CanonicalJson.Serialize` output: no BOM, contains no `\r`, 2-space indentation, ends with exactly one `\n`, dictionary keys ordinal-sorted; the output for a sample model matches its committed golden file (`Golden/CanonicalJsonTests/sample-model.golden.json`) and is byte-stable across two calls.
 - [ ] AC-11 `CanonicalJson.ReaderOptions` accept a document with `//` and `/* */` comments and trailing commas.
 - [ ] AC-12 `JsonPointer` escapes `~` → `~0`, `/` → `~1`; `FromJsonPath("$.folders.root.folders[2].mask")` → `/folders/root/folders/2/mask`; `FromJsonPath("$['a/b']")` → `/a~1b`.
 - [ ] AC-13 `SchemaVersion.TryParse` accepts `1.0`, `2.13`; rejects `1`, `1.0.0`, `v1.0`, `-1.0`, `01.0`; `Evaluate` returns `Supported`/`NewerMinor`/`UnsupportedMajor` correctly.
 - [ ] AC-14 `ContentHasher` returns the known SHA-256 of `""` and `"abc"` as lowercase hex; stream and span overloads agree.
 - [ ] AC-15 `TreeFingerprint.Compute` is independent of entry order, changes when any path/size/hash changes, and throws on case-insensitive duplicate paths.
+- [ ] AC-16 `GoldenStore.AssertMatches` passes for identical text and leaves no `*.received.*` file (a pre-existing stale one is deleted).
+- [ ] AC-17 On mismatch it throws `GoldenMismatchException` whose message contains the golden path and `-`/`+` diff lines, writes `<name>.received.json`, and leaves the golden file unchanged; a missing golden file fails the same way.
+- [ ] AC-18 With `update: true` it writes the golden file (UTF-8 no BOM, no `\r`) and passes; `Golden` enables update mode only when `DOTNET_REPACK_UPDATE_GOLDEN=1`.
+- [ ] AC-19 Scrubbers: `WithTemp`/`WithRepoRoot` replace raw and JSON-escaped paths with `{TEMP}`/`{REPO}`; without scrubbers, `a\r\nb` vs golden `a\nb` fails.
+- [ ] AC-20 `Golden.AssertMatches(..., "x/y")` from `FooTests.cs` resolves `<test dir>/Golden/FooTests/x/y.golden.json`; `.txt` via `GoldenOptions.Extension`; names containing `..` or rooted names throw `ArgumentException`.
+- [ ] AC-21 `DotNetRepack.Testing.csproj` has no `PackageReference`/`ProjectReference`; no `src` project references it.
 
 ## Test Requirements
 
-- xUnit v3 on MTP, project `tests/DotNetRepack.Core.Tests/`. Verify.XunitV3 for the canonical JSON snapshot only.
+- xUnit v3 on MTP, project `tests/DotNetRepack.Core.Tests/`. Golden-file comparison via `DotNetRepack.Testing.Golden` for the canonical JSON sample only. `Golden` itself is tested in `tests/DotNetRepack.Core.Tests/Testing/GoldenStoreTests.cs` against temp directories through `GoldenStore` (no env-var mutation).
+- Names: classes `<TypeUnderTest>Tests`, methods `<Subject><Condition><ExpectedResult>` without underscores (e.g. `TryParseRejectsRootedPath`).
 - Synthetic in-memory data only; no test-app matrix dependency.
 - Mark tests `[Trait("WU", "100")]`.
 - Run: `dotnet test --project tests/DotNetRepack.Core.Tests --filter-trait "WU=100"` · focused: `--filter-class "*RelativePathTests"`.
@@ -128,6 +146,7 @@ Diagnostic codes owned: `RPK0001`–`RPK0099` (core). Code sub-range convention 
 
 - **Resolved** — `--permissive` semantics: see Design Notes (architecture §13, §19 item 27).
 - Whether reserved device names should be rejected for app-tree paths (they cannot exist on Windows) or only for spec-authored paths.
+- Whether `Golden` tests should move to a dedicated `DotNetRepack.Testing.Tests` project (adds a 16th test project) instead of `DotNetRepack.Core.Tests`; proposed: stay in Core.Tests until `DotNetRepack.Testing` grows.
 - **Resolved** — `TreeFingerprint` ownership: Core (this WU); WU-305 reuses `Core.Hashing.TreeFingerprint` and adds only sidecar exclusion (architecture §3.2).
 
 ## Test Evidence

@@ -25,13 +25,15 @@ A milestone is a release grouping, not a start gate. A WU may start as soon as i
 - Every test carries `[Trait("WU", "<id>")]`. Run one WU with `dotnet test --project <test project path> --filter-trait "WU=<id>"` (MTP mode, no `--` separator). Full suite: `dotnet test --solution DotNetRepack.slnx -c Release`.
 - `Category` traits (combinable): `Integration` (cross-project in-process pipeline/CLI tests), `Matrix` (needs `artifacts/testapps`; skips with an explicit reason locally when absent, never skips in CI), `Network` (external feeds; skipped unless `DOTNET_REPACK_TEST_NETWORK=1`, run nightly), `Launch` (starts produced apps in the harness).
 - The default run (local and PR CI) makes no network calls.
+- Naming: test classes `<TypeUnderTest>Tests`; methods PascalCase `<Subject><Condition><ExpectedResult>` with no underscores (e.g. `ParseRejectsAbsolutePath`); CA1707 is not suppressed.
+- Expected outputs are golden files (`Golden/<TestClass>/<name>.golden.json`, LF) compared through the in-repo `Golden` helper in `tests/DotNetRepack.Testing` ([architecture §16](../Architecture/DotNetRepack.architecture.md#16-testing-strategy)).
 - "Zero errors across the matrix" never includes fixtures flagged `expectedInvalid` in `manifest.json`; those must produce their listed diagnostics instead ([architecture §16](../Architecture/DotNetRepack.architecture.md#16-testing-strategy)).
 
 ## Work Unit Status
 
 | ID | Title | MS | Depends on | Parallel with | Spec | Status |
 |---|---|---|---|---|---|---|
-| WU-000 | repository-scaffold | M0 | — | — | [spec](../Specs/M0/WU-000-repository-scaffold.spec.md) | Not started |
+| WU-000 | repository-scaffold | M0 | — | — | [spec](../Specs/M0/WU-000-repository-scaffold.spec.md) | In review — post-review deltas pending |
 | WU-001 | ai-enablement | M0 | WU-000 | WU-002, WU-003, WU-006, WU-007, WU-100 | [spec](../Specs/M0/WU-001-ai-enablement.spec.md) | Not started |
 | WU-002 | ci-pipeline | M0 | WU-000 | WU-001, WU-003, WU-006, WU-007, WU-100 | [spec](../Specs/M0/WU-002-ci-pipeline.spec.md) | Not started |
 | WU-003 | test-app-suite | M0 | WU-000 | WU-001, WU-002, WU-006, WU-007, WU-100 | [spec](../Specs/M0/WU-003-test-app-suite.spec.md) | Not started |
@@ -102,7 +104,7 @@ Dashed nodes are dependencies from other milestones.
 
 ### M0 Foundation & Repo Bootstrap
 
-- **WU-000** scaffold: git init, `.gitignore`, `.gitattributes` (LF for `*.json`, `*.md`, `*.cs`), `.editorconfig`, `global.json` (net10 SDK + MTP runner), `Directory.Build.props`, `Directory.Packages.props`, `.slnx` with the empty project layout from the architecture document, README, CONTRIBUTING, LICENSE placeholder.
+- **WU-000** scaffold: git init, `.gitignore`, `.gitattributes` (CRLF working tree for source files; LF for `*.sh` and `tests/**/Golden/**`), `.editorconfig`, `global.json` (net10 SDK + MTP runner), `Directory.Build.props`, `Directory.Packages.props`, `.slnx` with the empty project layout from the architecture document (incl. the `tests/DotNetRepack.Testing` support library), README, CONTRIBUTING, LICENSE placeholder.
 - **WU-001** AI enablement: `AGENTS.md`, `.github/copilot-instructions.md`, instructions (C#, tests, specs/docs), prompts (`implement-work-unit`, `verify-work-unit`, `new-work-unit-spec`), skills (`work-unit-workflow`, `schema-change`, `test-apps`), agents (implementer, reviewer).
 - **WU-002** CI: GitHub Actions on `windows-latest` running build, test (MTP, TRX upload) and `dotnet format --verify-no-changes`. Dependabot for NuGet and Actions.
 - **WU-003** Test apps: sources under `tests/TestApps/` + `build/Build-TestApps.ps1` publishing the matrix `{net8.0, net10.0} × {FD, SC} × {R2R off, on}` into `artifacts/testapps/` with `manifest.json`. CI cache.
@@ -124,7 +126,7 @@ flowchart LR
 
 ### M1 Core Primitives & Specification Documents
 
-- **WU-100** `RelativePath`, `Diagnostic`/codes, results, ordering, canonical JSON writer, hashing, `TreeFingerprint`, `IPackageLocator` contract.
+- **WU-100** `RelativePath`, `Diagnostic`/codes, results, ordering, canonical JSON writer, hashing, `TreeFingerprint`, `IPackageLocator` contract, `Golden` test helper.
 - **WU-101/102** Object models, (de)serialisation, generated schemas under `schemas/`, schema drift test.
 - **WU-103** Includes with precedence and cycle detection ([AS §21](../Requirements/Application_Specification.md), [TS §27](../Requirements/Transformation_Specification.md)).
 - **WU-104** `${var}` resolution and `--var` ([TS §28](../Requirements/Transformation_Specification.md)).
@@ -142,7 +144,7 @@ flowchart LR
 ```
 
 **M1 acceptance criteria**
-- [ ] AppSpec and TransformSpec round-trip (read → canonical write → read) is lossless over a snapshot corpus. Canonical output is byte-stable.
+- [ ] AppSpec and TransformSpec round-trip (read → canonical write → read) is lossless over a golden-file corpus. Canonical output is byte-stable.
 - [ ] Committed schemas equal the generated ones (CI test). Invalid documents yield `RPK1xxx` with a JSON pointer.
 - [ ] Include cycles and unresolved variables are reported as errors naming the chain or variable. Include paths resolve relative to the including file.
 - [ ] `dotnet-repack --help`, `schema export` and `@file` response files work. Exit code 2 is returned on invalid arguments; stub verbs return 70; cancellation returns 130.
@@ -159,7 +161,7 @@ flowchart LR
 ```
 
 **M2 acceptance criteria**
-- [ ] Inspection of every matrix binary matches a Verify snapshot: managed, native, mixed, R2R, satellite and reference assemblies are all classified correctly.
+- [ ] Inspection of every matrix binary matches a committed golden file: managed, native, mixed, R2R, satellite and reference assemblies are all classified correctly.
 - [ ] Malformed or truncated PE fixtures produce diagnostics without exceptions.
 - [ ] A single-file bundle fixture is detected and reported.
 - [ ] Apphost binding (DLL path) is read correctly for net8 and net10 FD and SC apphosts.
@@ -178,7 +180,7 @@ flowchart LR
 ```
 
 **M3 acceptance criteria**
-- [ ] Hand-authored AppSpecs for every test app produce snapshot-verified effective models and derived artefacts.
+- [ ] Hand-authored AppSpecs for every test app produce effective models and derived artefacts that match committed golden files.
 - [ ] Two consecutive runs produce byte-identical derived artefacts.
 - [ ] Ambiguous equal-rank folder matches, `idRef` alias cycles, root-escaping paths or reparse points, and classification ties are each reported with a distinct `RPK3xxx` code.
 - [ ] The cyclic-plugin test app yields an error that lists the full cycle path. The one-way plugin chain passes.

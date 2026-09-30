@@ -88,7 +88,7 @@ Namespace `DotNetRepack.Planning.Selectors`.
 - [ ] AC-6 An absent selector selects every in-scope artefact and no sidecar.
 - [ ] AC-7 A selector that matches nothing sets `MatchesNothing = true` and appears in `SelectorMatchReport` with its document and JSON pointer. The engine emits no diagnostic itself.
 - [ ] AC-8 Invalid glob, invalid culture pattern and invalid RID value each produce a distinct `RPK50xx` error with a JSON pointer and no exception.
-- [ ] AC-9 Results are identical for shuffled artefact input order (permutation test) and across two runs (Verify snapshot of `SelectorMatchReport` for the TS §33 fixture over a matrix PluginHost entry).
+- [ ] AC-9 Results are identical for shuffled artefact input order (permutation test) and across two runs (golden file of `SelectorMatchReport` for the TS §33 fixture over a matrix PluginHost entry).
 - [ ] AC-10 The engine performs no filesystem access: a fake `IAppTree` that throws on `OpenRead` runs the full suite green.
 
 ## Test Requirements

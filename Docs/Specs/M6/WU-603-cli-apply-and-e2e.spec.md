@@ -48,7 +48,7 @@ Ship `dotnet-repack apply` end to end: pre-flight safety, plan, execute, post-va
 | `Support/LaunchSmoke` (tests only) | Starts `<output>/<host>.exe --smoke` (WU-003 contract) with `ArgumentList`, a 30 s timeout and captured output. Asserts exit 0 |
 | Scenario TransformSpecs (`tests/DotNetRepack.IntegrationTests/TransformSpecs/`) | Reuse the WU-504 set (`filtering`, `docs`, `resources-en`, `symbols-dir`, `symbols-zip`, `other-rid`) and add `symbols-preserve`, `symbols-exclude`, `layout`, each with `output.assert` where applicable |
 | `ApplyE2ETests` | Scenario × matrix entries below |
-| v0.2.0 readiness | Checklist in the PR: M6 criteria mapped to test names; `--help` for `apply` updated in snapshots |
+| v0.2.0 readiness | Checklist in the PR: M6 criteria mapped to test names; `--help` for `apply` updated in golden files |
 
 **Exit codes** (architecture §13)
 
@@ -84,7 +84,7 @@ Ship `dotnet-repack apply` end to end: pre-flight safety, plan, execute, post-va
 
 ## Acceptance Criteria
 
-- [ ] AC-1 `apply --help` matches the architecture §14 synopsis (Verify snapshot).
+- [ ] AC-1 `apply --help` matches the architecture §14 synopsis (golden file).
 - [ ] AC-2 `apply --dry-run` with a non-empty `--output` exits 1 with `RPK6003` and writes only artefacts. With a valid output path it creates no output (reuses the WU-506 AC-6 harness).
 - [ ] AC-3 `apply` with `filtering` on ConsoleApp net10 FD exits 0, creates `<output>/repack.appspec.json`, and leaves the input tree fingerprint (including sidecars) unchanged.
 - [ ] AC-4 For every `filtering`/`docs`/`resources-en`/`symbols-dir`/`symbols-zip` entry in the E2E matrix, `apply` exits 0 and a subsequent `validate <output> --spec <output>/repack.appspec.json` exits 0 (M6 criterion 1).

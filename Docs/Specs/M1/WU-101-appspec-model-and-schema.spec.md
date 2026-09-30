@@ -100,19 +100,19 @@ Per-document structural checks (`RPK1100`–`1199`): duplicate `id` among `folde
 - Comments are not preserved; round-trip is semantic (read → write → read equal) and canonical output is byte-stable ([§5](../../Architecture/DotNetRepack.architecture.md#5-artefacts)).
 - String-or-array members (e.g. `glob`, `is`) use a `StringList` type with a custom converter; `JsonSchemaExporter` cannot describe custom converters, so `SchemaGenerator` patches those nodes via `TransformSchemaNode`. Canonical write always emits arrays.
 - Extensible vocabularies (`role`, association `type`, group ids) are strings in the schema with built-in constants in code ([AS §10.6](../../Requirements/Application_Specification.md), [AS §11.2](../../Requirements/Application_Specification.md)).
-- `generator.version` is written as supplied; tests set it explicitly so snapshots do not depend on the build's informational version.
+- `generator.version` is written as supplied; tests set it explicitly so golden files do not depend on the build's informational version.
 - No creation timestamps in the model ([§19](../../Architecture/DotNetRepack.architecture.md#19-resolved--open-inconsistencies) item 22).
 
 ## Acceptance Criteria
 
 - [ ] AC-1 `AppSpecDocument` models every row of the member table above; a reflection test asserts each JSON member name exists in the generated schema.
-- [ ] AC-2 Round-trip over every valid fixture: `Read → Write → Read` yields an equal model and `Write` output is byte-identical on the second pass (Verify snapshot per fixture).
+- [ ] AC-2 Round-trip over every valid fixture: `Read → Write → Read` yields an equal model and `Write` output is byte-identical on the second pass (golden file per fixture).
 - [ ] AC-3 `commented.appspec.json` reads successfully and its canonical output contains no comments and no trailing commas.
 - [ ] AC-4 Canonical output: UTF-8 no BOM, LF only, 2-space indent, trailing LF, no timestamp-like members.
 - [ ] AC-5 `wrong-kind` → `RPK1003`; `bad-version` → `RPK1004`; `major-2` → `RPK1005` error; `minor-newer-known-members` → success with `RPK1006` warning; `minor-newer-unknown-member` → `RPK1006` warning plus an error.
 - [ ] AC-6 `unknown-member` yields `RPK1010` whose location has the document name and a JSON pointer to the offending member (e.g. `/folders/root/folders/1/masks`).
 - [ ] AC-7 `escaping-reference` (`references: ["../x"]`) and an absolute `mask` yield `RPK11xx` errors with pointers; `duplicate-sibling-id` yields `RPK11xx` naming the id.
-- [ ] AC-8 `folderspec-equivalent.appspec.json` is schema-valid and its snapshot shows `<culture>`, `/` separators, `duplicates: "error"` and the recursive `plugins` `idRef`.
+- [ ] AC-8 `folderspec-equivalent.appspec.json` is schema-valid and its golden file shows `<culture>`, `/` separators, `duplicates: "error"` and the recursive `plugins` `idRef`.
 - [ ] AC-9 `SchemaDriftTests` regenerates the schema and fails with a diff message if it differs byte-wise from `schemas/appspec/v1/appspec.schema.json`; an env var `REPACK_UPDATE_SCHEMAS=1` rewrites the file locally instead (never set in CI).
 - [ ] AC-10 The committed schema declares `additionalProperties: false` on all object schemas, `kind` const `AppSpec`, and the `schemaVersion` pattern.
 - [ ] AC-11 `ISchemaValidator` is implemented only by the adapter for the library chosen in the WU-007 ADR; no other project references that library.
@@ -120,7 +120,7 @@ Per-document structural checks (`RPK1100`–`1199`): duplicate `id` among `folde
 
 ## Test Requirements
 
-- xUnit v3 + Verify.XunitV3 in `tests/DotNetRepack.Specifications.Tests/`; fixtures copied to output (`<None Include="Fixtures/**" CopyToOutputDirectory="PreserveNewest" />`).
+- xUnit v3 + golden files (`DotNetRepack.Testing.Golden`) in `tests/DotNetRepack.Specifications.Tests/`; fixtures copied to output (`<None Include="Fixtures/**" CopyToOutputDirectory="PreserveNewest" />`).
 - No test-app matrix dependency; synthetic and fixture documents only. Trait `WU=101`.
 - Run: `dotnet test --project tests/DotNetRepack.Specifications.Tests --filter-trait "WU=101"` · focused: `--filter-class "*SchemaDriftTests"`.
 - Record Test Evidence below and in the PR.
@@ -144,6 +144,7 @@ Per-document structural checks (`RPK1100`–`1199`): duplicate `id` among `folde
 - Grammar for compound reference entries such as FS `current\runtimes` / `root\runtimes`: proposed `current/runtimes` = path relative to the named root. The architecture lists only `current`, `parent`, `root`, `folder:<id>` and root-relative paths.
 - `frameworkContexts[].appliesTo` is proposed to satisfy [AS §9.3](../../Requirements/Application_Specification.md); the architecture example has no scoping member.
 - Explicit file exceptions (`match.files`) shape per [AS §11.3](../../Requirements/Application_Specification.md)/[§11.5](../../Requirements/Application_Specification.md) is proposed, not specified.
+- **Resolved** — `schemas/**` is checked out LF (WU-000 D4), so AC-9's byte-wise drift check stands as written.
 
 ## Test Evidence
 

@@ -71,7 +71,7 @@ Plan self-contained → framework-dependent conversion: remove only files owned 
 
 ## Test Requirements
 
-- xUnit v3 + Verify in `tests/DotNetRepack.Transforms.Tests/DeploymentModel/`.
+- xUnit v3 + golden files in `tests/DotNetRepack.Transforms.Tests/DeploymentModel/`.
 - Matrix inputs under `Category=Matrix`; fixtures derived from SC outputs with added native DLL / override assembly; packs via `LocalPackageFeedFixture`; no network.
 - Run: `dotnet test --project tests/DotNetRepack.Transforms.Tests --filter-trait "WU=804"`.
 - Record Test Evidence in the PR.
