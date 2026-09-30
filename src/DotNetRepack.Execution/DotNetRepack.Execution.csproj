@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\DotNetRepack.Planning\DotNetRepack.Planning.csproj" />
+    <ProjectReference Include="..\DotNetRepack.Validation\DotNetRepack.Validation.csproj" />
+    <ProjectReference Include="..\DotNetRepack.Platform.Abstractions\DotNetRepack.Platform.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

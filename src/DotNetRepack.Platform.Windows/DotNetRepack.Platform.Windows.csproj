@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\DotNetRepack.Platform.Abstractions\DotNetRepack.Platform.Abstractions.csproj" />
+    <ProjectReference Include="..\DotNetRepack.Inspection\DotNetRepack.Inspection.csproj" />
+  </ItemGroup>
+
+</Project>

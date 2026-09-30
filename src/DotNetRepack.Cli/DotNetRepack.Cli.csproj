@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>true</IsPackable>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>dotnet-repack</ToolCommandName>
+    <PackageId>DotNetRepack.Tool</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DotNetRepack.Analysis\DotNetRepack.Analysis.csproj" />
+    <ProjectReference Include="..\DotNetRepack.Validation\DotNetRepack.Validation.csproj" />
+    <ProjectReference Include="..\DotNetRepack.Planning\DotNetRepack.Planning.csproj" />
+    <ProjectReference Include="..\DotNetRepack.Execution\DotNetRepack.Execution.csproj" />
+    <ProjectReference Include="..\DotNetRepack.Transforms\DotNetRepack.Transforms.csproj" />
+    <ProjectReference Include="..\DotNetRepack.Platform.Windows\DotNetRepack.Platform.Windows.csproj" />
+  </ItemGroup>
+
+</Project>
