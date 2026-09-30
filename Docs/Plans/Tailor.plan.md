@@ -34,7 +34,7 @@ A milestone is a release grouping, not a start gate. A WU may start as soon as i
 | ID | Title | MS | Depends on | Parallel with | Spec | Status |
 |---|---|---|---|---|---|---|
 | WU-000 | repository-scaffold | M0 | — | — | [spec](../Specs/M0/WU-000-repository-scaffold.spec.md) | Done |
-| WU-001 | ai-enablement | M0 | WU-000 | WU-002, WU-003, WU-006, WU-007, WU-100 | [spec](../Specs/M0/WU-001-ai-enablement.spec.md) | Not started |
+| WU-001 | ai-enablement | M0 | WU-000 | WU-002, WU-003, WU-006, WU-007, WU-100 | [spec](../Specs/M0/WU-001-ai-enablement.spec.md) | In review |
 | WU-002 | ci-pipeline | M0 | WU-000 | WU-001, WU-003, WU-006, WU-007, WU-100 | [spec](../Specs/M0/WU-002-ci-pipeline.spec.md) | Not started |
 | WU-003 | test-app-suite | M0 | WU-000 | WU-001, WU-002, WU-006, WU-007, WU-100 | [spec](../Specs/M0/WU-003-test-app-suite.spec.md) | Not started |
 | WU-004 | spike-crossgen2 | M0 | WU-003 | WU-005, WU-006, WU-007, M1, M2 | [spec](../Specs/M0/WU-004-spike-crossgen2.spec.md) | Not started |
@@ -122,7 +122,7 @@ flowchart LR
 - [ ] `Build-TestApps.ps1` publishes the full matrix. Running it twice produces the same `manifest.json` (file lists and hashes, excluding known non-deterministic files, which are listed).
 - [ ] CI restores the matrix from cache when the TestApps sources are unchanged.
 - [ ] Four spike reports exist in `Docs/Spikes/`, each with a recommendation, and each decision is recorded as an ADR and reflected in the architecture document.
-- [ ] AI enablement files exist, and the `implement-work-unit` prompt references this plan and the spec path convention.
+- [x] AI enablement files exist, and the `implement-work-unit` prompt references this plan and the spec path convention.
 
 ### M1 Core Primitives & Specification Documents
 
