@@ -5,7 +5,7 @@
 | ID | WU-000 |
 | Title | repository-scaffold |
 | Milestone | [M0 Foundation & Repo Bootstrap](../../Plans/DotNetRepack.plan.md#m0-foundation--repo-bootstrap) |
-| Status | In review — post-review deltas pending |
+| Status | Done |
 | Depends on | — |
 | Parallel with | — (every other WU depends on this one) |
 | Target paths | repo root files, `src/*`, `tests/DotNetRepack.*` (incl. `tests/DotNetRepack.Testing`), `DotNetRepack.slnx` |
@@ -103,7 +103,7 @@ AC-10's `lf` expectation for `*.csproj`/`*.md` is superseded by AC-14; AC-6's pr
 
 ## Acceptance Criteria
 
-- [x] AC-1 `git log --oneline` shows exactly two commits on `main`: the first contains only `Docs/**`, the second the scaffold.
+- [x] AC-1 `git log --oneline` shows exactly two commits on `main`: the first contains only `Docs/**`, the second the scaffold. _(Verified at scaffold time. `main` now has 4 commits: + `889adc1` docs-only post-review spec edits, + `ceef2b6` post-review deltas D1–D5.)_
 - [x] AC-2 `dotnet --version` from the repo root resolves an SDK allowed by `global.json`; `global.json` contains `"runner": "Microsoft.Testing.Platform"` under `test`.
 - [x] AC-3 `dotnet build DotNetRepack.slnx -c Release -warnaserror` exits 0 with 0 warnings.
 - [x] AC-4 `dotnet test --solution DotNetRepack.slnx -c Release` exits 0 and reports 15 passing tests (one per test project), running under MTP.
@@ -112,18 +112,18 @@ AC-10's `lf` expectation for `*.csproj`/`*.md` is superseded by AC-14; AC-6's pr
 - [x] AC-7 `dotnet list <each src csproj> reference` matches the project-reference table exactly.
 - [x] AC-8 No `PackageReference` has a `Version` attribute (`Select-String -Path **/*.csproj -Pattern 'PackageReference[^>]+Version='` returns nothing).
 - [x] AC-9 `dotnet pack src/DotNetRepack.Cli -c Release -o artifacts/pkg` produces `DotNetRepack.Tool.*.nupkg` containing `tools/net10.0/any/DotnetToolSettings.xml` with command `dotnet-repack`.
-- [x] AC-10 `git check-attr eol -- src/DotNetRepack.Core/DotNetRepack.Core.csproj Docs/Plans/DotNetRepack.plan.md` reports `lf`; `git check-attr binary -- x.dll` reports `set`.
+- [x] AC-10 ~~`git check-attr eol -- src/DotNetRepack.Core/DotNetRepack.Core.csproj Docs/Plans/DotNetRepack.plan.md` reports `lf`~~ (superseded by AC-14; both now report `crlf`); `git check-attr binary -- x.dll` reports `set` (re-checked after D4: still `set`).
 - [x] AC-11 `git status --ignored` after build shows `bin/`, `obj/` ignored; `.gitignore` contains `artifacts/` and `.repack/`.
 - [x] AC-12 README.md, CONTRIBUTING.md and LICENSE exist; README links resolve to existing files.
 
 Post-review deltas (see [Post-review changes](#post-review-changes)):
 
-- [ ] AC-13 No Verify package anywhere: `Select-String -Path Directory.Packages.props, tests/Directory.Build.props, **/*.csproj -Pattern 'Verify'` returns nothing.
-- [ ] AC-14 After re-checkout, `git ls-files --eol` shows `w/crlf` for source files and `w/lf` for `*.sh` / Golden files; `git check-attr eol -- src/DotNetRepack.Core/DotNetRepack.Core.csproj x.sh tests/X.Tests/Golden/C/n.golden.json` reports `crlf`, `lf`, `lf`; `dotnet format DotNetRepack.slnx --verify-no-changes` passes.
-- [ ] AC-15 `.editorconfig` has `end_of_line = crlf` under `[*]` and `end_of_line = lf` under `[*.sh]` and `[tests/**/Golden/**]`.
-- [ ] AC-16 `tests/DotNetRepack.Testing` exists as a non-test class library; `DotNetRepack.slnx` lists 13 `src` projects, 15 test projects and `DotNetRepack.Testing` (29 total); every test project references `DotNetRepack.Testing`; `dotnet test --solution DotNetRepack.slnx -c Release` still reports exactly 15 passing tests.
-- [ ] AC-17 Every `ScaffoldTests` method is named `ReferencedAssemblyLoads`; no `NoWarn` in the repo contains `CA1707`; `dotnet build DotNetRepack.slnx -c Release -warnaserror` exits 0.
-- [ ] AC-18 `git check-ignore tests/X.Tests/Golden/C/n.received.json` reports the path as ignored.
+- [x] AC-13 No Verify package anywhere: `Select-String -Path Directory.Packages.props, tests/Directory.Build.props, **/*.csproj -Pattern 'Verify'` returns nothing. _(Checked all `*.props`/`*.csproj`/`*.targets` outside `bin/obj`: no match.)_
+- [x] AC-14 After re-checkout, `git ls-files --eol` shows `w/crlf` for source files and `w/lf` for `*.sh` / Golden files; `git check-attr eol -- src/DotNetRepack.Core/DotNetRepack.Core.csproj x.sh tests/X.Tests/Golden/C/n.golden.json` reports `crlf`, `lf`, `lf`; `dotnet format DotNetRepack.slnx --verify-no-changes` passes. _(All 128 tracked files `i/lf w/crlf`. No `*.sh`/Golden/`schemas` files exist yet, so the `w/lf` part is verified only via `check-attr` (also `lf` for `schemas/a.json`, `Docs/Guides/diagnostics.md`). Format covered by Implementer evidence at matching state.)_
+- [x] AC-15 `.editorconfig` has `end_of_line = crlf` under `[*]` and `end_of_line = lf` under `[*.sh]` and `[tests/**/Golden/**]`. _(Also `lf` under `[schemas/**]` and `[Docs/Guides/diagnostics.md]`; no later section overrides `end_of_line`.)_
+- [x] AC-16 `tests/DotNetRepack.Testing` exists as a non-test class library; `DotNetRepack.slnx` lists 13 `src` projects, 15 test projects and `DotNetRepack.Testing` (29 total); every test project references `DotNetRepack.Testing`; `dotnet test --solution DotNetRepack.slnx -c Release` still reports exactly 15 passing tests. _(Evaluated via `dotnet msbuild -getItem/-getProperty`: Testing is `IsTestProject=false`, `OutputType=Library`, no ProjectReference/PackageReference; all 15 test projects `IsTestProject=true`, `Exe`, reference Testing + their target project.)_
+- [x] AC-17 Every `ScaffoldTests` method is named `ReferencedAssemblyLoads`; no `NoWarn` in the repo contains `CA1707`; `dotnet build DotNetRepack.slnx -c Release -warnaserror` exits 0. _(15/15 methods `ReferencedAssemblyLoads`; no `CA1707`/`Referenced_assembly_loads` remain.)_
+- [x] AC-18 `git check-ignore tests/X.Tests/Golden/C/n.received.json` reports the path as ignored. _(`.gitignore:489:*.received.*`.)_
 
 ## Test Requirements
 
@@ -150,6 +150,8 @@ Post-review deltas (see [Post-review changes](#post-review-changes)):
 - Exact SDK feature band to pin (`10.0.100` vs latest installed `10.0.1xx`/`10.0.2xx`).
 - Whether xUnit v3 needs the `mtp-v2` package flavour with the pinned SDK (resolve during implementation, record in PR).
 - **Resolved** — D4 includes LF exceptions for committed generated files: `schemas/** text eol=lf` and `Docs/Guides/diagnostics.md text eol=lf` in `.gitattributes`, mirrored in `.editorconfig` (architecture [§20](../../Architecture/DotNetRepack.architecture.md#20-open-questions)).
+- **Drift (docs, Verifier 2026-09-30)** — architecture [§15](../../Architecture/DotNetRepack.architecture.md#15-determinism) and the plan's WU-000 bullet still list only `*.sh` and `tests/**/Golden/**` as LF exceptions; they omit `schemas/**` and `Docs/Guides/diagnostics.md` (implemented, and resolved in §20). The Deliverables `.editorconfig` row likewise names only `[*.sh]`/`[tests/**/Golden/**]`. Doc-only; update §15/plan text when next touched.
+- **Note (Verifier 2026-09-30)** — Test Evidence is recorded in this spec rather than a PR description: no remote/PR exists (commits go straight to `main`). Commit `889adc1` changed many `Docs/Specs/**` files beyond the plan status row; it is a docs-only planning commit, not part of the implemented deltas (`ceef2b6` touched only Deliverables files).
 
 ## Test Evidence
 - **State**: `62c37e1b6257bc5e38d2dbe5934194322e16e4cc690900913bbcf6d920777bb9` (`52` files; docs included: no; exclusions: none)
@@ -181,5 +183,27 @@ Post-review deltas (see [Post-review changes](#post-review-changes)):
 - **Excluded checks**: `build/test/format/pack — covered by matching inherited records`
 - **Command**: `cd E:\DotNetRepack; Get-FunctionalState.ps1; git log --oneline; git show --name-only ee00d6c/311b2c3; dotnet --version; git check-attr eol -- src/DotNetRepack.Core/DotNetRepack.Core.csproj Docs/Plans/DotNetRepack.plan.md; git check-attr binary -- x.dll; git status --ignored --short; Select-String -Path (all *.csproj) -Pattern 'PackageReference[^>]+Version='; ProjectReference XML parse per csproj; ZipFile read of artifacts/pkg/DotNetRepack.Tool.1.0.0.nupkg; Test-Path on README/CONTRIBUTING link targets`
 - **Result**: `pass — 2 commits (311b2c3: 72 files all Docs/**; ee00d6c: 55 files, none under Docs/); SDK 10.0.401; runner MTP; slnx 13 src + 15 tests; refs match spec table exactly; AC-8 no matches; eol lf/lf, binary set; bin/ obj/ artifacts/ ignored; 12/12 links resolve; DotnetToolSettings.xml Command Name="dotnet-repack"`
+- **Evidence source**: `run by Verifier`
+- **Rerun reason**: `none`
+
+## Test Evidence
+- **State**: `e845bcecd945c85c18619d581ec064d704258aff9ad1e439bdab7135c8d2a51b` (`53` files; docs included: no; exclusions: none)
+- **Environment**: `Windows; .NET SDK 10.0.401 (global.json 10.0.100 + latestFeature); NuGet xunit.v3 4.0.1 (xunit.v3.mtp-v2) restored from nuget.org; CI/GITHUB_ACTIONS unset; git core.autocrlf=true, core.safecrlf=true (global)`
+- **Impact**: `root build/config files (Directory.Packages.props, .gitattributes, .editorconfig, .gitignore, DotNetRepack.slnx), tests/Directory.Build.props (affects all 15 test projects), new tests/DotNetRepack.Testing, all 15 ScaffoldTests.cs; no src changes`
+- **Selected checks**: `full solution format verify, -warnaserror build, full solution test — AC-14/16/17 require the full solution`
+- **Excluded checks**: `none — no other suites exist`
+- **Command**: `cd E:\DotNetRepack; dotnet format DotNetRepack.slnx --verify-no-changes; dotnet build DotNetRepack.slnx -c Release -warnaserror; dotnet test --solution DotNetRepack.slnx -c Release`
+- **Result**: `pass — format exit 0; build exit 0, 0 warnings, 0 errors; test exit 0, total 15, succeeded 15, failed 0, skipped 0 (DotNetRepack.Testing not run as a test project); fingerprint unchanged after run`
+- **Evidence source**: `run by Implementer`
+- **Rerun reason**: `none`
+
+## Test Evidence
+- **State**: `e845bcecd945c85c18619d581ec064d704258aff9ad1e439bdab7135c8d2a51b` (`53` files; docs included: no; exclusions: none) — recomputed by Verifier, matches inherited record
+- **Environment**: `Windows; .NET SDK 10.0.401 (dotnet --version from repo root); CI/GITHUB_ACTIONS unset; git core.autocrlf=true, core.safecrlf=true`
+- **Impact**: `AC-13..AC-18 static, MSBuild-evaluation and git checks; no code executed`
+- **Selected checks**: `Verify/CA1707/Referenced_assembly_loads search over *.props/*.csproj/*.targets/.editorconfig/ScaffoldTests.cs (excl. bin/obj); git ls-files --eol; check-attr eol/binary; check-ignore; .editorconfig section/end_of_line scan; .gitattributes/.gitignore/Directory.Packages.props/tests/Directory.Build.props/Testing csproj read; slnx XML parse; dotnet msbuild -getItem:ProjectReference/PackageReference -getProperty:IsTestProject/OutputType per tests/*.csproj; git show --stat 889adc1/ceef2b6`
+- **Excluded checks**: `format/build/test — covered by matching inherited Implementer record`
+- **Command**: `cd E:\DotNetRepack; Get-FunctionalState.ps1; git log --oneline; git ls-files --eol; git check-attr eol -- src/DotNetRepack.Core/DotNetRepack.Core.csproj x.sh tests/X.Tests/Golden/C/n.golden.json schemas/a.json Docs/Guides/diagnostics.md Docs/Plans/DotNetRepack.plan.md; git check-attr binary -- x.dll; git check-ignore -v tests/X.Tests/Golden/C/n.received.json; dotnet msbuild <each tests csproj> -getItem:ProjectReference -getProperty:IsTestProject -getProperty:OutputType; dotnet msbuild tests/DotNetRepack.Testing/DotNetRepack.Testing.csproj -getItem:PackageReference`
+- **Result**: `pass — no Verify/CA1707 matches; 128/128 tracked files i/lf w/crlf; eol crlf,lf,lf,lf,lf,crlf; binary set; received.json ignored by .gitignore:489 *.received.*; .editorconfig [*] crlf, lf for [*.sh] [tests/**/Golden/**] [schemas/**] [Docs/Guides/diagnostics.md]; slnx 29 projects (13 /src/, 16 /tests/ incl. Testing); Testing IsTestProject=false Library, 0 project/package refs, only its csproj; 15 test projects IsTestProject=true Exe, each refs Testing + target; 15/15 ReferencedAssemblyLoads; ceef2b6 touched only Deliverables files`
 - **Evidence source**: `run by Verifier`
 - **Rerun reason**: `none`
