@@ -481,7 +481,6 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 
-# DotNetRepack
 artifacts/
 .repack/
 *.staging-*/

@@ -6,6 +6,15 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>dotnet-tailor</ToolCommandName>
     <PackageId>dotnet-tailor</PackageId>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Authors>Kuan Bartel</Authors>
+    <Company>Kuan Bartel</Company>
+    <Copyright>Copyright 2026 Kuan Bartel</Copyright>
+    <RepositoryUrl>https://github.com/kjbartel/DotNetTailor</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/kjbartel/DotNetTailor</PackageProjectUrl>
+    <PackageTags>dotnet-tailor;tailor;dotnet-tool;application;transform;binary-first</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +24,10 @@
     <ProjectReference Include="..\Tailor.Execution\Tailor.Execution.csproj" />
     <ProjectReference Include="..\Tailor.Transforms\Tailor.Transforms.csproj" />
     <ProjectReference Include="..\Tailor.Platform.Windows\Tailor.Platform.Windows.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>

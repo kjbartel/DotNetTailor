@@ -1,6 +1,7 @@
 # .NET Tailor
+The .NET Tailor tool customises and alters .NET applications to fit your operational needs.
 
-> Working names: product `.NET Tailor`, command `dotnet-tailor`, package `dotnet-tailor`. All are placeholders until the final name is decided.
+> Repository status: product `Tailor`, command `dotnet-tailor`, root namespace `Tailor`, package id `dotnet-tailor`.
 
 .NET Tailor is a binary-first .NET command-line tool that analyses, validates and transforms compiled .NET application folder trees. It never modifies its input: it produces a new tree plus a new Application Specification (AppSpec) describing it. Planned transformations include filtering and layout, ReadyToRun compilation, framework-dependent ⇄ self-contained conversion, retargeting and patching, for Windows `win-x64` in v1.
 
@@ -44,6 +45,6 @@ dotnet test --project tests/Tailor.Core.Tests --filter-trait "WU=000"
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Licence
+## License
 
-Not yet chosen. See [LICENSE](LICENSE).
+This project is licensed under the [Apache License 2.0](LICENSE). Copyright 2026 Kuan Bartel.
