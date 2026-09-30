@@ -1,0 +1,40 @@
+{
+    "root_folder" : {
+        "id" : "root",
+        "file_types" : [ "assemblies", "binaries", "config", "content" ],
+        "reference_paths" : [ "current", "current\\runtimes" ],
+        "folders" : [
+            {
+                "id" : "runtimes",
+                "mask" : "runtimes",
+                "recurse" : true,
+                "file_types" : [ "platform_binaries", "platform_assemblies" ]
+            },
+            {
+                "id" : "resources",
+                "mask" : "<lang_spec>"
+            },
+            {
+                "id" : "plugins",
+                "mask" : "Plugins",
+                "file_types" : [ "assemblies", "binaries", "config", "content" ],
+                "reference_paths" : [ "root", "root\\runtimes", "parent", "parent\\runtimes", "current", "current\\runtimes" ],
+                "duplicate_references" : false,
+                "folders" : [
+                    { "id_ref" : "runtimes" },
+                    {
+                        "id_ref" : "plugins",
+                        "mask" : "**"
+                    }
+                ]
+
+            },
+            {
+                "id" : "other",
+                "mask" : "**",
+                "recurse" : true,
+                "file_types" : [ "content" ]
+            }
+        ]
+    }
+}
