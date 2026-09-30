@@ -8,15 +8,15 @@ Deliver `dotnet-tailor` v1.0.0. The tool analyses, validates and transforms comp
 
 ## How Agents Use This Plan
 
-1. Pick a WU with status `Not started` whose **Depends on** WUs are all `Done`. Prefer WUs on the critical path (see [Critical path](#critical-path)).
+1. Pick a WU with status `Ready` (legacy `Not started`) whose **Depends on** WUs are all `Done`. Prefer WUs on the critical path (see [Critical path](#critical-path)).
 2. Read the WU spec (`../Specs/<Milestone>/<ID>-<slug>.spec.md`), the architecture sections it cites, and the requirement sections it links. If the spec does not exist yet, create it first with the `new-work-unit-spec` prompt and have it reviewed.
 3. Set the status to `In progress`. Work on branch `wu/<id>-<slug>` (e.g. `wu/300-folder-matching-engine`).
 4. Implement using the `implement-work-unit` prompt. Add focused tests. Satisfy every acceptance criterion in the spec. Keep the change to one atomic commit, or a small number of reviewable ones.
-5. Open a PR titled `WU-<id>: <title>`. CI must be green.
-6. The Verifier (`verify-work-unit` prompt) checks each criterion and ticks it in the spec. It sets the status here to `Done`, and ticks milestone criteria when they are met.
+5. Open a PR titled `WU-<id>: <title>`. CI must be green and code review (`review-changes` prompt and any human review) must approve.
+6. The Verifier (`verify-work-unit` prompt) checks each criterion and ticks it in the spec. It appends a Completion note, sets the status here to `Done`, and ticks milestone criteria when they are met.
 7. If a WU finds an architecture change, record an ADR in `Docs/Decisions/` and update the architecture document in the same PR.
 
-Statuses: `Not started` · `In progress` · `In review` · `Done` · `Blocked (<reason>)`.
+Statuses: `Draft` · `Ready` (legacy `Not started`) · `In progress` · `In review` · `Done` · `Blocked (<reason>)` · `Superseded`. Epics, features, steps, criteria and phase gates: `planning-artifacts` skill.
 
 A milestone is a release grouping, not a start gate. A WU may start as soon as its dependencies are `Done`.
 

@@ -1,6 +1,6 @@
 # Repository Guidance
 
-This file is the repository-wide agent guide. The design authority is [the architecture](Docs/Architecture/Tailor.architecture.md); sequencing and work-unit status live in [the master plan](Docs/Plans/Tailor.plan.md). A work unit's spec is its implementation contract.
+This file is the repository-wide agent guide. The design authority is [the architecture](Docs/Architecture/Tailor.architecture.md); sequencing and work-unit status live in [the master plan](Docs/Plans/Tailor.plan.md). A work unit's spec is its implementation contract. Agents, lanes and review flow are in [the AI workflow guide](Docs/Guides/ai-workflow.md); start with the **Tailor Contributor** agent.
 
 ## Repository Map
 
@@ -10,6 +10,7 @@ This file is the repository-wide agent guide. The design authority is [the archi
 - `schemas/`: committed schemas generated from specification models.
 - `Docs/Requirements/`: authoritative requirements; do not edit during implementation work.
 - `Docs/Architecture/`, `Docs/Plans/`, `Docs/Specs/`: design, sequencing and work-unit contracts.
+- `Docs/Epics/`, `Docs/Features/`, `Docs/Decisions/`, `Docs/Guides/`: epics, features, ADRs and contributor/user guides (hierarchy and gates: `planning-artifacts` skill).
 - `spikes/` and `Docs/Spikes/`: isolated research and spike reports; spike code is never referenced from `src/`.
 
 ## Build and Test
@@ -28,13 +29,13 @@ Run one work unit's tests with `dotnet test --project <project> --filter-trait "
 
 Follow [How Agents Use This Plan](Docs/Plans/Tailor.plan.md#how-agents-use-this-plan):
 
-1. Select a `Not started` WU whose dependencies are all `Done`; prefer the critical path.
+1. Select a `Ready` (legacy `Not started`) WU whose dependencies are all `Done`; prefer the critical path.
 2. Read its `Docs/Specs/<Milestone>/<ID>-<slug>.spec.md`, cited architecture sections and requirements.
 3. Set the WU `In progress` and work on `wu/<id>-<slug>`.
-4. Implement only its scope and acceptance criteria; add focused tests and run formatting, lint and relevant checks.
+4. Implement only its scope, following its `## Steps` in order; add focused tests (WU trait, plus `AC` trait for `(T)` criteria) and run formatting, lint and relevant checks.
 5. Record the required Test Evidence block with the exact functional-state fingerprint and environment.
-6. Keep changes reviewable and open a PR titled `WU-<id>: <title>` when using a remote.
-7. The Verifier checks evidence, ticks acceptance criteria and sets status to `Done`.
+6. Keep changes reviewable and open a PR titled `WU-<id>: <title>` when using a remote. The Tailor Code Reviewer (and any human PR review) must `Approve`; resolve findings with the `code-review` skill.
+7. The Verifier checks evidence, ticks steps and acceptance criteria, appends a concise Completion note and sets status to `Done`. Implementers never tick their own work.
 
 ## Boundaries
 
@@ -58,7 +59,7 @@ Respect the ownership and dependency rules in [architecture §3.1](Docs/Architec
 
 ## Test Evidence
 
-For selected checks, record the state fingerprint and all context needed to reuse the result:
+For selected checks, follow the [`test-evidence` skill](.github/skills/test-evidence/SKILL.md) and record the state fingerprint and all context needed to reuse the result:
 
 ```markdown
 ## Test Evidence

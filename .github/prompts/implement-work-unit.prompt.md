@@ -1,6 +1,6 @@
 ---
 description: "Implement one approved .NET Tailor work unit from its spec with focused tests and evidence."
-agent: agent
+agent: Tailor Implementer
 ---
 
 Implement work unit `${input:wu}`.
