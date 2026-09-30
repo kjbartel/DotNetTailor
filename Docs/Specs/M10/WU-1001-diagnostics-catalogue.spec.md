@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-603 |
 | Parallel with | M7–M9 |
-| Target project(s)/paths | `src/DotNetRepack.Core/` (diagnostic descriptor registry), `src/DotNetRepack.Cli/` (help text), `Docs/Guides/diagnostics.md` (generated), `tests/DotNetRepack.Core.Tests/`, `tests/DotNetRepack.Cli.Tests/` |
+| Target project(s)/paths | `src/Tailor.Core/` (diagnostic descriptor registry), `src/Tailor.Cli/` (help text), `Docs/Guides/diagnostics.md` (generated), `tests/Tailor.Core.Tests/`, `tests/Tailor.Cli.Tests/` |
 | Size | M |
 
 ## Goal
@@ -22,7 +22,7 @@ Every `RPK` code has one registry descriptor and a user-facing entry in `Docs/Gu
 | [RQ §10](../../Requirements/Repackage_tool_Requirements_v1.1.md), [RQ §12](../../Requirements/Repackage_tool_Requirements_v1.1.md) | dotnet CLI conventions, clear error reporting, auditability |
 | [CK §12](../../Requirements/Read_to_run_Cake.md) | Failures clearly reported, meaningful exit codes |
 | [TS §24](../../Requirements/Transformation_Specification.md) | Policy-configurable vs structural (non-downgradable) conditions |
-| [Architecture §13, §14](../../Architecture/DotNetRepack.architecture.md) | Code ranges, diagnostic shape, policy mapping, exit codes, CLI verbs |
+| [Architecture §13, §14](../../Architecture/Tailor.architecture.md) | Code ranges, diagnostic shape, policy mapping, exit codes, CLI verbs |
 
 ## Scope
 
@@ -33,7 +33,7 @@ Every `RPK` code has one registry descriptor and a user-facing entry in `Docs/Gu
 - Parity tests:
   - Registry ↔ committed markdown: regenerated content equals the committed file.
   - Source ↔ registry: no `RPK\d{4}` literal outside the registry. Every registered code is referenced by at least one emission site or marked `reserved`.
-  - Range check: each code is inside its project's range ([Architecture §13](../../Architecture/DotNetRepack.architecture.md)). Codes are unique.
+  - Range check: each code is inside its project's range ([Architecture §13](../../Architecture/Tailor.architecture.md)). Codes are unique.
 - Help text completeness: every command, subcommand, option and argument has a non-empty description. `--help` output per verb is compared against golden files. Help mentions exit codes (root help) and `analyse` as an alias.
 
 **Out**
@@ -45,7 +45,7 @@ Every `RPK` code has one registry descriptor and a user-facing entry in `Docs/Gu
 
 ## Design Notes
 
-- Choose one generation path and document it in the guide header ("generated, do not edit; run `<command>`"). Preferred: a golden-file-style drift test (same conventions as `DotNetRepack.Testing.Golden`) that fails on drift, writes a `.received` file for acceptance and rewrites the guide under `DOTNET_REPACK_UPDATE_GOLDEN=1`.
+- Choose one generation path and document it in the guide header ("generated, do not edit; run `<command>`"). Preferred: a golden-file-style drift test (same conventions as `Tailor.Testing.Golden`) that fails on drift, writes a `.received` file for acceptance and rewrites the guide under `DOTNET_REPACK_UPDATE_GOLDEN=1`.
 - Keep descriptors in the owning projects if the architecture's dependency rules require it (e.g. `Transforms` codes). A Core-level registry discovers them through an assembly-scan-free, explicit registration list so that ordering stays deterministic.
 - WUs that finish after this one must add descriptors + docs. The parity test enforces it.
 
@@ -56,12 +56,12 @@ Every `RPK` code has one registry descriptor and a user-facing entry in `Docs/Gu
 - [ ] AC-3 Each entry shows code, title, default severity, whether policy can change it, description and remedy. Entries are grouped by range and sorted.
 - [ ] AC-4 Codes are unique and each falls in the range for its category. The test fails on violations.
 - [ ] AC-5 Every CLI command/option/argument has a non-empty description (reflection over the command tree). `--help` golden files exist for the root and every verb.
-- [ ] AC-6 The guide contains the exit-code table from [Architecture §13](../../Architecture/DotNetRepack.architecture.md), and root `--help` references it.
+- [ ] AC-6 The guide contains the exit-code table from [Architecture §13](../../Architecture/Tailor.architecture.md), and root `--help` references it.
 
 ## Test Requirements
 
 - xUnit v3 on MTP, golden files for the markdown and help text. No network or test apps needed.
-- Run: `dotnet test --project tests/DotNetRepack.Core.Tests --filter-trait "WU=1001"`; `dotnet test --project tests/DotNetRepack.Cli.Tests --filter-trait "WU=1001"`.
+- Run: `dotnet test --project tests/Tailor.Core.Tests --filter-trait "WU=1001"`; `dotnet test --project tests/Tailor.Cli.Tests --filter-trait "WU=1001"`.
 - Record Test Evidence: commands and TRX.
 
 ## Definition of Done

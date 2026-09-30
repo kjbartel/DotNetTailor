@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-401, WU-402, WU-403, WU-105, WU-103 |
 | Parallel with | WU-502, WU-503 |
-| Target project(s)/paths | `src/DotNetRepack.Cli/Commands/Analyze/`, `src/DotNetRepack.Cli/Commands/Validate/`, `src/DotNetRepack.Cli/Composition/`, `tests/DotNetRepack.Cli.Tests/`, `tests/DotNetRepack.IntegrationTests/Cli/` |
+| Target project(s)/paths | `src/Tailor.Cli/Commands/Analyze/`, `src/Tailor.Cli/Commands/Validate/`, `src/Tailor.Cli/Composition/`, `tests/Tailor.Cli.Tests/`, `tests/Tailor.IntegrationTests/Cli/` |
 | Size | M |
 | Branch / PR | `wu/404-cli-analyze-validate` / `WU-404: cli-analyze-validate` |
 
@@ -22,7 +22,7 @@ Ship `analyze` (alias `analyse`) and `validate` end to end: correct spec and art
 |---|---|
 | [RQ §4.1](../../Requirements/Repackage_tool_Requirements_v1.1.md), [RQ §4.2](../../Requirements/Repackage_tool_Requirements_v1.1.md), [RQ §9](../../Requirements/Repackage_tool_Requirements_v1.1.md), [RQ §10](../../Requirements/Repackage_tool_Requirements_v1.1.md) | Non-mutating analysis, validation, spec location, dotnet-style CLI |
 | [AS §23](../../Requirements/Application_Specification.md#23-location-and-portability) | Default/alternate spec location |
-| Architecture [§4](../../Architecture/DotNetRepack.architecture.md#4-processing-pipeline), [§5](../../Architecture/DotNetRepack.architecture.md#5-artefacts), [§13](../../Architecture/DotNetRepack.architecture.md#13-diagnostics-failure-policy-and-exit-codes), [§14](../../Architecture/DotNetRepack.architecture.md#14-cli), [§19](../../Architecture/DotNetRepack.architecture.md#19-resolved--open-inconsistencies) item 2 | Pipeline, artefacts, exit codes, verbs, sidecars |
+| Architecture [§4](../../Architecture/Tailor.architecture.md#4-processing-pipeline), [§5](../../Architecture/Tailor.architecture.md#5-artefacts), [§13](../../Architecture/Tailor.architecture.md#13-diagnostics-failure-policy-and-exit-codes), [§14](../../Architecture/Tailor.architecture.md#14-cli), [§19](../../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies) item 2 | Pipeline, artefacts, exit codes, verbs, sidecars |
 | Plan M4 criteria 1, 4, 5, 7 (local pack smoke only) | AC-4, AC-6–AC-9, AC-12 |
 
 ## Scope
@@ -72,13 +72,13 @@ Ship `analyze` (alias `analyse`) and `validate` end to end: correct spec and art
 - [ ] AC-9 `validation-report.json` written by `validate` contains `specHash`, `treeFingerprint`, `state`.
 - [ ] AC-10 Nonexistent `appDir` exits 2 with `RPK0401`; single-file bundle fixture exits 1.
 - [ ] AC-11 A multi-document AppSpec (`includes`) validates identically to its flattened equivalent.
-- [ ] AC-12 `dotnet pack src/DotNetRepack.Cli` produces `DotNetRepack.Tool`; `dotnet tool install --tool-path <tmp> --add-source <nupkgDir> DotNetRepack.Tool` succeeds and `dotnet-repack --help` exits 0 (integration test).
+- [ ] AC-12 `dotnet pack src/Tailor.Cli` produces `Tailor.Tool`; `dotnet tool install --tool-path <tmp> --add-source <nupkgDir> Tailor.Tool` succeeds and `dotnet-tailor --help` exits 0 (integration test).
 
 ## Test Requirements
 
-- Unit: `tests/DotNetRepack.Cli.Tests/` — parsing, option validation, exit-code mapping, location rules with fakes; trait `WU=404`.
-- Integration: `tests/DotNetRepack.IntegrationTests/Cli/AnalyzeValidateTests` copying matrix apps to temp dirs (never run against `artifacts/testapps` in place), before/after `TreeFingerprint`; `ToolPackTests` for AC-12; trait `Category=Integration`, `Category=Matrix`, `WU=404`.
-- Run: `dotnet test --project tests/DotNetRepack.Cli.Tests --filter-trait "WU=404"`; `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=404"`.
+- Unit: `tests/Tailor.Cli.Tests/` — parsing, option validation, exit-code mapping, location rules with fakes; trait `WU=404`.
+- Integration: `tests/Tailor.IntegrationTests/Cli/AnalyzeValidateTests` copying matrix apps to temp dirs (never run against `artifacts/testapps` in place), before/after `TreeFingerprint`; `ToolPackTests` for AC-12; trait `Category=Integration`, `Category=Matrix`, `WU=404`.
+- Run: `dotnet test --project tests/Tailor.Cli.Tests --filter-trait "WU=404"`; `dotnet test --project tests/Tailor.IntegrationTests --filter-trait "WU=404"`.
 - Record Test Evidence in the PR.
 
 ## Definition of Done

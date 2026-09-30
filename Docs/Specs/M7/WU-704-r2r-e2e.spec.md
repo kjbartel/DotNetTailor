@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-703, WU-603 |
 | Parallel with | M8 |
-| Target | `tests/DotNetRepack.IntegrationTests/ReadyToRun/`, `tests/DotNetRepack.IntegrationTests/Fixtures/r2r/*.transform.json`, `src/DotNetRepack.Cli/Composition/` (Acquisition wiring); fixes in `src/DotNetRepack.*` only where E2E exposes defects |
+| Target | `tests/Tailor.IntegrationTests/ReadyToRun/`, `tests/Tailor.IntegrationTests/Fixtures/r2r/*.transform.json`, `src/Tailor.Cli/Composition/` (Acquisition wiring); fixes in `src/Tailor.*` only where E2E exposes defects |
 | Size | M |
 
 ## Goal
@@ -23,7 +23,7 @@ Prove M7 end to end through the CLI: `plan` and `apply` with an R2R TransformSpe
 | [RD §8](../../Requirements/R2R_tool_Design.md) | Eligibility states, plugins without co-compilation |
 | [CK §6.2](../../Requirements/Read_to_run_Cake.md#6-target-framework-and-runtime-requirements) | crossgen2 R2R for `win-x64` |
 | [RQ §5.4](../../Requirements/Repackage_tool_Requirements_v1.1.md#5-supported-transformation-categories) | Semantics unchanged (launch) |
-| [Plan M7 criteria](../../Plans/DotNetRepack.plan.md#m7-acquisition--readytorun--v030-preview), [Architecture §16](../../Architecture/DotNetRepack.architecture.md#16-testing-strategy) | Milestone gate, harness-only launch |
+| [Plan M7 criteria](../../Plans/Tailor.plan.md#m7-acquisition--readytorun--v030-preview), [Architecture §16](../../Architecture/Tailor.architecture.md#16-testing-strategy) | Milestone gate, harness-only launch |
 
 ## Scope
 
@@ -70,8 +70,8 @@ Prove M7 end to end through the CLI: `plan` and `apply` with an R2R TransformSpe
 
 ## Test Requirements
 
-- xUnit v3 + golden files in `tests/DotNetRepack.IntegrationTests/`, tagged `Category=Integration`, `Category=Matrix` (and `Category=Launch` for smoke runs so CI can tier them); trait `WU=704`.
-- Run: `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=704"`.
+- xUnit v3 + golden files in `tests/Tailor.IntegrationTests/`, tagged `Category=Integration`, `Category=Matrix` (and `Category=Launch` for smoke runs so CI can tier them); trait `WU=704`.
+- Run: `dotnet test --project tests/Tailor.IntegrationTests --filter-trait "WU=704"`.
 - `LocalPackageFeedFixture` with an isolated global packages folder seeded from `Build-TestApps.ps1` restores; no network in default runs.
 - Record Test Evidence (scenario list, fingerprints, results) in the PR.
 

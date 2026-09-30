@@ -4,7 +4,7 @@
 |---|---|
 | ID | WU-007 |
 | Title | spike-nuget-and-libraries |
-| Milestone | [M0 Foundation & Repo Bootstrap](../../Plans/DotNetRepack.plan.md#m0-foundation--repo-bootstrap) |
+| Milestone | [M0 Foundation & Repo Bootstrap](../../Plans/Tailor.plan.md#m0-foundation--repo-bootstrap) |
 | Status | Not started |
 | Depends on | WU-000 |
 | Parallel with | WU-001–WU-006, WU-100 |
@@ -20,15 +20,15 @@ Prove package acquisition with NuGet.Protocol/NuGet.Configuration (config hierar
 
 | Source | Section | Relevance |
 |---|---|---|
-| [Architecture](../../Architecture/DotNetRepack.architecture.md#10-acquisition) | §10 Acquisition | Assumptions to confirm |
-| [Architecture](../../Architecture/DotNetRepack.architecture.md#61-common-rules) | §6.1 schemas + validator | Validator requirement |
-| [Architecture](../../Architecture/DotNetRepack.architecture.md#17-security) | §17 Secrets | Credential handling |
-| [Architecture](../../Architecture/DotNetRepack.architecture.md#20-open-questions) | §20 validator library | Decision owner |
+| [Architecture](../../Architecture/Tailor.architecture.md#10-acquisition) | §10 Acquisition | Assumptions to confirm |
+| [Architecture](../../Architecture/Tailor.architecture.md#61-common-rules) | §6.1 schemas + validator | Validator requirement |
+| [Architecture](../../Architecture/Tailor.architecture.md#17-security) | §17 Secrets | Credential handling |
+| [Architecture](../../Architecture/Tailor.architecture.md#20-open-questions) | §20 validator library | Decision owner |
 | [TS](../../Requirements/Transformation_Specification.md) | §29 External Sources and Credentials, §5 Identity and Schema | Sources, credentials, schema |
 | [AS](../../Requirements/Application_Specification.md) | §5 schema/versioning | Schema validation |
 | [RQ](../../Requirements/Repackage_tool_Requirements_v1.1.md) | §10 CLI and Distribution, §12 Non-Functional | Dependencies, reproducibility |
 | [CK](../../Requirements/Read_to_run_Cake.md) | §9.3 Library updates via NuGet | Historical detail |
-| [Plan](../../Plans/DotNetRepack.plan.md#risks-register) | Risks R5, R8; M7 criterion 3 | Consumers |
+| [Plan](../../Plans/Tailor.plan.md#risks-register) | Risks R5, R8; M7 criterion 3 | Consumers |
 
 ## Scope
 
@@ -55,8 +55,8 @@ Prove package acquisition with NuGet.Protocol/NuGet.Configuration (config hierar
 - `Docs/Spikes/WU-007-spike-nuget-and-libraries.md`: Question, Method, Findings (Q1–Q9, **Answer** + **Evidence**), Decision, Recommended ADRs, Impact, Follow-ups.
 - `Docs/Decisions/ADR-0004-nuget-acquisition.md` (status `Proposed`): API surface, cache layout, integrity, credentials, offline.
 - `Docs/Decisions/ADR-0005-json-schema-validator.md` (status `Proposed`): chosen library, licence, rejected alternatives.
-- Architecture update in the same PR: [§10](../../Architecture/DotNetRepack.architecture.md#10-acquisition), [§6.1](../../Architecture/DotNetRepack.architecture.md#61-common-rules) validator sentence, remove the validator item from [§20](../../Architecture/DotNetRepack.architecture.md#20-open-questions), the WU-007 row in [§21](../../Architecture/DotNetRepack.architecture.md#21-spikes-feeding-this-document).
-- `spikes/WU-007/` throwaway code (props isolation as in WU-004), README with rerun steps. Not in `DotNetRepack.slnx`.
+- Architecture update in the same PR: [§10](../../Architecture/Tailor.architecture.md#10-acquisition), [§6.1](../../Architecture/Tailor.architecture.md#61-common-rules) validator sentence, remove the validator item from [§20](../../Architecture/Tailor.architecture.md#20-open-questions), the WU-007 row in [§21](../../Architecture/Tailor.architecture.md#21-spikes-feeding-this-document).
+- `spikes/WU-007/` throwaway code (props isolation as in WU-004), README with rerun steps. Not in `Tailor.slnx`.
 
 ## Design Notes
 
@@ -74,8 +74,8 @@ Prove package acquisition with NuGet.Protocol/NuGet.Configuration (config hierar
 - [ ] AC-5 Q9 findings contain a licence table for every listed package with SPDX id and source link.
 - [ ] AC-6 `ADR-0004-nuget-acquisition.md` and `ADR-0005-json-schema-validator.md` exist, status `Proposed`, sections Context, Decision, Consequences, Alternatives.
 - [ ] AC-7 Architecture §6.1, §10, §20 and the §21 WU-007 row are updated and link the report and ADRs.
-- [ ] AC-8 `spikes/WU-007/` exists, is not referenced by `DotNetRepack.slnx`, has a README; no binaries or secrets committed.
-- [ ] AC-9 Solution build (`-warnaserror`), `dotnet test --solution DotNetRepack.slnx -c Release` and format verify still pass.
+- [ ] AC-8 `spikes/WU-007/` exists, is not referenced by `Tailor.slnx`, has a README; no binaries or secrets committed.
+- [ ] AC-9 Solution build (`-warnaserror`), `dotnet test --solution Tailor.slnx -c Release` and format verify still pass.
 
 ## Test Requirements
 
@@ -89,7 +89,7 @@ Prove package acquisition with NuGet.Protocol/NuGet.Configuration (config hierar
 
 ## Agent Notes
 
-- Load: [architecture §6.1, §10, §17, §19, §20, §21](../../Architecture/DotNetRepack.architecture.md), this spec.
+- Load: [architecture §6.1, §10, §17, §19, §20, §21](../../Architecture/Tailor.architecture.md), this spec.
 - Use the `microsoft-code-reference` / `microsoft-docs` skills to confirm NuGet client API signatures instead of guessing.
 - Keep architecture edits to the sections listed; WU-004/005/006 edit others in parallel.
 

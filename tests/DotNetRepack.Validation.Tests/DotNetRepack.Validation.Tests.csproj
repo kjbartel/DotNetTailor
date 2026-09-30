@@ -1,7 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\DotNetRepack.Validation\DotNetRepack.Validation.csproj" />
-  </ItemGroup>
-
-</Project>

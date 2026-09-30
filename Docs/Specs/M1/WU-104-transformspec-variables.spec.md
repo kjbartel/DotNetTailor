@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-102, WU-103 |
 | Parallel with | WU-105, M2, M3 |
-| Target project(s)/paths | `src/DotNetRepack.Specifications/Variables/`, `src/DotNetRepack.Specifications/TransformSpec/` (attribute annotations only), `tests/DotNetRepack.Specifications.Tests/Variables/` |
+| Target project(s)/paths | `src/Tailor.Specifications/Variables/`, `src/Tailor.Specifications/TransformSpec/` (attribute annotations only), `tests/Tailor.Specifications.Tests/Variables/` |
 | Size | S |
 
 ## Goal
@@ -19,9 +19,9 @@ Resolve declarative `${name}` parameters in an effective TransformSpec from CLI 
 
 | Area | Requirements | Architecture |
 |---|---|---|
-| Parameters, constraints, resolution | [TS §28](../../Requirements/Transformation_Specification.md), [TS §32](../../Requirements/Transformation_Specification.md) (5, 12) | [§6.3](../../Architecture/DotNetRepack.architecture.md#63-transformspec-shape-illustrative-the-wu-102-schema-is-normative) (variables bullet) |
-| CLI `--var` | [RQ §10](../../Requirements/Repackage_tool_Requirements_v1.1.md) | [§14](../../Architecture/DotNetRepack.architecture.md#14-cli) |
-| Determinism / provenance | [TS §3.6](../../Requirements/Transformation_Specification.md), [TS §29.3](../../Requirements/Transformation_Specification.md) | [§15](../../Architecture/DotNetRepack.architecture.md#15-determinism) |
+| Parameters, constraints, resolution | [TS §28](../../Requirements/Transformation_Specification.md), [TS §32](../../Requirements/Transformation_Specification.md) (5, 12) | [§6.3](../../Architecture/Tailor.architecture.md#63-transformspec-shape-illustrative-the-wu-102-schema-is-normative) (variables bullet) |
+| CLI `--var` | [RQ §10](../../Requirements/Repackage_tool_Requirements_v1.1.md) | [§14](../../Architecture/Tailor.architecture.md#14-cli) |
+| Determinism / provenance | [TS §3.6](../../Requirements/Transformation_Specification.md), [TS §29.3](../../Requirements/Transformation_Specification.md) | [§15](../../Architecture/Tailor.architecture.md#15-determinism) |
 
 ## Scope
 
@@ -38,7 +38,7 @@ Resolve declarative `${name}` parameters in an effective TransformSpec from CLI 
 
 ## Deliverables
 
-Namespace `DotNetRepack.Specifications.Variables`.
+Namespace `Tailor.Specifications.Variables`.
 
 | Type | API / responsibility |
 |---|---|
@@ -63,7 +63,7 @@ Diagnostics:
 
 - Syntax: `${name}` with name `^[A-Za-z_][A-Za-z0-9_]*$`; multiple references and surrounding text allowed (`net${major}.0-windows`); `$${` emits a literal `${`.
 - Single pass, no recursion: substituted values and defaults are inserted literally and are not re-scanned, so cycles are impossible.
-- Precedence: CLI > default ([§6.3](../../Architecture/DotNetRepack.architecture.md#63-transformspec-shape-illustrative-the-wu-102-schema-is-normative)). Defaults from included documents arrive already merged by WU-103.
+- Precedence: CLI > default ([§6.3](../../Architecture/Tailor.architecture.md#63-transformspec-shape-illustrative-the-wu-102-schema-is-normative)). Defaults from included documents arrive already merged by WU-103.
 - All diagnostics are errors and are reported together (not first-only); variable errors are structural ("invalid specification", [TS §24.4](../../Requirements/Transformation_Specification.md)).
 - Substitution walks the typed model via the attribute (reflection cached per type) or a hand-written visitor; either way the result is a new immutable document.
 - Resolution happens before any planning ([TS §28.4](../../Requirements/Transformation_Specification.md)); WU-502 calls the resolver.
@@ -85,7 +85,7 @@ Diagnostics:
 ## Test Requirements
 
 - xUnit v3; synthetic in-memory TransformSpecs via `InMemoryDocumentSource`; reuse `ts33-conceptual-example` with a `targetTfm` variable. Trait `WU=104`.
-- Run: `dotnet test --project tests/DotNetRepack.Specifications.Tests --filter-trait "WU=104"`.
+- Run: `dotnet test --project tests/Tailor.Specifications.Tests --filter-trait "WU=104"`.
 - Record Test Evidence below and in the PR.
 
 ## Definition of Done

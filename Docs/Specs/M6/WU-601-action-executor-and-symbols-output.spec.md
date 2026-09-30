@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-600, WU-503 |
 | Parallel with | WU-504, WU-505, WU-507 |
-| Target project(s)/paths | `src/DotNetRepack.Execution/{Executor,Actions,Symbols,Reports}/`, `tests/DotNetRepack.Execution.Tests/{Executor,Actions,Symbols,Reports}/` |
+| Target project(s)/paths | `src/Tailor.Execution/{Executor,Actions,Symbols,Reports}/`, `tests/Tailor.Execution.Tests/{Executor,Actions,Symbols,Reports}/` |
 | Size | M |
 | Branch / PR | `wu/601-action-executor-and-symbols-output` / `WU-601: action-executor-and-symbols-output` |
 
@@ -25,7 +25,7 @@ Execute a WU-503 plan into a WU-600 staging session. Every action kind is dispat
 | [TS §26.4](../../Requirements/Transformation_Specification.md#26-dry-run-and-planning-behaviour), [TS §31](../../Requirements/Transformation_Specification.md#31-relationship-to-transformation-plans-and-logs) | Action kinds; execution report content |
 | [RQ §8](../../Requirements/Repackage_tool_Requirements_v1.1.md), [RQ §12](../../Requirements/Repackage_tool_Requirements_v1.1.md) | Separate report artefact; deterministic, auditable, safe failure |
 | [CK §8.3](../../Requirements/Read_to_run_Cake.md) | Symbols zip packaging |
-| Architecture [§3.1](../../Architecture/DotNetRepack.architecture.md#31-project-responsibilities-and-allowed-dependencies) (Execution must not change the plan), [§5](../../Architecture/DotNetRepack.architecture.md#5-artefacts), [§9](../../Architecture/DotNetRepack.architecture.md#9-transformation-handlers) (Symbols row), [§11](../../Architecture/DotNetRepack.architecture.md#11-execution-and-safety), [§15](../../Architecture/DotNetRepack.architecture.md#15-determinism), [§17](../../Architecture/DotNetRepack.architecture.md#17-security) | Executor, zip rules, determinism, zip path safety |
+| Architecture [§3.1](../../Architecture/Tailor.architecture.md#31-project-responsibilities-and-allowed-dependencies) (Execution must not change the plan), [§5](../../Architecture/Tailor.architecture.md#5-artefacts), [§9](../../Architecture/Tailor.architecture.md#9-transformation-handlers) (Symbols row), [§11](../../Architecture/Tailor.architecture.md#11-execution-and-safety), [§15](../../Architecture/Tailor.architecture.md#15-determinism), [§17](../../Architecture/Tailor.architecture.md#17-security) | Executor, zip rules, determinism, zip path safety |
 | Plan M6 criteria 1, 3, 4 | AC-6–AC-10 |
 
 ## Scope
@@ -42,14 +42,14 @@ Execute a WU-503 plan into a WU-600 staging session. Every action kind is dispat
 
 ## Deliverables
 
-Namespace `DotNetRepack.Execution`.
+Namespace `Tailor.Execution`.
 
 | Type | API / responsibility |
 |---|---|
 | `Executor.PlanExecutor.ExecuteAsync(ExecutablePlan, ExecutionContext, CancellationToken)` → `ExecutionResult` | `ExecutablePlan` wraps WU-503 `PlanResult` (read-only). `ExecutionContext {InputRoot, StagingSession, IPackageLocator?, UserFileRoot?, SymbolsFormat, MaxParallelism}`. Result: `Succeeded`, `ActionResults[]`, `Diagnostics` |
 | `Actions.IActionExecutor` | `ActionKind Kind`, `ValueTask<ActionResult> ExecuteAsync(PlanAction, ActionExecutionContext, CancellationToken)`. Registered through DI, keyed by kind; a duplicate kind → startup error |
 | `Actions.StreamingCopier` | `CopyAsync(Stream source, string destination, ContentHash? expected, CancellationToken)` → `(ContentHash actual, long size)`. Single pass: read → write + `IncrementalHash` SHA-256. Mismatch → delete destination, error |
-| `IConfigModifier` (consumed, not defined here) | Lives in `DotNetRepack.Planning.Actions` (architecture §3.2) so Transforms can implement it without referencing Execution: `string Name`, `ValueTask<byte[]> ModifyAsync(ReadOnlyMemory<byte> original, JsonObject parameters, CancellationToken)`. Selected by `PlanAction.Parameters.modifier`. If WU-503 has not added it, add it to Planning in this WU |
+| `IConfigModifier` (consumed, not defined here) | Lives in `Tailor.Planning.Actions` (architecture §3.2) so Transforms can implement it without referencing Execution: `string Name`, `ValueTask<byte[]> ModifyAsync(ReadOnlyMemory<byte> original, JsonObject parameters, CancellationToken)`. Selected by `PlanAction.Parameters.modifier`. If WU-503 has not added it, add it to Planning in this WU |
 | `Symbols.SymbolsDirectoryWriter` / `Symbols.DeterministicZipWriter` | Write `ExtractSymbols` outputs into `StagingSession.SymbolsRoot` (directory) or `<SymbolsRoot>.zip` (zip) |
 | `Reports.ExecutionReportWriter` | `execution-report.json`: `kind: ExecutionReport`, `schemaVersion`, `planHash`, `actions[] {id, kind, status (succeeded\|failed\|skipped), destination, sha256, size, diagnostics[]}` sorted by `order`, `tools[]`, `timings {…}` (the only non-canonical section, separable) |
 | `ExecutionDiagnostics` | `RPK6101`–`RPK6199` |
@@ -91,9 +91,9 @@ Namespace `DotNetRepack.Execution`.
 
 ## Test Requirements
 
-- Unit: `tests/DotNetRepack.Execution.Tests/{Executor,Actions,Symbols,Reports}/`, with WU-600 `StagingSession` over temp directories, fake locators and fake modifiers. Trait `WU=601`.
+- Unit: `tests/Tailor.Execution.Tests/{Executor,Actions,Symbols,Reports}/`, with WU-600 `StagingSession` over temp directories, fake locators and fake modifiers. Trait `WU=601`.
 - Integration (AC-10): matrix copies with WU-504 scenario plans. Traits `Category=Integration`, `Category=Matrix`, `WU=601`.
-- Run: `dotnet test --project tests/DotNetRepack.Execution.Tests --filter-trait "WU=601"`; `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=601"`.
+- Run: `dotnet test --project tests/Tailor.Execution.Tests --filter-trait "WU=601"`; `dotnet test --project tests/Tailor.IntegrationTests --filter-trait "WU=601"`.
 - Record Test Evidence below and in the PR.
 
 ## Definition of Done

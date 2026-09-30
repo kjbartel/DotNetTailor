@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-500 |
 | Parallel with | WU-400–WU-403 |
-| Target project(s)/paths | `src/DotNetRepack.Planning/Precedence/`, `tests/DotNetRepack.Planning.Tests/Precedence/` |
+| Target project(s)/paths | `src/Tailor.Planning/Precedence/`, `tests/Tailor.Planning.Tests/Precedence/` |
 | Size | M |
 | Branch / PR | `wu/501-rule-precedence-and-conflicts` / `WU-501: rule-precedence-and-conflicts` |
 
@@ -25,7 +25,7 @@ Assign every rule-derived intent a deterministic precedence level (TS §22.2), r
 | [TS §21](../../Requirements/Transformation_Specification.md#21-transformation-defaults) (21.3, 21.4) | Defaults are overridable and favour preservation |
 | [TS §24.4](../../Requirements/Transformation_Specification.md#24-validation-and-failure-policies) | Ambiguous intent is an unconditional (structural) error |
 | [TS §32](../../Requirements/Transformation_Specification.md#32-global-invariants) items 9, 13 | Preservation by default, no silent conflict resolution |
-| Architecture [§8](../../Architecture/DotNetRepack.architecture.md#8-selectors-precedence-and-actions), [§13](../../Architecture/DotNetRepack.architecture.md#13-diagnostics-failure-policy-and-exit-codes) | Levels 1–5, structural diagnostics |
+| Architecture [§8](../../Architecture/Tailor.architecture.md#8-selectors-precedence-and-actions), [§13](../../Architecture/Tailor.architecture.md#13-diagnostics-failure-policy-and-exit-codes) | Levels 1–5, structural diagnostics |
 | Plan M5 criterion 2 | AC-4–AC-7 |
 
 ## Scope
@@ -41,7 +41,7 @@ Assign every rule-derived intent a deterministic precedence level (TS §22.2), r
 
 ## Deliverables
 
-Namespace `DotNetRepack.Planning.Precedence`.
+Namespace `Tailor.Planning.Precedence`.
 
 | Type | API / responsibility |
 |---|---|
@@ -97,8 +97,8 @@ Namespace `DotNetRepack.Planning.Precedence`.
 
 ## Test Requirements
 
-- Unit only: `tests/DotNetRepack.Planning.Tests/Precedence/`, synthetic intents and compiled selectors. Trait `WU=501`.
-- Run: `dotnet test --project tests/DotNetRepack.Planning.Tests --filter-trait "WU=501"`.
+- Unit only: `tests/Tailor.Planning.Tests/Precedence/`, synthetic intents and compiled selectors. Trait `WU=501`.
+- Run: `dotnet test --project tests/Tailor.Planning.Tests --filter-trait "WU=501"`.
 - Record Test Evidence below and in the PR.
 
 ## Definition of Done

@@ -4,7 +4,7 @@
 |---|---|
 | ID | WU-003 |
 | Title | test-app-suite |
-| Milestone | [M0 Foundation & Repo Bootstrap](../../Plans/DotNetRepack.plan.md#m0-foundation--repo-bootstrap) |
+| Milestone | [M0 Foundation & Repo Bootstrap](../../Plans/Tailor.plan.md#m0-foundation--repo-bootstrap) |
 | Status | Not started |
 | Depends on | WU-000 |
 | Parallel with | WU-001, WU-002, WU-006, WU-007, WU-100 |
@@ -20,14 +20,14 @@ Provide source for the sample apps and a deterministic, idempotent script that p
 
 | Source | Section | Relevance |
 |---|---|---|
-| [Architecture](../../Architecture/DotNetRepack.architecture.md#16-testing-strategy) | §16 Testing Strategy | App list, matrix, cache key |
-| [Architecture](../../Architecture/DotNetRepack.architecture.md#15-determinism) | §15 Determinism | Fingerprint format `(relativePath, size, sha256)` |
-| [Architecture](../../Architecture/DotNetRepack.architecture.md#71-folder-matching) | §7.1, [§7.6](../../Architecture/DotNetRepack.architecture.md#76-graphs) | Plugin nesting, cycle fixture |
+| [Architecture](../../Architecture/Tailor.architecture.md#16-testing-strategy) | §16 Testing Strategy | App list, matrix, cache key |
+| [Architecture](../../Architecture/Tailor.architecture.md#15-determinism) | §15 Determinism | Fingerprint format `(relativePath, size, sha256)` |
+| [Architecture](../../Architecture/Tailor.architecture.md#71-folder-matching) | §7.1, [§7.6](../../Architecture/Tailor.architecture.md#76-graphs) | Plugin nesting, cycle fixture |
 | [AS](../../Requirements/Application_Specification.md) | §10 folders, §11 classification, §12 associations, §16 graphs | Layout features to exercise |
 | [TS](../../Requirements/Transformation_Specification.md) | §15 resources, §33 example | `en`/`en-*`, other-RID removal, WPF plugin app |
 | [RD](../../Requirements/R2R_tool_Design.md) | §6 Plugin Architecture | One-way chain, cycle invariant |
 | [CK](../../Requirements/Read_to_run_Cake.md) | §2.2 app types, §7.1 native binaries, §7.3 resources | Coverage |
-| [Plan](../../Plans/DotNetRepack.plan.md#m0-foundation--repo-bootstrap) | M0 criteria 2–3; M2/M3/M8/M9 criteria; [risk R7](../../Plans/DotNetRepack.plan.md#risks-register) | Consumers |
+| [Plan](../../Plans/Tailor.plan.md#m0-foundation--repo-bootstrap) | M0 criteria 2–3; M2/M3/M8/M9 criteria; [risk R7](../../Plans/Tailor.plan.md#risks-register) | Consumers |
 
 ## Scope
 
@@ -42,7 +42,7 @@ Provide source for the sample apps and a deterministic, idempotent script that p
 | Path | Kind | TFMs | Features exercised |
 |---|---|---|---|
 | `Directory.Build.props`, `Directory.Packages.props` | isolation | — | Do **not** import repo root props; own CPM; `Deterministic=true`, `ContinuousIntegrationBuild=true`, `PathMap` to strip source roots, `GenerateDocumentationFile=true` for libraries, `DebugType=portable` |
-| `TestApps.slnx` | convenience solution | — | Not referenced from `DotNetRepack.slnx` |
+| `TestApps.slnx` | convenience solution | — | Not referenced from `Tailor.slnx` |
 | `ConsoleApp/` + `ConsoleApp.Library/` | console exe + classlib | `net8.0;net10.0` | Satellite resources `en`, `de`, `fr` (neutral culture invariant); library with PDB + XML doc; native DLL via a package with `runtimes/<rid>/native` assets; `--smoke` exits 0 |
 | `WinFormsApp/` | WinExe | `net8.0-windows;net10.0-windows` | GUI subsystem, `ApplicationIcon` (`app.ico`), version resources, `--smoke` exits 0 before showing UI |
 | `WpfApp/` | WinExe | `net8.0-windows;net10.0-windows` | As WinForms, WPF profile |
@@ -89,7 +89,7 @@ Publish command per variant: `dotnet publish <proj> -c Release -f <fullTfm> -r w
 }
 ```
 
-`expectedInvalid` is `null` for valid fixtures, or `{ "codes": ["RPK3401"], "reason": "<why>" }` for deliberately invalid ones. Every `PluginHostCyclic` variant sets it. Matrix-wide "zero errors" checks skip these variants and assert exactly the listed codes instead ([architecture §16](../../Architecture/DotNetRepack.architecture.md#16-testing-strategy)).
+`expectedInvalid` is `null` for valid fixtures, or `{ "codes": ["RPK3401"], "reason": "<why>" }` for deliberately invalid ones. Every `PluginHostCyclic` variant sets it. Matrix-wide "zero errors" checks skip these variants and assert exactly the listed codes instead ([architecture §16](../../Architecture/Tailor.architecture.md#16-testing-strategy)).
 
 ## Design Notes
 
@@ -101,7 +101,7 @@ Publish command per variant: `dotnet publish <proj> -c Release -f <fullTfm> -r w
 - **Determinism.** Isolated `--artifacts-path` per variant (no shared `obj`). Sequential builds. `PathMap`/`ContinuousIntegrationBuild` remove machine paths from PDBs. Hash every file; list files that still differ between two clean runs in `nonDeterministic` with a reason (expected candidates: none; verify R2R outputs and PDBs explicitly). The `_r2r-rsp` files contain absolute paths and are excluded from the manifest.
 - **`.rsp` retention.** Copy the crossgen2 `*.rsp` files that the SDK ReadyToRun targets write under the variant's intermediate directory (locate by search under `<temp>/<variant>/obj/**`; record the exact relative path in the script comment).
 - **Idempotence.** `sourceHash` = SHA-256 over sorted `(path, sha256)` of git-tracked `tests/TestApps/**`, `build/Build-TestApps.ps1`, `global.json`. Skip when `.source-hash` matches and all variant folders exist. Write output via a temp folder and move into place so an interrupted run leaves no partial variant.
-- **Launching** is a test-harness function, not a tool feature ([architecture §19 item 21](../../Architecture/DotNetRepack.architecture.md#19-resolved--open-inconsistencies)). net8 FD variants need the .NET 8 runtime installed.
+- **Launching** is a test-harness function, not a tool feature ([architecture §19 item 21](../../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies)). net8 FD variants need the .NET 8 runtime installed.
 - PowerShell 7 (`pwsh`), `Set-StrictMode -Version Latest`, `$ErrorActionPreference = 'Stop'`. External processes are started with argument arrays, never string concatenation.
 
 ## Acceptance Criteria
@@ -116,7 +116,7 @@ Publish command per variant: `dotnet publish <proj> -c Release -f <fullTfm> -r w
 - [ ] AC-8 `PluginHostCyclic/*/Plugins/PluginX/PluginX.dll` references `PluginY` and vice versa (verified with a short `System.Reflection.Metadata` or `ildasm`-free PowerShell check recorded in the PR). Every `PluginHostCyclic` variant has `expectedInvalid.codes = ["RPK3401"]` in `manifest.json`; every other variant has `expectedInvalid: null`.
 - [ ] AC-9 SC variants contain `hostfxr.dll` and `coreclr.dll`; FD variants do not; `*.runtimeconfig.json` of SC variants contains `includedFrameworks`.
 - [ ] AC-10 Every R2R variant has `artifacts/testapps/_r2r-rsp/<App>/<tfm>-<mode>/` with ≥ 1 `*.rsp`.
-- [ ] AC-11 `dotnet build DotNetRepack.slnx -c Release -warnaserror` and `dotnet format DotNetRepack.slnx --verify-no-changes` still pass (TestApps are isolated).
+- [ ] AC-11 `dotnet build Tailor.slnx -c Release -warnaserror` and `dotnet format Tailor.slnx --verify-no-changes` still pass (TestApps are isolated).
 - [ ] AC-12 With WU-002 merged, a CI re-run with unchanged TestApps sources restores `artifacts/testapps` from cache and skips the script (M0 criterion 3).
 
 ## Test Requirements
@@ -133,9 +133,9 @@ Publish command per variant: `dotnet publish <proj> -c Release -f <fullTfm> -r w
 
 ## Agent Notes
 
-- Load: [architecture §7.1, §7.6, §15, §16](../../Architecture/DotNetRepack.architecture.md), this spec, [WU-002 spec](WU-002-ci-pipeline.spec.md) (cache-key contract).
+- Load: [architecture §7.1, §7.6, §15, §16](../../Architecture/Tailor.architecture.md), this spec, [WU-002 spec](WU-002-ci-pipeline.spec.md) (cache-key contract).
 - Suggested prompt: `implement-work-unit` with `wu=WU-003`; skill `test-apps` if present.
-- Do not add TestApps to `DotNetRepack.slnx`. Do not commit anything under `artifacts/`.
+- Do not add TestApps to `Tailor.slnx`. Do not commit anything under `artifacts/`.
 
 ## Open Questions
 

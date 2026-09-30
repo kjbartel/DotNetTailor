@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-005, WU-700 |
 | Parallel with | M3–M7 |
-| Target | `src/DotNetRepack.Platform.Abstractions/` (`IApphostService`), `src/DotNetRepack.Platform.Windows/Apphost/`, `src/DotNetRepack.Transforms/DeploymentModel/ApphostTemplateResolver.cs`, `tests/DotNetRepack.Platform.Windows.Tests/` |
+| Target | `src/Tailor.Platform.Abstractions/` (`IApphostService`), `src/Tailor.Platform.Windows/Apphost/`, `src/Tailor.Transforms/DeploymentModel/ApphostTemplateResolver.cs`, `tests/Tailor.Platform.Windows.Tests/` |
 | Size | L |
 
 ## Goal
@@ -23,7 +23,7 @@ Create and rebind Windows apphosts without the SDK: patch the app-DLL placeholde
 | [TS §19](../../Requirements/Transformation_Specification.md#19-addition-rules) | Host pack as addition source; provenance |
 | [CK §5](../../Requirements/Read_to_run_Cake.md#5-deployment-model-transformations) | FD⇄SC combinations |
 | [RQ §5.3](../../Requirements/Repackage_tool_Requirements_v1.1.md#5-supported-transformation-categories) | Deployment model changes |
-| [Architecture §9.2](../../Architecture/DotNetRepack.architecture.md#92-apphost), [§12](../../Architecture/DotNetRepack.architecture.md#12-platform-abstraction), [§1.2](../../Architecture/DotNetRepack.architecture.md#12-non-goals-v1), [§19 item 12](../../Architecture/DotNetRepack.architecture.md#19-resolved--open-inconsistencies) | Custom patcher, bundle refusal, no re-signing |
+| [Architecture §9.2](../../Architecture/Tailor.architecture.md#92-apphost), [§12](../../Architecture/Tailor.architecture.md#12-platform-abstraction), [§1.2](../../Architecture/Tailor.architecture.md#12-non-goals-v1), [§19 item 12](../../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies) | Custom patcher, bundle refusal, no re-signing |
 
 ## Scope
 
@@ -72,10 +72,10 @@ Create and rebind Windows apphosts without the SDK: patch the app-DLL placeholde
 
 ## Test Requirements
 
-- xUnit v3 + golden files in `tests/DotNetRepack.Platform.Windows.Tests/` (Windows-only; tests skip with explicit reason on non-Windows) and `tests/DotNetRepack.Transforms.Tests/` for the resolver.
+- xUnit v3 + golden files in `tests/Tailor.Platform.Windows.Tests/` (Windows-only; tests skip with explicit reason on non-Windows) and `tests/Tailor.Transforms.Tests/` for the resolver.
 - Signed fixture: synthetic security-directory blob is sufficient; real signing optional.
 - Host packs via `LocalPackageFeedFixture` (offline); `Category=Network` only for extra versions. Matrix hosts under `Category=Matrix`; launch under `Category=Launch`.
-- Run: `dotnet test --project tests/DotNetRepack.Platform.Windows.Tests --filter-trait "WU=800"`; `dotnet test --project tests/DotNetRepack.Transforms.Tests --filter-trait "WU=800"`.
+- Run: `dotnet test --project tests/Tailor.Platform.Windows.Tests --filter-trait "WU=800"`; `dotnet test --project tests/Tailor.Transforms.Tests --filter-trait "WU=800"`.
 - Record Test Evidence in the PR.
 
 ## Definition of Done

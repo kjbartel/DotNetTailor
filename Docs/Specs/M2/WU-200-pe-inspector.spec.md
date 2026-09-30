@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-100 |
 | Parallel with | WU-201–WU-203, M1 |
-| Target project(s)/paths | `src/DotNetRepack.Inspection/Pe/`, `tests/DotNetRepack.Inspection.Tests/Pe/` (+ `Fixtures/Pe/`), `tests/DotNetRepack.IntegrationTests/Inspection/` |
+| Target project(s)/paths | `src/Tailor.Inspection/Pe/`, `tests/Tailor.Inspection.Tests/Pe/` (+ `Fixtures/Pe/`), `tests/Tailor.IntegrationTests/Inspection/` |
 | Size | M |
 
 ## Goal
@@ -19,10 +19,10 @@ Classify any file as non-PE, native PE, managed IL-only, or mixed-mode, and repo
 
 | Area | Requirements | Architecture |
 |---|---|---|
-| Binary inspection for classification | [AS §11.3](../../Requirements/Application_Specification.md), [AS §13.2](../../Requirements/Application_Specification.md), [AS §14](../../Requirements/Application_Specification.md) | [§7.2](../../Architecture/DotNetRepack.architecture.md#72-classification-as-11), [§7.4](../../Architecture/DotNetRepack.architecture.md#74-identities-and-inspection) |
-| R2R eligibility inputs | [TS §14.4](../../Requirements/Transformation_Specification.md), [RD §8.2](../../Requirements/R2R_tool_Design.md) | [§9.1](../../Architecture/DotNetRepack.architecture.md#91-readytorun-details) |
-| Single-file refusal | — | [§1.2](../../Architecture/DotNetRepack.architecture.md#12-non-goals-v1), [§7.4](../../Architecture/DotNetRepack.architecture.md#74-identities-and-inspection) |
-| Untrusted binaries | [RQ §12](../../Requirements/Repackage_tool_Requirements_v1.1.md) | [§17](../../Architecture/DotNetRepack.architecture.md#17-security) |
+| Binary inspection for classification | [AS §11.3](../../Requirements/Application_Specification.md), [AS §13.2](../../Requirements/Application_Specification.md), [AS §14](../../Requirements/Application_Specification.md) | [§7.2](../../Architecture/Tailor.architecture.md#72-classification-as-11), [§7.4](../../Architecture/Tailor.architecture.md#74-identities-and-inspection) |
+| R2R eligibility inputs | [TS §14.4](../../Requirements/Transformation_Specification.md), [RD §8.2](../../Requirements/R2R_tool_Design.md) | [§9.1](../../Architecture/Tailor.architecture.md#91-readytorun-details) |
+| Single-file refusal | — | [§1.2](../../Architecture/Tailor.architecture.md#12-non-goals-v1), [§7.4](../../Architecture/Tailor.architecture.md#74-identities-and-inspection) |
+| Untrusted binaries | [RQ §12](../../Requirements/Repackage_tool_Requirements_v1.1.md) | [§17](../../Architecture/Tailor.architecture.md#17-security) |
 
 ## Scope
 
@@ -40,7 +40,7 @@ Classify any file as non-PE, native PE, managed IL-only, or mixed-mode, and repo
 
 ## Deliverables
 
-Namespace `DotNetRepack.Inspection.Pe`.
+Namespace `Tailor.Inspection.Pe`.
 
 | Type | API |
 |---|---|
@@ -60,9 +60,9 @@ Diagnostics (minimum):
 
 ## Design Notes
 
-- Use only `System.Reflection.PortableExecutable.PEReader` / `System.Reflection.Metadata` ([§17](../../Architecture/DotNetRepack.architecture.md#17-security)); open streams with `PEStreamOptions.Default` (no `PrefetchEntireImage` for large files); wrap every read in bounds-checked accessors; catch `BadImageFormatException`, `InvalidOperationException`, `ArgumentOutOfRangeException` → diagnostic. Never throw to callers for bad input; I/O errors (file not found, access denied) are returned as `RPK2004`.
-- Fact rules per [§7.4](../../Architecture/DotNetRepack.architecture.md#74-identities-and-inspection): managed = `CorHeader != null`; mixed = managed and no `ILOnly`; R2R = `CorHeader.ManagedNativeHeaderDirectory` non-empty and signature `0x00525452`; composite component via the R2R `Component` flag; composite image = native PE with export `RTR_HEADER`. Flag values come from the runtime's `readytorun.h`; cite the source in a code comment.
-- Reference assembly: scan assembly-level custom attributes for `System.Runtime.CompilerServices.ReferenceAssemblyAttribute` by type name (no blob decoding). This deliberately lives here (not WU-201) so WU-702 can depend on WU-200 alone ([plan](../../Plans/DotNetRepack.plan.md)).
+- Use only `System.Reflection.PortableExecutable.PEReader` / `System.Reflection.Metadata` ([§17](../../Architecture/Tailor.architecture.md#17-security)); open streams with `PEStreamOptions.Default` (no `PrefetchEntireImage` for large files); wrap every read in bounds-checked accessors; catch `BadImageFormatException`, `InvalidOperationException`, `ArgumentOutOfRangeException` → diagnostic. Never throw to callers for bad input; I/O errors (file not found, access denied) are returned as `RPK2004`.
+- Fact rules per [§7.4](../../Architecture/Tailor.architecture.md#74-identities-and-inspection): managed = `CorHeader != null`; mixed = managed and no `ILOnly`; R2R = `CorHeader.ManagedNativeHeaderDirectory` non-empty and signature `0x00525452`; composite component via the R2R `Component` flag; composite image = native PE with export `RTR_HEADER`. Flag values come from the runtime's `readytorun.h`; cite the source in a code comment.
+- Reference assembly: scan assembly-level custom attributes for `System.Runtime.CompilerServices.ReferenceAssemblyAttribute` by type name (no blob decoding). This deliberately lives here (not WU-201) so WU-702 can depend on WU-200 alone ([plan](../../Plans/Tailor.plan.md)).
 - Bundle detection: apply the bundle-marker algorithm confirmed by spike WU-005 (bundle signature + non-zero header offset in an apphost). Detection must scan with a bounded buffer, not load the whole file into memory more than once.
 - Non-PE files (e.g. `.json`) return `Kind = NotPe` without a diagnostic when the `MZ` signature is absent.
 
@@ -82,11 +82,11 @@ Diagnostics (minimum):
 
 ## Test Requirements
 
-- xUnit v3 + golden files (`DotNetRepack.Testing.Golden`) in `tests/DotNetRepack.Inspection.Tests/`.
-- Unit tests in `tests/DotNetRepack.Inspection.Tests/Pe/` use synthetic in-memory PE images built with `System.Reflection.Metadata.Ecma335.MetadataBuilder` + `ManagedPEBuilder`/`PEBuilder`; add a small `SyntheticPe` builder in `tests/DotNetRepack.Inspection.Tests/Infrastructure/` (shared with WU-201/WU-202). Trait `WU=200`.
-- Matrix tests (AC-8, AC-9) in `tests/DotNetRepack.IntegrationTests/Inspection/PeInspectionMatrixTests` read `artifacts/testapps/manifest.json` (WU-003); traits `Category=Integration`, `Category=Matrix`, `WU=200`. Skip with an explicit reason locally when the matrix is absent; CI must not skip.
+- xUnit v3 + golden files (`Tailor.Testing.Golden`) in `tests/Tailor.Inspection.Tests/`.
+- Unit tests in `tests/Tailor.Inspection.Tests/Pe/` use synthetic in-memory PE images built with `System.Reflection.Metadata.Ecma335.MetadataBuilder` + `ManagedPEBuilder`/`PEBuilder`; add a small `SyntheticPe` builder in `tests/Tailor.Inspection.Tests/Infrastructure/` (shared with WU-201/WU-202). Trait `WU=200`.
+- Matrix tests (AC-8, AC-9) in `tests/Tailor.IntegrationTests/Inspection/PeInspectionMatrixTests` read `artifacts/testapps/manifest.json` (WU-003); traits `Category=Integration`, `Category=Matrix`, `WU=200`. Skip with an explicit reason locally when the matrix is absent; CI must not skip.
 - Malformed-PE and single-file fixtures are owned by this WU ([WU-003](../M0/WU-003-test-app-suite.spec.md) Out of scope).
-- Run: `dotnet test --project tests/DotNetRepack.Inspection.Tests --filter-trait "WU=200"`; `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=200"`.
+- Run: `dotnet test --project tests/Tailor.Inspection.Tests --filter-trait "WU=200"`; `dotnet test --project tests/Tailor.IntegrationTests --filter-trait "WU=200"`.
 - Record Test Evidence below and in the PR.
 
 ## Definition of Done
@@ -98,11 +98,11 @@ Diagnostics (minimum):
 
 - Read the WU-005 spike report/ADR for the bundle marker and any per-major differences before implementing AC-7.
 - Golden files hold only stable facts; SDK patch updates may change R2R minor versions.
-- `Inspection` references only `Core` ([§3.1](../../Architecture/DotNetRepack.architecture.md#31-project-responsibilities-and-allowed-dependencies)).
+- `Inspection` references only `Core` ([§3.1](../../Architecture/Tailor.architecture.md#31-project-responsibilities-and-allowed-dependencies)).
 
 ## Open Questions
 
-- M2 criterion "mixed classified correctly" needs a real mixed-mode binary; the C++/CLI fixture is optional (`-IncludeMixedMode` in WU-003, [§16](../../Architecture/DotNetRepack.architecture.md#16-testing-strategy)). Without it only the synthetic AC-2 covers mixed.
+- M2 criterion "mixed classified correctly" needs a real mixed-mode binary; the C++/CLI fixture is optional (`-IncludeMixedMode` in WU-003, [§16](../../Architecture/Tailor.architecture.md#16-testing-strategy)). Without it only the synthetic AC-2 covers mixed.
 - Committing a binary single-file fixture (AC-11) vs generating it in CI: this spec proposes committing it for determinism and speed.
 - Severity of malformed-PE diagnostics (warning vs error) at model level is decided by WU-301; here they are warnings.
 

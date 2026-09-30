@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-100 |
 | Parallel with | M2–M5 |
-| Target project(s)/paths | `src/DotNetRepack.Platform.Abstractions/Paths/`, `src/DotNetRepack.Platform.Windows/Paths/`, `src/DotNetRepack.Execution/Safety/`, `src/DotNetRepack.Execution/Staging/`, `tests/DotNetRepack.Execution.Tests/{Safety,Staging}/`, `tests/DotNetRepack.Platform.Windows.Tests/Paths/` |
+| Target project(s)/paths | `src/Tailor.Platform.Abstractions/Paths/`, `src/Tailor.Platform.Windows/Paths/`, `src/Tailor.Execution/Safety/`, `src/Tailor.Execution/Staging/`, `tests/Tailor.Execution.Tests/{Safety,Staging}/`, `tests/Tailor.Platform.Windows.Tests/Paths/` |
 | Size | M |
 | Branch / PR | `wu/600-output-safety-and-staging` / `WU-600: output-safety-and-staging` |
 
@@ -24,7 +24,7 @@ Guarantee safe output handling. Before any write, reject input/output (and symbo
 | [RQ §12](../../Requirements/Repackage_tool_Requirements_v1.1.md) | Safe failure, no partial output corruption |
 | [TS §24.4](../../Requirements/Transformation_Specification.md#24-validation-and-failure-policies), [TS §32](../../Requirements/Transformation_Specification.md#32-global-invariants) item 10 | Input/output identity and unsafe path traversal are unconditional errors |
 | [TS §2.4](../../Requirements/Transformation_Specification.md#2-lifecycle) | Execution produces a new directory |
-| Architecture [§11](../../Architecture/DotNetRepack.architecture.md#11-execution-and-safety), [§12](../../Architecture/DotNetRepack.architecture.md#12-platform-abstraction), [§17](../../Architecture/DotNetRepack.architecture.md#17-security), [§20](../../Architecture/DotNetRepack.architecture.md#20-open-questions) (`--force`) | Canonicalisation, staging, atomic rename, long paths, `IPathCanonicaliser` |
+| Architecture [§11](../../Architecture/Tailor.architecture.md#11-execution-and-safety), [§12](../../Architecture/Tailor.architecture.md#12-platform-abstraction), [§17](../../Architecture/Tailor.architecture.md#17-security), [§20](../../Architecture/Tailor.architecture.md#20-open-questions) (`--force`) | Canonicalisation, staging, atomic rename, long paths, `IPathCanonicaliser` |
 | Plan risk R9 | Rename retry with backoff, long paths |
 | Plan M6 criteria 2, 3 | AC-1–AC-10 |
 
@@ -93,9 +93,9 @@ Guarantee safe output handling. Before any write, reject input/output (and symbo
 
 ## Test Requirements
 
-- Unit: `tests/DotNetRepack.Execution.Tests/{Safety,Staging}/` with a fake canonicaliser and `IFileSystemOps` fault injection. Trait `WU=600`.
-- Platform: `tests/DotNetRepack.Platform.Windows.Tests/Paths/`, with real temp directories, junctions (`mklink /J` equivalent via API), symlinks and long paths. Traits `WU=600` (no category: runs in the default suite on the Windows host).
-- Run: `dotnet test --project tests/DotNetRepack.Execution.Tests --filter-trait "WU=600"`, `dotnet test --project tests/DotNetRepack.Platform.Windows.Tests --filter-trait "WU=600"`.
+- Unit: `tests/Tailor.Execution.Tests/{Safety,Staging}/` with a fake canonicaliser and `IFileSystemOps` fault injection. Trait `WU=600`.
+- Platform: `tests/Tailor.Platform.Windows.Tests/Paths/`, with real temp directories, junctions (`mklink /J` equivalent via API), symlinks and long paths. Traits `WU=600` (no category: runs in the default suite on the Windows host).
+- Run: `dotnet test --project tests/Tailor.Execution.Tests --filter-trait "WU=600"`, `dotnet test --project tests/Tailor.Platform.Windows.Tests --filter-trait "WU=600"`.
 - Record Test Evidence below and in the PR, including whether the symlink tests ran or skipped.
 
 ## Definition of Done

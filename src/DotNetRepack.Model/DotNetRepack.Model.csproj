@@ -1,8 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <ItemGroup>
-    <ProjectReference Include="..\DotNetRepack.Specifications\DotNetRepack.Specifications.csproj" />
-    <ProjectReference Include="..\DotNetRepack.Inspection\DotNetRepack.Inspection.csproj" />
-  </ItemGroup>
-
-</Project>

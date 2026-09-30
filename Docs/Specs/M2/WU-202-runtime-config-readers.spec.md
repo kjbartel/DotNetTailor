@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-100, WU-005 |
 | Parallel with | WU-200, WU-201, WU-203, M1 |
-| Target project(s)/paths | `src/DotNetRepack.Inspection/Runtime/`, `src/DotNetRepack.Inspection/Apphost/`, `tests/DotNetRepack.Inspection.Tests/Runtime/`, `tests/DotNetRepack.Inspection.Tests/Apphost/`, `tests/DotNetRepack.IntegrationTests/Inspection/` |
+| Target project(s)/paths | `src/Tailor.Inspection/Runtime/`, `src/Tailor.Inspection/Apphost/`, `tests/Tailor.Inspection.Tests/Runtime/`, `tests/Tailor.Inspection.Tests/Apphost/`, `tests/Tailor.IntegrationTests/Inspection/` |
 | Size | M |
 
 ## Goal
@@ -19,10 +19,10 @@ Read the runtime-facing configuration of an app: `*.runtimeconfig.json` (framewo
 
 | Area | Requirements | Architecture |
 |---|---|---|
-| Execution model | [AS §7.2](../../Requirements/Application_Specification.md), [AS §9.2](../../Requirements/Application_Specification.md), [AS §12.4](../../Requirements/Application_Specification.md) | [§7.4](../../Architecture/DotNetRepack.architecture.md#74-identities-and-inspection) (Apphost binding), [§3.1](../../Architecture/DotNetRepack.architecture.md#31-project-responsibilities-and-allowed-dependencies) (Inspection owns readers) |
-| FD/SC facts for later transforms | [TS §13](../../Requirements/Transformation_Specification.md), [TS §11.4](../../Requirements/Transformation_Specification.md), [RQ §5.3](../../Requirements/Repackage_tool_Requirements_v1.1.md) | [§9](../../Architecture/DotNetRepack.architecture.md#9-transformation-handlers), [§9.2](../../Architecture/DotNetRepack.architecture.md#92-apphost) |
-| Platform isolation | [RQ §11](../../Requirements/Repackage_tool_Requirements_v1.1.md) | [§12](../../Architecture/DotNetRepack.architecture.md#12-platform-abstraction) |
-| Untrusted input | [RQ §12](../../Requirements/Repackage_tool_Requirements_v1.1.md) | [§17](../../Architecture/DotNetRepack.architecture.md#17-security) |
+| Execution model | [AS §7.2](../../Requirements/Application_Specification.md), [AS §9.2](../../Requirements/Application_Specification.md), [AS §12.4](../../Requirements/Application_Specification.md) | [§7.4](../../Architecture/Tailor.architecture.md#74-identities-and-inspection) (Apphost binding), [§3.1](../../Architecture/Tailor.architecture.md#31-project-responsibilities-and-allowed-dependencies) (Inspection owns readers) |
+| FD/SC facts for later transforms | [TS §13](../../Requirements/Transformation_Specification.md), [TS §11.4](../../Requirements/Transformation_Specification.md), [RQ §5.3](../../Requirements/Repackage_tool_Requirements_v1.1.md) | [§9](../../Architecture/Tailor.architecture.md#9-transformation-handlers), [§9.2](../../Architecture/Tailor.architecture.md#92-apphost) |
+| Platform isolation | [RQ §11](../../Requirements/Repackage_tool_Requirements_v1.1.md) | [§12](../../Architecture/Tailor.architecture.md#12-platform-abstraction) |
+| Untrusted input | [RQ §12](../../Requirements/Repackage_tool_Requirements_v1.1.md) | [§17](../../Architecture/Tailor.architecture.md#17-security) |
 
 ## Scope
 
@@ -65,9 +65,9 @@ Diagnostics (minimum):
 
 - runtimeconfig: parse with `CanonicalJson.ReaderOptions` into `JsonObject`; runtimeconfig has no public reader API. Ignore `*.runtimeconfig.dev.json` (caller responsibility; document it). Keep `Raw` so WU-801 can edit while preserving unknown members.
 - deps.json: `DependencyContextJsonReader.Read(Stream)` (Microsoft.Extensions.DependencyModel via CPM). `IsRuntimePack` = library type `runtimepack` or name prefix `runtimepack.`. RID from `runtimeTarget.name` suffix after `/`.
-- Apphost binding: the SDK replaces the SHA-256(`foobar`) UTF-8 placeholder with the DLL path in a fixed 1024-byte buffer ([§9.2](../../Architecture/DotNetRepack.architecture.md#92-apphost)). After binding, the placeholder is gone, so the reader must locate the path with the algorithm confirmed by spike WU-005. Implement it behind `ApphostBindingReader` only. Validate the extracted path with `RelativePath.TryParse` (security, [§17](../../Architecture/DotNetRepack.architecture.md#17-security)).
+- Apphost binding: the SDK replaces the SHA-256(`foobar`) UTF-8 placeholder with the DLL path in a fixed 1024-byte buffer ([§9.2](../../Architecture/Tailor.architecture.md#92-apphost)). After binding, the placeholder is gone, so the reader must locate the path with the algorithm confirmed by spike WU-005. Implement it behind `ApphostBindingReader` only. Validate the extracted path with `RelativePath.TryParse` (security, [§17](../../Architecture/Tailor.architecture.md#17-security)).
 - Subsystem: from `PEHeaders.PEHeader.Subsystem` (`WindowsGui` → `Gui`, `WindowsCui` → `Console`).
-- Location per [§3.2](../../Architecture/DotNetRepack.architecture.md#32-cross-layer-contracts): this reader is the **single owner** of apphost binding reads (pure byte/PE parsing, no Win32 APIs). `IApphostService` (WU-800) has no read operation; `Platform.Windows` reuses this reader internally. No `Platform.*` reference from `Inspection`.
+- Location per [§3.2](../../Architecture/Tailor.architecture.md#32-cross-layer-contracts): this reader is the **single owner** of apphost binding reads (pure byte/PE parsing, no Win32 APIs). `IApphostService` (WU-800) has no read operation; `Platform.Windows` reuses this reader internally. No `Platform.*` reference from `Inspection`.
 - All readers are stateless and never throw for bad input.
 
 ## Acceptance Criteria
@@ -85,10 +85,10 @@ Diagnostics (minimum):
 
 ## Test Requirements
 
-- xUnit v3 + golden files (`DotNetRepack.Testing.Golden`) in `tests/DotNetRepack.Inspection.Tests/`.
+- xUnit v3 + golden files (`Tailor.Testing.Golden`) in `tests/Tailor.Inspection.Tests/`.
 - Unit fixtures: small hand-written runtimeconfig/deps.json files under `Fixtures/Runtime/` modelled on SDK output; synthetic apphost PE via `SyntheticPe` helper. Trait `WU=202`.
-- Matrix tests (AC-8, AC-9) in `tests/DotNetRepack.IntegrationTests/Inspection/RuntimeConfigMatrixTests` over `artifacts/testapps/manifest.json`; traits `Category=Integration`, `Category=Matrix`, `WU=202`; skip with reason locally when absent, CI must not skip.
-- Run: `dotnet test --project tests/DotNetRepack.Inspection.Tests --filter-trait "WU=202"`; `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=202"`.
+- Matrix tests (AC-8, AC-9) in `tests/Tailor.IntegrationTests/Inspection/RuntimeConfigMatrixTests` over `artifacts/testapps/manifest.json`; traits `Category=Integration`, `Category=Matrix`, `WU=202`; skip with reason locally when absent, CI must not skip.
+- Run: `dotnet test --project tests/Tailor.Inspection.Tests --filter-trait "WU=202"`; `dotnet test --project tests/Tailor.IntegrationTests --filter-trait "WU=202"`.
 - Record Test Evidence below and in the PR.
 
 ## Definition of Done
@@ -99,13 +99,13 @@ Diagnostics (minimum):
 ## Agent Notes
 
 - Read the WU-005 spike report/ADR first (WU-005 is a dependency); AC-7/AC-8 depend on its findings.
-- Do not copy code from Microsoft.NET.HostModel ([§9.2](../../Architecture/DotNetRepack.architecture.md#92-apphost)).
+- Do not copy code from Microsoft.NET.HostModel ([§9.2](../../Architecture/Tailor.architecture.md#92-apphost)).
 
 ## Open Questions
 
 - **Resolved** — WU-005 dependency: added to the plan.
 - **Resolved** — duplicate `ApphostBinding` types: this spec's `Inspection.Apphost.ApphostBinding` is the only one; `IApphostService` exposes no binding read (architecture §3.2).
-- Whether `ApphostBinding` should report the .NET 9+ `DOTNET_ROOT` search options ([§9.2](../../Architecture/DotNetRepack.architecture.md#92-apphost)); proposed: add when WU-800 needs it.
+- Whether `ApphostBinding` should report the .NET 9+ `DOTNET_ROOT` search options ([§9.2](../../Architecture/Tailor.architecture.md#92-apphost)); proposed: add when WU-800 needs it.
 
 ## Test Evidence
 

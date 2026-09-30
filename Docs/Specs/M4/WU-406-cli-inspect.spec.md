@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-404, WU-305 |
 | Parallel with | WU-405, M5, WU-1002 |
-| Target project(s)/paths | `src/DotNetRepack.Cli/Commands/Inspect/`, `tests/DotNetRepack.Cli.Tests/Inspect/`, `tests/DotNetRepack.IntegrationTests/Cli/Inspect/` |
+| Target project(s)/paths | `src/Tailor.Cli/Commands/Inspect/`, `tests/Tailor.Cli.Tests/Inspect/`, `tests/Tailor.IntegrationTests/Cli/Inspect/` |
 | Size | S |
 | Branch / PR | `wu/406-cli-inspect` / `WU-406: cli-inspect` |
 
@@ -23,7 +23,7 @@ Ship the `inspect` verb: show the derived artefacts and graphs of an application
 | [AS §22](../../Requirements/Application_Specification.md#22-derived-analysis-artefacts) | Derived, non-authoritative views |
 | [AS §16](../../Requirements/Application_Specification.md) | Plugin graph inspection |
 | [RQ §4.2](../../Requirements/Repackage_tool_Requirements_v1.1.md), [RQ §10](../../Requirements/Repackage_tool_Requirements_v1.1.md) | Non-mutating, dotnet-style CLI |
-| Architecture [§5](../../Architecture/DotNetRepack.architecture.md#5-artefacts), [§14](../../Architecture/DotNetRepack.architecture.md#14-cli), [§19](../../Architecture/DotNetRepack.architecture.md#19-resolved--open-inconsistencies) item 8 | Artefact set, synopsis, `inspect --plugin` replaces `tool plugin` |
+| Architecture [§5](../../Architecture/Tailor.architecture.md#5-artefacts), [§14](../../Architecture/Tailor.architecture.md#14-cli), [§19](../../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies) item 8 | Artefact set, synopsis, `inspect --plugin` replaces `tool plugin` |
 | Plan M4 criterion "`inspect` shows every derived artefact" | AC-1–AC-8 |
 
 ## Scope
@@ -69,9 +69,9 @@ Ship the `inspect` verb: show the derived artefacts and graphs of an application
 
 ## Test Requirements
 
-- Unit: `tests/DotNetRepack.Cli.Tests/Inspect/` (parsing, renderers over synthetic EAMs). Trait `WU=406`.
-- Integration: `tests/DotNetRepack.IntegrationTests/Cli/Inspect/`, in-process CLI over matrix copies with WU-305 hand-authored AppSpecs. Traits `Category=Integration`, `Category=Matrix`, `WU=406`.
-- Run: `dotnet test --project tests/DotNetRepack.Cli.Tests --filter-trait "WU=406"`; `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=406"`.
+- Unit: `tests/Tailor.Cli.Tests/Inspect/` (parsing, renderers over synthetic EAMs). Trait `WU=406`.
+- Integration: `tests/Tailor.IntegrationTests/Cli/Inspect/`, in-process CLI over matrix copies with WU-305 hand-authored AppSpecs. Traits `Category=Integration`, `Category=Matrix`, `WU=406`.
+- Run: `dotnet test --project tests/Tailor.Cli.Tests --filter-trait "WU=406"`; `dotnet test --project tests/Tailor.IntegrationTests --filter-trait "WU=406"`.
 - Record Test Evidence in the PR.
 
 ## Definition of Done

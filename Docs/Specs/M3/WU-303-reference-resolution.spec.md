@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-301, WU-201 |
 | Parallel with | WU-302 |
-| Target project(s)/paths | `src/DotNetRepack.Model/References/`, `src/DotNetRepack.Model/Identities/`, `src/DotNetRepack.Inspection/Frameworks/` (catalogue contract only), `tests/DotNetRepack.Model.Tests/References/` |
+| Target project(s)/paths | `src/Tailor.Model/References/`, `src/Tailor.Model/Identities/`, `src/Tailor.Inspection/Frameworks/` (catalogue contract only), `tests/Tailor.Model.Tests/References/` |
 | Size | M |
 | Branch / PR | `wu/303-reference-resolution` / `WU-303: reference-resolution` |
 
@@ -22,7 +22,7 @@ Resolve every managed assembly reference from declared, ordered reference roots 
 |---|---|
 | [AS §13](../../Requirements/Application_Specification.md#13-managed-assembly-model), [AS §15](../../Requirements/Application_Specification.md#15-dependency-and-reference-model) | Identity, reference paths, discovery, duplicates |
 | [RD §5.1](../../Requirements/R2R_tool_Design.md#51-resolution-context)–[§5.3](../../Requirements/R2R_tool_Design.md#53-resolution-rules) | Resolution contexts, identity, no probing, missing references |
-| Architecture [§7.4, §7.5](../../Architecture/DotNetRepack.architecture.md#7-effective-application-model-semantics), [§19](../../Architecture/DotNetRepack.architecture.md#19-resolved--open-inconsistencies) items 10, 20 | Framework catalogue, `knownUnresolved` |
+| Architecture [§7.4, §7.5](../../Architecture/Tailor.architecture.md#7-effective-application-model-semantics), [§19](../../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies) items 10, 20 | Framework catalogue, `knownUnresolved` |
 | Plan M4 criterion 3 (wrong reference root, removed file) | AC-4, AC-9 |
 
 ## Scope
@@ -43,12 +43,12 @@ Resolve every managed assembly reference from declared, ordered reference roots 
 
 | Item | Detail |
 |---|---|
-| `DotNetRepack.Model.Identities.AssemblyIdentityIndex` | Built from files classified `managed`/`platformManaged`; excludes reference assemblies; uses WU-201 identity (name, version, culture, PKT) |
-| `DotNetRepack.Model.References.ResolutionContext` | `FolderPath`, `FolderDefinitionId`, ordered `Roots`, `DuplicatePolicy` |
+| `Tailor.Model.Identities.AssemblyIdentityIndex` | Built from files classified `managed`/`platformManaged`; excludes reference assemblies; uses WU-201 identity (name, version, culture, PKT) |
+| `Tailor.Model.References.ResolutionContext` | `FolderPath`, `FolderDefinitionId`, ordered `Roots`, `DuplicatePolicy` |
 | `ReferenceRoot` parser | `<anchor>[/<subpath>]` where anchor ∈ `current`, `parent`, `root`, `folder:<id>`; plain relative path = root-relative |
 | `ReferenceResolver.Resolve(...)` → `ReferenceResolutionResult` | `Edges` (`FromPath`, `ReferenceIdentity`, `Outcome`, `ResolvedPath?`, `RootIndex?`), `Diagnostics` |
 | `ReferenceOutcome` | `Resolved`, `FrameworkVerified`, `FrameworkUnverified`, `KnownUnresolved`, `Unresolved`, `Ambiguous`, `VersionTooLow` |
-| `DotNetRepack.Inspection.Frameworks.IFrameworkCatalogue` + `EmptyFrameworkCatalogue` | `TryGetFrameworkAssembly(frameworkName, frameworkVersion, assemblyName, out FrameworkAssemblyInfo)`; lives in Inspection so Acquisition (WU-701) can implement it; the Cli wires the implementation, `EmptyFrameworkCatalogue` is the fallback (architecture §3.2) |
+| `Tailor.Inspection.Frameworks.IFrameworkCatalogue` + `EmptyFrameworkCatalogue` | `TryGetFrameworkAssembly(frameworkName, frameworkVersion, assemblyName, out FrameworkAssemblyInfo)`; lives in Inspection so Acquisition (WU-701) can implement it; the Cli wires the implementation, `EmptyFrameworkCatalogue` is the fallback (architecture §3.2) |
 | Diagnostic codes (proposed, `RPK33xx`) | `RPK3301` unresolved reference, `RPK3302` framework reference unverified (warning, one per distinct assembly name), `RPK3303` duplicate candidates under `error`, `RPK3304` candidate version lower than referenced, `RPK3305` invalid root (escapes root, unknown/ambiguous `folder:<id>`), `RPK3306` known-unresolved reference (warning), `RPK3307` stale `knownUnresolved` entry (warning) |
 
 ## Design Notes
@@ -77,9 +77,9 @@ Resolve every managed assembly reference from declared, ordered reference roots 
 
 ## Test Requirements
 
-- Unit: `tests/DotNetRepack.Model.Tests/References/`, synthetic trees with fake identity facts (no real PE needed); trait `WU=303`.
+- Unit: `tests/Tailor.Model.Tests/References/`, synthetic trees with fake identity facts (no real PE needed); trait `WU=303`.
 - One integration smoke over the plugin host FD/SC matrix entries: zero `RPK3301` with a hand-authored spec (full matrix golden files in WU-305).
-- Run: `dotnet test --project tests/DotNetRepack.Model.Tests --filter-trait "WU=303"`.
+- Run: `dotnet test --project tests/Tailor.Model.Tests --filter-trait "WU=303"`.
 - Record Test Evidence in the PR.
 
 ## Definition of Done

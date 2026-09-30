@@ -1,0 +1,35 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Tailor.Acquisition/Tailor.Acquisition.csproj" />
+    <Project Path="src/Tailor.Analysis/Tailor.Analysis.csproj" />
+    <Project Path="src/Tailor.Cli/Tailor.Cli.csproj" />
+    <Project Path="src/Tailor.Core/Tailor.Core.csproj" />
+    <Project Path="src/Tailor.Execution/Tailor.Execution.csproj" />
+    <Project Path="src/Tailor.Inspection/Tailor.Inspection.csproj" />
+    <Project Path="src/Tailor.Model/Tailor.Model.csproj" />
+    <Project Path="src/Tailor.Planning/Tailor.Planning.csproj" />
+    <Project Path="src/Tailor.Platform.Abstractions/Tailor.Platform.Abstractions.csproj" />
+    <Project Path="src/Tailor.Platform.Windows/Tailor.Platform.Windows.csproj" />
+    <Project Path="src/Tailor.Specifications/Tailor.Specifications.csproj" />
+    <Project Path="src/Tailor.Transforms/Tailor.Transforms.csproj" />
+    <Project Path="src/Tailor.Validation/Tailor.Validation.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Tailor.Acquisition.Tests/Tailor.Acquisition.Tests.csproj" />
+    <Project Path="tests/Tailor.Analysis.Tests/Tailor.Analysis.Tests.csproj" />
+    <Project Path="tests/Tailor.Cli.Tests/Tailor.Cli.Tests.csproj" />
+    <Project Path="tests/Tailor.Core.Tests/Tailor.Core.Tests.csproj" />
+    <Project Path="tests/Tailor.Execution.Tests/Tailor.Execution.Tests.csproj" />
+    <Project Path="tests/Tailor.Inspection.Tests/Tailor.Inspection.Tests.csproj" />
+    <Project Path="tests/Tailor.IntegrationTests/Tailor.IntegrationTests.csproj" />
+    <Project Path="tests/Tailor.Model.Tests/Tailor.Model.Tests.csproj" />
+    <Project Path="tests/Tailor.Planning.Tests/Tailor.Planning.Tests.csproj" />
+    <Project Path="tests/Tailor.Platform.Abstractions.Tests/Tailor.Platform.Abstractions.Tests.csproj" />
+    <Project Path="tests/Tailor.Platform.Windows.Tests/Tailor.Platform.Windows.Tests.csproj" />
+    <Project Path="tests/Tailor.RegressionTests/Tailor.RegressionTests.csproj" />
+    <Project Path="tests/Tailor.Specifications.Tests/Tailor.Specifications.Tests.csproj" />
+    <Project Path="tests/Tailor.Testing/Tailor.Testing.csproj" />
+    <Project Path="tests/Tailor.Transforms.Tests/Tailor.Transforms.Tests.csproj" />
+    <Project Path="tests/Tailor.Validation.Tests/Tailor.Validation.Tests.csproj" />
+  </Folder>
+</Solution>

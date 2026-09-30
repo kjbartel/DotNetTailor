@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-900, WU-901, WU-902, WU-704 |
 | Parallel with | WU-1000–WU-1002 |
-| Target project(s)/paths | `tests/DotNetRepack.IntegrationTests/` (TS §33 scenario, fixtures under `Fixtures/Ts33/`), `tests/DotNetRepack.RegressionTests/` (golden files). Production code only for defects found (see Scope) |
+| Target project(s)/paths | `tests/Tailor.IntegrationTests/` (TS §33 scenario, fixtures under `Fixtures/Ts33/`), `tests/Tailor.RegressionTests/` (golden files). Production code only for defects found (see Scope) |
 | Size | M |
 
 ## Goal
@@ -24,8 +24,8 @@ Prove that the [TS §33](../../Requirements/Transformation_Specification.md) con
 | [TS §25](../../Requirements/Transformation_Specification.md), [TS §26](../../Requirements/Transformation_Specification.md) | Output assertions, dry-run and per-file action report |
 | [TS §32.6–32.9, §32.12–32.14](../../Requirements/Transformation_Specification.md) | Composable, deterministic, explicit upgrades, preserve by default, plan before execution, projected validation |
 | [RQ §5](../../Requirements/Repackage_tool_Requirements_v1.1.md), [RQ §7](../../Requirements/Repackage_tool_Requirements_v1.1.md), [RQ §12](../../Requirements/Repackage_tool_Requirements_v1.1.md) | All categories combined, dry-run, determinism |
-| [Architecture §4, §11, §15, §16](../../Architecture/DotNetRepack.architecture.md) | Pipeline, staging, determinism, testing strategy |
-| [Plan M9 acceptance criteria](../../Plans/DotNetRepack.plan.md) | Milestone gate |
+| [Architecture §4, §11, §15, §16](../../Architecture/Tailor.architecture.md) | Pipeline, staging, determinism, testing strategy |
+| [Plan M9 acceptance criteria](../../Plans/Tailor.plan.md) | Milestone gate |
 
 ## Scope
 
@@ -56,7 +56,7 @@ Prove that the [TS §33](../../Requirements/Transformation_Specification.md) con
 
 ## Deliverables
 
-- `tests/DotNetRepack.IntegrationTests/Fixtures/Ts33/ts33.transform.json` (+ README comment block mapping the TS §33 bullets, if the JSON reader tolerates comments).
+- `tests/Tailor.IntegrationTests/Fixtures/Ts33/ts33.transform.json` (+ README comment block mapping the TS §33 bullets, if the JSON reader tolerates comments).
 - Integration test class `Ts33CombinedTransformTests` and golden files of the normalised plan, projected AppSpec and output AppSpec.
 - Any local feed additions needed (net10 runtime/host/crossgen2 packs, library versions).
 
@@ -83,7 +83,7 @@ Prove that the [TS §33](../../Requirements/Transformation_Specification.md) con
 ## Test Requirements
 
 - xUnit v3 on MTP, golden files. Tests run offline against the local package feed fixture (net10 runtime, WindowsDesktop, host, crossgen2 packs; library versions).
-- Mark the class `Category=Integration`, `Category=Matrix`, `Category=Launch` (nightly if CI time requires, plan risk R7) but runnable locally with one command: `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=903"`.
+- Mark the class `Category=Integration`, `Category=Matrix`, `Category=Launch` (nightly if CI time requires, plan risk R7) but runnable locally with one command: `dotnet test --project tests/Tailor.IntegrationTests --filter-trait "WU=903"`.
 - Record Test Evidence: commands, TRX, output hash manifests of both runs, and launch log.
 
 ## Definition of Done

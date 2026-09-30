@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-100, WU-007 (consumes `Specifications.Common` from WU-101, see Agent Notes) |
 | Parallel with | WU-101, WU-105, M2 |
-| Target project(s)/paths | `src/DotNetRepack.Specifications/TransformSpec/`, `schemas/transformspec/v1/transformspec.schema.json`, `tests/DotNetRepack.Specifications.Tests/` (`TransformSpec/`, `Fixtures/TransformSpec/`) |
+| Target project(s)/paths | `src/Tailor.Specifications/TransformSpec/`, `schemas/transformspec/v1/transformspec.schema.json`, `tests/Tailor.Specifications.Tests/` (`TransformSpec/`, `Fixtures/TransformSpec/`) |
 | Size | L |
 
 ## Goal
@@ -19,11 +19,11 @@ Define the v1 TransformSpec object model (intent only), its tolerant read and ca
 
 | Area | Requirements | Architecture |
 |---|---|---|
-| Identity, schema | [TS §5](../../Requirements/Transformation_Specification.md), [TS §32](../../Requirements/Transformation_Specification.md) (16) | [§6.1](../../Architecture/DotNetRepack.architecture.md#61-common-rules) |
-| Sections | [TS §6](../../Requirements/Transformation_Specification.md)–[§25](../../Requirements/Transformation_Specification.md), [TS §27](../../Requirements/Transformation_Specification.md) (`includes` as data), [TS §28](../../Requirements/Transformation_Specification.md) (declarations only), [TS §29](../../Requirements/Transformation_Specification.md) | [§6.3](../../Architecture/DotNetRepack.architecture.md#63-transformspec-shape-illustrative-the-wu-102-schema-is-normative), [§8](../../Architecture/DotNetRepack.architecture.md#8-selectors-precedence-and-actions) |
-| Extensibility | [TS §7.2](../../Requirements/Transformation_Specification.md), [TS §14.2](../../Requirements/Transformation_Specification.md), [TS §32](../../Requirements/Transformation_Specification.md) (17) | [§3.1](../../Architecture/DotNetRepack.architecture.md#31-project-responsibilities-and-allowed-dependencies) (wiring by category) |
+| Identity, schema | [TS §5](../../Requirements/Transformation_Specification.md), [TS §32](../../Requirements/Transformation_Specification.md) (16) | [§6.1](../../Architecture/Tailor.architecture.md#61-common-rules) |
+| Sections | [TS §6](../../Requirements/Transformation_Specification.md)–[§25](../../Requirements/Transformation_Specification.md), [TS §27](../../Requirements/Transformation_Specification.md) (`includes` as data), [TS §28](../../Requirements/Transformation_Specification.md) (declarations only), [TS §29](../../Requirements/Transformation_Specification.md) | [§6.3](../../Architecture/Tailor.architecture.md#63-transformspec-shape-illustrative-the-wu-102-schema-is-normative), [§8](../../Architecture/Tailor.architecture.md#8-selectors-precedence-and-actions) |
+| Extensibility | [TS §7.2](../../Requirements/Transformation_Specification.md), [TS §14.2](../../Requirements/Transformation_Specification.md), [TS §32](../../Requirements/Transformation_Specification.md) (17) | [§3.1](../../Architecture/Tailor.architecture.md#31-project-responsibilities-and-allowed-dependencies) (wiring by category) |
 | Conceptual example | [TS §33](../../Requirements/Transformation_Specification.md) | — |
-| No credentials | [TS §29.2](../../Requirements/Transformation_Specification.md), [TS §12.4](../../Requirements/Transformation_Specification.md) | [§17](../../Architecture/DotNetRepack.architecture.md#17-security) |
+| No credentials | [TS §29.2](../../Requirements/Transformation_Specification.md), [TS §12.4](../../Requirements/Transformation_Specification.md) | [§17](../../Architecture/Tailor.architecture.md#17-security) |
 
 ## Scope
 
@@ -39,7 +39,7 @@ Define the v1 TransformSpec object model (intent only), its tolerant read and ca
 
 ## Deliverables
 
-Namespace `DotNetRepack.Specifications.TransformSpec`. Root `sealed record TransformSpecDocument : SpecificationDocument`, adding `id?`, `description?` ([TS §5.2](../../Requirements/Transformation_Specification.md)). All top-level sections optional in the schema.
+Namespace `Tailor.Specifications.TransformSpec`. Root `sealed record TransformSpecDocument : SpecificationDocument`, adding `id?`, `description?` ([TS §5.2](../../Requirements/Transformation_Specification.md)). All top-level sections optional in the schema.
 
 | JSON member | Model | TS ref |
 |---|---|---|
@@ -59,21 +59,21 @@ Namespace `DotNetRepack.Specifications.TransformSpec`. Root `sealed record Trans
 | `sources[]` | `PackageSource`: `name?` \| `url?` (no credential members) | §29 |
 | `output.assert` | `StateAssertions` plus `absentCultures[]?`, `readyToRun?` (`select`, `state` `compiled\|notCompiled`), `symbols?` | §25 |
 
-`Selector` (single record; properties in one object are AND-ed): `all[]?`, `any[]?`, `not?`, `folderId?`, `folderRole?`, `classification?`, `association?`, `assemblyRole?`, `plugin?`, `frameworkRole?`, `rid?`, `culture?`, `tfm?`, `name?`, `path?` — each predicate a `StringList` (string or array) ([§8](../../Architecture/DotNetRepack.architecture.md#8-selectors-precedence-and-actions), [TS §8](../../Requirements/Transformation_Specification.md)). Empty object `{}` is invalid; absent means whole app ([TS §8.5](../../Requirements/Transformation_Specification.md)).
+`Selector` (single record; properties in one object are AND-ed): `all[]?`, `any[]?`, `not?`, `folderId?`, `folderRole?`, `classification?`, `association?`, `assemblyRole?`, `plugin?`, `frameworkRole?`, `rid?`, `culture?`, `tfm?`, `name?`, `path?` — each predicate a `StringList` (string or array) ([§8](../../Architecture/Tailor.architecture.md#8-selectors-precedence-and-actions), [TS §8](../../Requirements/Transformation_Specification.md)). Empty object `{}` is invalid; absent means whole app ([TS §8.5](../../Requirements/Transformation_Specification.md)).
 
 Per-document structural checks (`RPK1200`–`1299`): duplicate `rules[].id` / `layout[].id` / `additions[].id`; empty selector object; `not` with zero predicates; library entry `allow: range` without `range`, `exact` without `version`; `sources[]` entry with both or neither of `name`/`url`, or a `url` containing userinfo (`user:pass@`) → structural error; `layout.destination`/`additions.destination` failing `RelativePath`; invalid variable name.
 
 Schema: `schemas/transformspec/v1/transformspec.schema.json`, same generator and post-processing as WU-101; `kind` const `TransformSpec`; `TransformSpecFormat.Instance` supports `1.0`.
 
-Fixtures (`Fixtures/TransformSpec/`): `minimal`, `architecture-example` ([§6.3](../../Architecture/DotNetRepack.architecture.md#63-transformspec-shape-illustrative-the-wu-102-schema-is-normative)), `ts33-conceptual-example` (every bullet of [TS §33](../../Requirements/Transformation_Specification.md) expressed: retarget `net10.0-windows`, SC `win-x64`, `latestPatch` runtime, selected library with `allow`, preserve app/plugin assemblies, exclude other-RID runtime assets, keep `en`/`en-*`, preserve associated config, exclude XML docs, symbols `separate`, R2R on app+plugin roles except an excluded name, catch-all preserve), `commented`, plus invalid: `unknown-member`, `wrong-kind`, `major-2`, `credential-in-url`, `duplicate-rule-id`, `empty-selector`, `unknown-policy-condition`.
+Fixtures (`Fixtures/TransformSpec/`): `minimal`, `architecture-example` ([§6.3](../../Architecture/Tailor.architecture.md#63-transformspec-shape-illustrative-the-wu-102-schema-is-normative)), `ts33-conceptual-example` (every bullet of [TS §33](../../Requirements/Transformation_Specification.md) expressed: retarget `net10.0-windows`, SC `win-x64`, `latestPatch` runtime, selected library with `allow`, preserve app/plugin assemblies, exclude other-RID runtime assets, keep `en`/`en-*`, preserve associated config, exclude XML docs, symbols `separate`, R2R on app+plugin roles except an excluded name, catch-all preserve), `commented`, plus invalid: `unknown-member`, `wrong-kind`, `major-2`, `credential-in-url`, `duplicate-rule-id`, `empty-selector`, `unknown-policy-condition`.
 
 ## Design Notes
 
 - Reuse `SpecificationReader`/`Writer`/`SchemaGenerator` from WU-101; do not fork them.
 - Keep `${name}` strings verbatim; therefore members that may hold variables must be `string`-typed in the model (TFM, versions, RID, package version). Enum-typed members cannot carry variables — see Open Questions.
 - `operations.extensions` is the only open-schema point; everything else is `additionalProperties: false` ([TS §32](../../Requirements/Transformation_Specification.md) item 17 vs strict schema).
-- No credential-shaped members anywhere in the model ([§17](../../Architecture/DotNetRepack.architecture.md#17-security)).
-- Runtime and library version policies are separate types ([§10](../../Architecture/DotNetRepack.architecture.md#10-acquisition)). Each exposes a pure mapping onto a NuGet range string per the architecture §10 table: `RuntimeVersionPolicy.ToRangeString(string sourceVersion, string targetMajorMinor)` and `LibraryVersionPolicy.ToRangeString(string currentVersion)` (semantic-version arithmetic only; no NuGet package reference). Handlers (WU-803/804/900/901/902) parse the result and call the WU-700 resolver. There is no implicit runtime version: the model allows `runtimeVersion` to be absent, and the owning handlers report a missing value as a validation error when their operation changes the runtime.
+- No credential-shaped members anywhere in the model ([§17](../../Architecture/Tailor.architecture.md#17-security)).
+- Runtime and library version policies are separate types ([§10](../../Architecture/Tailor.architecture.md#10-acquisition)). Each exposes a pure mapping onto a NuGet range string per the architecture §10 table: `RuntimeVersionPolicy.ToRangeString(string sourceVersion, string targetMajorMinor)` and `LibraryVersionPolicy.ToRangeString(string currentVersion)` (semantic-version arithmetic only; no NuGet package reference). Handlers (WU-803/804/900/901/902) parse the result and call the WU-700 resolver. There is no implicit runtime version: the model allows `runtimeVersion` to be absent, and the owning handlers report a missing value as a validation error when their operation changes the runtime.
 - Canonical output and round-trip semantics as WU-101.
 
 ## Acceptance Criteria
@@ -92,8 +92,8 @@ Fixtures (`Fixtures/TransformSpec/`): `minimal`, `architecture-example` ([§6.3]
 
 ## Test Requirements
 
-- xUnit v3 + golden files (`DotNetRepack.Testing.Golden`) in `tests/DotNetRepack.Specifications.Tests/`, namespace `…Tests.TransformSpec`. Fixtures copied to output. Trait `WU=102`.
-- Run: `dotnet test --project tests/DotNetRepack.Specifications.Tests --filter-trait "WU=102"`.
+- xUnit v3 + golden files (`Tailor.Testing.Golden`) in `tests/Tailor.Specifications.Tests/`, namespace `…Tests.TransformSpec`. Fixtures copied to output. Trait `WU=102`.
+- Run: `dotnet test --project tests/Tailor.Specifications.Tests --filter-trait "WU=102"`.
 - Record Test Evidence below and in the PR.
 
 ## Definition of Done
@@ -105,7 +105,7 @@ Fixtures (`Fixtures/TransformSpec/`): `minimal`, `architecture-example` ([§6.3]
 ## Agent Notes
 
 - `Specifications.Common` is delivered by WU-101. If WU-101 is not merged, start with the TransformSpec model types and fixtures, then rebase onto WU-101's `Common/` before wiring the reader and schema; do not create a second copy.
-- Use the selector vocabulary from [§8](../../Architecture/DotNetRepack.architecture.md#8-selectors-precedence-and-actions) exactly; no new predicates.
+- Use the selector vocabulary from [§8](../../Architecture/Tailor.architecture.md#8-selectors-precedence-and-actions) exactly; no new predicates.
 - The TS §33 fixture is reused by WU-903 and the WU-1003 template; keep it realistic.
 
 ## Open Questions

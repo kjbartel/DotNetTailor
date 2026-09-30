@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-504, WU-505, WU-404, WU-507 |
 | Parallel with | WU-602, WU-604 |
-| Target project(s)/paths | `src/DotNetRepack.Planning/Artefacts/`, `schemas/plan/v1/plan.schema.json`, `src/DotNetRepack.Cli/Commands/Plan/`, `src/DotNetRepack.Cli/Commands/Apply/` (dry-run path only), `src/DotNetRepack.Cli/Composition/`, `tests/DotNetRepack.Planning.Tests/Artefacts/`, `tests/DotNetRepack.Cli.Tests/`, `tests/DotNetRepack.IntegrationTests/Cli/Plan/` |
+| Target project(s)/paths | `src/Tailor.Planning/Artefacts/`, `schemas/plan/v1/plan.schema.json`, `src/Tailor.Cli/Commands/Plan/`, `src/Tailor.Cli/Commands/Apply/` (dry-run path only), `src/Tailor.Cli/Composition/`, `tests/Tailor.Planning.Tests/Artefacts/`, `tests/Tailor.Cli.Tests/`, `tests/Tailor.IntegrationTests/Cli/Plan/` |
 | Size | M |
 | Branch / PR | `wu/506-plan-artefacts-and-cli-plan` / `WU-506: plan-artefacts-and-cli-plan` |
 
@@ -24,7 +24,7 @@ Serialise planning results into deterministic artefacts (`*.plan.json` with sche
 | [TS §31](../../Requirements/Transformation_Specification.md#31-relationship-to-transformation-plans-and-logs), [TS §29.3](../../Requirements/Transformation_Specification.md#29-external-sources-and-credentials), [TS §3.6](../../Requirements/Transformation_Specification.md#3-design-principles) | Plan content, pinned external identities, determinism |
 | [RQ §6](../../Requirements/Repackage_tool_Requirements_v1.1.md), [RQ §8](../../Requirements/Repackage_tool_Requirements_v1.1.md), [RQ §12](../../Requirements/Repackage_tool_Requirements_v1.1.md) | Ordering reflected in outputs; separate artefacts; auditable, deterministic |
 | [TS §5](../../Requirements/Transformation_Specification.md#5-specification-identity-and-schema) | Versioned schemas (applied to `kind: Plan`) |
-| Architecture [§5](../../Architecture/DotNetRepack.architecture.md#5-artefacts), [§6.1](../../Architecture/DotNetRepack.architecture.md#61-common-rules), [§13](../../Architecture/DotNetRepack.architecture.md#13-diagnostics-failure-policy-and-exit-codes), [§14](../../Architecture/DotNetRepack.architecture.md#14-cli), [§15](../../Architecture/DotNetRepack.architecture.md#15-determinism) | Artefact set, header rules, exit codes, verbs, canonical JSON |
+| Architecture [§5](../../Architecture/Tailor.architecture.md#5-artefacts), [§6.1](../../Architecture/Tailor.architecture.md#61-common-rules), [§13](../../Architecture/Tailor.architecture.md#13-diagnostics-failure-policy-and-exit-codes), [§14](../../Architecture/Tailor.architecture.md#14-cli), [§15](../../Architecture/Tailor.architecture.md#15-determinism) | Artefact set, header rules, exit codes, verbs, canonical JSON |
 | Plan M5 criteria 1, 3 | AC-6–AC-9 |
 
 ## Scope
@@ -88,9 +88,9 @@ Serialise planning results into deterministic artefacts (`*.plan.json` with sche
 
 ## Test Requirements
 
-- Unit: `tests/DotNetRepack.Planning.Tests/Artefacts/` (DTO mapping, canonical form, schema drift) and `tests/DotNetRepack.Cli.Tests/` (parsing, locations, exit mapping). Trait `WU=506`.
-- Integration: `tests/DotNetRepack.IntegrationTests/Cli/Plan/`, in-process CLI over matrix copies (never in place) with WU-504 scenario TransformSpecs. Traits `Category=Integration`, `Category=Matrix`, `WU=506`.
-- Run: `dotnet test --project tests/DotNetRepack.Planning.Tests --filter-trait "WU=506"`, `dotnet test --project tests/DotNetRepack.Cli.Tests --filter-trait "WU=506"`, `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=506"`.
+- Unit: `tests/Tailor.Planning.Tests/Artefacts/` (DTO mapping, canonical form, schema drift) and `tests/Tailor.Cli.Tests/` (parsing, locations, exit mapping). Trait `WU=506`.
+- Integration: `tests/Tailor.IntegrationTests/Cli/Plan/`, in-process CLI over matrix copies (never in place) with WU-504 scenario TransformSpecs. Traits `Category=Integration`, `Category=Matrix`, `WU=506`.
+- Run: `dotnet test --project tests/Tailor.Planning.Tests --filter-trait "WU=506"`, `dotnet test --project tests/Tailor.Cli.Tests --filter-trait "WU=506"`, `dotnet test --project tests/Tailor.IntegrationTests --filter-trait "WU=506"`.
 - Record Test Evidence below and in the PR.
 
 ## Definition of Done
@@ -99,7 +99,7 @@ Serialise planning results into deterministic artefacts (`*.plan.json` with sche
 
 ## Agent Notes
 
-- Reuse the WU-404 CLI in-process helpers and `TreeFingerprint`. Build the directory-snapshot helper for AC-6 in `tests/DotNetRepack.Testing` so that WU-603 and WU-704 can reuse it.
+- Reuse the WU-404 CLI in-process helpers and `TreeFingerprint`. Build the directory-snapshot helper for AC-6 in `tests/Tailor.Testing` so that WU-603 and WU-704 can reuse it.
 - Register `NoAcquisitionPlanner` in the Cli composition for v0.2.0.
 
 ## Open Questions

@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-100 |
 | Parallel with | WU-200, WU-202, WU-203, M1 |
-| Target project(s)/paths | `src/DotNetRepack.Inspection/Metadata/`, `tests/DotNetRepack.Inspection.Tests/Metadata/`, `tests/DotNetRepack.IntegrationTests/Inspection/` |
+| Target project(s)/paths | `src/Tailor.Inspection/Metadata/`, `tests/Tailor.Inspection.Tests/Metadata/`, `tests/Tailor.IntegrationTests/Inspection/` |
 | Size | M |
 
 ## Goal
@@ -19,12 +19,12 @@ Read managed assembly facts from ECMA-335 metadata: identity (name, version, cul
 
 | Area | Requirements | Architecture |
 |---|---|---|
-| Assembly model | [AS §13.2](../../Requirements/Application_Specification.md), [AS §13.3](../../Requirements/Application_Specification.md) | [§7.4](../../Architecture/DotNetRepack.architecture.md#74-identities-and-inspection) |
-| Identity | [RD §5.2](../../Requirements/R2R_tool_Design.md) | [§7.5](../../Architecture/DotNetRepack.architecture.md#75-reference-resolution-as-15-rd-5) |
-| Dependency discovery | [AS §15.3](../../Requirements/Application_Specification.md) | [§7.5](../../Architecture/DotNetRepack.architecture.md#75-reference-resolution-as-15-rd-5) |
-| Satellites | [AS §17.2](../../Requirements/Application_Specification.md) | [§7.4](../../Architecture/DotNetRepack.architecture.md#74-identities-and-inspection) |
-| Compat scan (consumer WU-901) | [TS §11.5](../../Requirements/Transformation_Specification.md), [RQ §5.1](../../Requirements/Repackage_tool_Requirements_v1.1.md) | [§9](../../Architecture/DotNetRepack.architecture.md#9-transformation-handlers) (Retarget row) |
-| Untrusted input | [RQ §12](../../Requirements/Repackage_tool_Requirements_v1.1.md) | [§17](../../Architecture/DotNetRepack.architecture.md#17-security) |
+| Assembly model | [AS §13.2](../../Requirements/Application_Specification.md), [AS §13.3](../../Requirements/Application_Specification.md) | [§7.4](../../Architecture/Tailor.architecture.md#74-identities-and-inspection) |
+| Identity | [RD §5.2](../../Requirements/R2R_tool_Design.md) | [§7.5](../../Architecture/Tailor.architecture.md#75-reference-resolution-as-15-rd-5) |
+| Dependency discovery | [AS §15.3](../../Requirements/Application_Specification.md) | [§7.5](../../Architecture/Tailor.architecture.md#75-reference-resolution-as-15-rd-5) |
+| Satellites | [AS §17.2](../../Requirements/Application_Specification.md) | [§7.4](../../Architecture/Tailor.architecture.md#74-identities-and-inspection) |
+| Compat scan (consumer WU-901) | [TS §11.5](../../Requirements/Transformation_Specification.md), [RQ §5.1](../../Requirements/Repackage_tool_Requirements_v1.1.md) | [§9](../../Architecture/Tailor.architecture.md#9-transformation-handlers) (Retarget row) |
+| Untrusted input | [RQ §12](../../Requirements/Repackage_tool_Requirements_v1.1.md) | [§17](../../Architecture/Tailor.architecture.md#17-security) |
 
 ## Scope
 
@@ -40,7 +40,7 @@ Read managed assembly facts from ECMA-335 metadata: identity (name, version, cul
 
 ## Deliverables
 
-Namespace `DotNetRepack.Inspection.Metadata`.
+Namespace `Tailor.Inspection.Metadata`.
 
 | Type | API |
 |---|---|
@@ -57,11 +57,11 @@ Diagnostics (minimum): `RPK2101` PE has no assembly manifest (netmodule/native);
 
 - Use `PEReader.GetMetadataReader()`; decode attributes with `CustomAttribute.DecodeValue` and a minimal `ICustomAttributeTypeProvider<T>` (strings/primitives only).
 - Public key token: if `AssemblyDefinition.PublicKey` is a full key, compute token; `AssemblyReference.PublicKeyOrToken` may already be a token (`AssemblyFlags.PublicKey` distinguishes).
-- Satellite rule ([§7.4](../../Architecture/DotNetRepack.architecture.md#74-identities-and-inspection)): non-empty culture **and** name ends with `.resources` (ordinal-ignore-case). Culture validity is not checked here (WU-203 does that at model level).
+- Satellite rule ([§7.4](../../Architecture/Tailor.architecture.md#74-identities-and-inspection)): non-empty culture **and** name ends with `.resources` (ordinal-ignore-case). Culture validity is not checked here (WU-203 does that at model level).
 - TFM short-form mapping: `.NETCoreApp,Version=vX.Y` → `netX.Y`; `.NETStandard,Version=vX.Y` → `netstandardX.Y`; `.NETFramework,Version=vX.Y[.Z]` → `netXY[Z]`; platform suffix is not derivable from the attribute (`TargetPlatformAttribute` optional read → `-windows`). Unknown identifiers keep the raw value (`RPK2104`).
 - Reference lists and scans are sorted deterministically (identity order; then namespace, name, member name, signature).
 - Signature display for MemberRefs uses a `ISignatureTypeProvider<string, …>` producing a stable, culture-invariant string.
-- Exceptions from malformed metadata are caught and converted to `RPK2102`; never thrown ([§17](../../Architecture/DotNetRepack.architecture.md#17-security)).
+- Exceptions from malformed metadata are caught and converted to `RPK2102`; never thrown ([§17](../../Architecture/Tailor.architecture.md#17-security)).
 
 ## Acceptance Criteria
 
@@ -77,10 +77,10 @@ Diagnostics (minimum): `RPK2101` PE has no assembly manifest (netmodule/native);
 
 ## Test Requirements
 
-- xUnit v3 + golden files (`DotNetRepack.Testing.Golden`) in `tests/DotNetRepack.Inspection.Tests/`.
+- xUnit v3 + golden files (`Tailor.Testing.Golden`) in `tests/Tailor.Inspection.Tests/`.
 - Unit tests use synthetic assemblies built with `MetadataBuilder`/`ManagedPEBuilder` via the shared `SyntheticPe` helper (coordinate with WU-200; whichever lands first creates it). Trait `WU=201`.
-- Matrix test (AC-9) in `tests/DotNetRepack.IntegrationTests/Inspection/MetadataMatrixTests` over `artifacts/testapps/manifest.json`; traits `Category=Integration`, `Category=Matrix`, `WU=201`; skip with reason locally when absent, CI must not skip.
-- Run: `dotnet test --project tests/DotNetRepack.Inspection.Tests --filter-trait "WU=201"`; `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=201"`.
+- Matrix test (AC-9) in `tests/Tailor.IntegrationTests/Inspection/MetadataMatrixTests` over `artifacts/testapps/manifest.json`; traits `Category=Integration`, `Category=Matrix`, `WU=201`; skip with reason locally when absent, CI must not skip.
+- Run: `dotnet test --project tests/Tailor.Inspection.Tests --filter-trait "WU=201"`; `dotnet test --project tests/Tailor.IntegrationTests --filter-trait "WU=201"`.
 - Record Test Evidence below and in the PR.
 
 ## Definition of Done

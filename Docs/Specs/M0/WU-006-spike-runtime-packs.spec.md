@@ -4,7 +4,7 @@
 |---|---|
 | ID | WU-006 |
 | Title | spike-runtime-packs |
-| Milestone | [M0 Foundation & Repo Bootstrap](../../Plans/DotNetRepack.plan.md#m0-foundation--repo-bootstrap) |
+| Milestone | [M0 Foundation & Repo Bootstrap](../../Plans/Tailor.plan.md#m0-foundation--repo-bootstrap) |
 | Status | Not started |
 | Depends on | WU-000 |
 | Parallel with | WU-001–WU-004, WU-007, WU-100 |
@@ -20,14 +20,14 @@ Determine whether `data/RuntimeList.xml` in the runtime packs is a complete, rel
 
 | Source | Section | Relevance |
 |---|---|---|
-| [Architecture](../../Architecture/DotNetRepack.architecture.md#10-acquisition) | §10 Acquisition (RuntimeList catalogue) | Assumption to confirm |
-| [Architecture](../../Architecture/DotNetRepack.architecture.md#75-reference-resolution) | §7.5 framework catalogue | Framework reference resolution |
-| [Architecture](../../Architecture/DotNetRepack.architecture.md#9-transformation-handlers) | §9 Patch.Runtime, DeploymentModel rows | Diff and removal semantics |
-| [Architecture](../../Architecture/DotNetRepack.architecture.md#19-resolved--open-inconsistencies) | §19 items 10, 15 | Catalogue, AspNetCore support |
+| [Architecture](../../Architecture/Tailor.architecture.md#10-acquisition) | §10 Acquisition (RuntimeList catalogue) | Assumption to confirm |
+| [Architecture](../../Architecture/Tailor.architecture.md#75-reference-resolution) | §7.5 framework catalogue | Framework reference resolution |
+| [Architecture](../../Architecture/Tailor.architecture.md#9-transformation-handlers) | §9 Patch.Runtime, DeploymentModel rows | Diff and removal semantics |
+| [Architecture](../../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies) | §19 items 10, 15 | Catalogue, AspNetCore support |
 | [TS](../../Requirements/Transformation_Specification.md) | §12 Patching, §13 Deployment Model, §29 External Sources | Semantics |
 | [CK](../../Requirements/Read_to_run_Cake.md) | §9.1 Framework patch replacement | Historical detail |
 | [RD](../../Requirements/R2R_tool_Design.md) | §9.1 Framework Patching | Historical detail |
-| [Plan](../../Plans/DotNetRepack.plan.md#risks-register) | Risk R4; M8/M9 criteria | Consumers |
+| [Plan](../../Plans/Tailor.plan.md#risks-register) | Risk R4; M8/M9 criteria | Consumers |
 
 ## Scope
 
@@ -52,8 +52,8 @@ Determine whether `data/RuntimeList.xml` in the runtime packs is a complete, rel
 
 - `Docs/Spikes/WU-006-spike-runtime-packs.md`: Question, Method, Findings (Q1–Q8, **Answer** + **Evidence**), Decision, Recommended ADR, Impact, Follow-ups. Diff tables summarised (counts + representative rows); full diffs as text files under `spikes/WU-006/evidence/` if large.
 - `Docs/Decisions/ADR-0003-runtime-pack-catalogue.md` (status `Proposed`): catalogue source of truth, Profile handling, patch-diff algorithm (RuntimeList vs hashes).
-- Architecture update in the same PR: [§10](../../Architecture/DotNetRepack.architecture.md#10-acquisition) catalogue paragraph, §9 Patch.Runtime/DeploymentModel rows if semantics change, the WU-006 row in [§21](../../Architecture/DotNetRepack.architecture.md#21-spikes-feeding-this-document).
-- `spikes/WU-006/` throwaway code (props isolation as in WU-004), README with rerun steps. Not in `DotNetRepack.slnx`.
+- Architecture update in the same PR: [§10](../../Architecture/Tailor.architecture.md#10-acquisition) catalogue paragraph, §9 Patch.Runtime/DeploymentModel rows if semantics change, the WU-006 row in [§21](../../Architecture/Tailor.architecture.md#21-spikes-feeding-this-document).
+- `spikes/WU-006/` throwaway code (props isolation as in WU-004), README with rerun steps. Not in `Tailor.slnx`.
 
 ## Design Notes
 
@@ -69,8 +69,8 @@ Determine whether `data/RuntimeList.xml` in the runtime packs is a complete, rel
 - [ ] AC-4 Q5 findings state "Profile-filtered list equals SDK SC output: yes/no" for WinForms and WPF with the diff as evidence.
 - [ ] AC-5 `Docs/Decisions/ADR-0003-runtime-pack-catalogue.md` exists, status `Proposed`, sections Context, Decision, Consequences, Alternatives.
 - [ ] AC-6 Architecture §10 and the §21 WU-006 row are updated and link the report and ADR.
-- [ ] AC-7 `spikes/WU-006/` exists, is not referenced by `DotNetRepack.slnx`, has a README; no binaries committed.
-- [ ] AC-8 Solution build (`-warnaserror`), `dotnet test --solution DotNetRepack.slnx -c Release` and format verify still pass.
+- [ ] AC-7 `spikes/WU-006/` exists, is not referenced by `Tailor.slnx`, has a README; no binaries committed.
+- [ ] AC-8 Solution build (`-warnaserror`), `dotnet test --solution Tailor.slnx -c Release` and format verify still pass.
 
 ## Test Requirements
 
@@ -84,7 +84,7 @@ Determine whether `data/RuntimeList.xml` in the runtime packs is a complete, rel
 
 ## Agent Notes
 
-- Load: [architecture §7.5, §9, §10, §19, §21](../../Architecture/DotNetRepack.architecture.md), this spec.
+- Load: [architecture §7.5, §9, §10, §19, §21](../../Architecture/Tailor.architecture.md), this spec.
 - Keep architecture edits to the sections listed; WU-004/005/007 edit others in parallel.
 
 ## Open Questions

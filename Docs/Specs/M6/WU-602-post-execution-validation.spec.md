@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-601, WU-505 |
 | Parallel with | WU-506, WU-604 |
-| Target project(s)/paths | `src/DotNetRepack.Execution/PostValidation/`, `src/DotNetRepack.Execution/Pipeline/`, `src/DotNetRepack.Execution/Reports/`, `tests/DotNetRepack.Execution.Tests/{PostValidation,Pipeline}/`, `tests/DotNetRepack.IntegrationTests/Execution/` |
+| Target project(s)/paths | `src/Tailor.Execution/PostValidation/`, `src/Tailor.Execution/Pipeline/`, `src/Tailor.Execution/Reports/`, `tests/Tailor.Execution.Tests/{PostValidation,Pipeline}/`, `tests/Tailor.IntegrationTests/Execution/` |
 | Size | M |
 | Branch / PR | `wu/602-post-execution-validation` / `WU-602: post-execution-validation` |
 
@@ -25,7 +25,7 @@ After execution and before commit, re-derive the Effective Application Model fro
 | [RQ §9](../../Requirements/Repackage_tool_Requirements_v1.1.md), [AS §23](../../Requirements/Application_Specification.md#23-location-and-portability) | AppSpec default and alternate locations; read-only inputs |
 | [RQ §8](../../Requirements/Repackage_tool_Requirements_v1.1.md), [TS §31](../../Requirements/Transformation_Specification.md#31-relationship-to-transformation-plans-and-logs) | Reports separate from the AppSpec |
 | [RQ §12](../../Requirements/Repackage_tool_Requirements_v1.1.md) | Safe failure |
-| Architecture [§4](../../Architecture/DotNetRepack.architecture.md#4-processing-pipeline) (PV → C → W), [§5](../../Architecture/DotNetRepack.architecture.md#5-artefacts), [§11](../../Architecture/DotNetRepack.architecture.md#11-execution-and-safety), [§19](../../Architecture/DotNetRepack.architecture.md#19-resolved--open-inconsistencies) items 1, 2, [§20](../../Architecture/DotNetRepack.architecture.md#20-open-questions) (artefacts location for `apply`) | Re-derivation, sidecar output AppSpec, report location |
+| Architecture [§4](../../Architecture/Tailor.architecture.md#4-processing-pipeline) (PV → C → W), [§5](../../Architecture/Tailor.architecture.md#5-artefacts), [§11](../../Architecture/Tailor.architecture.md#11-execution-and-safety), [§19](../../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies) items 1, 2, [§20](../../Architecture/Tailor.architecture.md#20-open-questions) (artefacts location for `apply`) | Re-derivation, sidecar output AppSpec, report location |
 | Plan M6 criteria 1, 3 | AC-4–AC-9 |
 
 ## Scope
@@ -92,9 +92,9 @@ After execution and before commit, re-derive the Effective Application Model fro
 
 ## Test Requirements
 
-- Unit: `tests/DotNetRepack.Execution.Tests/{PostValidation,Pipeline}/`, with synthetic plans, fake executors (fault injection) and temp directories. Trait `WU=602`.
-- Integration: `tests/DotNetRepack.IntegrationTests/Execution/` over matrix copies with WU-504 scenario TransformSpecs, driven through the in-process pipeline (no CLI). Traits `Category=Integration`, `Category=Matrix`, `WU=602`.
-- Run: `dotnet test --project tests/DotNetRepack.Execution.Tests --filter-trait "WU=602"`, `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=602"`.
+- Unit: `tests/Tailor.Execution.Tests/{PostValidation,Pipeline}/`, with synthetic plans, fake executors (fault injection) and temp directories. Trait `WU=602`.
+- Integration: `tests/Tailor.IntegrationTests/Execution/` over matrix copies with WU-504 scenario TransformSpecs, driven through the in-process pipeline (no CLI). Traits `Category=Integration`, `Category=Matrix`, `WU=602`.
+- Run: `dotnet test --project tests/Tailor.Execution.Tests --filter-trait "WU=602"`, `dotnet test --project tests/Tailor.IntegrationTests --filter-trait "WU=602"`.
 - Record Test Evidence below and in the PR.
 
 ## Definition of Done

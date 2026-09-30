@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-305, WU-202 |
 | Parallel with | WU-400–WU-402, WU-500, WU-501 |
-| Target project(s)/paths | `src/DotNetRepack.Validation/AppSpec/`, `tests/DotNetRepack.Validation.Tests/AppSpec/`, `tests/DotNetRepack.IntegrationTests/Validation/` |
+| Target project(s)/paths | `src/Tailor.Validation/AppSpec/`, `tests/Tailor.Validation.Tests/AppSpec/`, `tests/Tailor.IntegrationTests/Validation/` |
 | Size | M |
 | Branch / PR | `wu/403-appspec-validation-engine` / `WU-403: appspec-validation-engine` |
 
@@ -24,7 +24,7 @@ Validate an AppSpec against a physical tree covering every check in AS §20.3, c
 | [AS §2.4](../../Requirements/Application_Specification.md#24-validation), [RQ §4.2](../../Requirements/Repackage_tool_Requirements_v1.1.md) | Validation as distinct, non-mutating operation |
 | [AS §12.6](../../Requirements/Application_Specification.md#126-missing-associated-files), [AS §16.3](../../Requirements/Application_Specification.md#163-plugin-dependencies) | Associations, plugin relationships |
 | [TS §24](../../Requirements/Transformation_Specification.md#24-validation-and-failure-policies) | Failure policies (strict/permissive, structural) |
-| Architecture [§5](../../Architecture/DotNetRepack.architecture.md#5-artefacts), [§13](../../Architecture/DotNetRepack.architecture.md#13-diagnostics-failure-policy-and-exit-codes), [§15](../../Architecture/DotNetRepack.architecture.md#15-determinism), [§19](../../Architecture/DotNetRepack.architecture.md#19-resolved--open-inconsistencies) item 1 | Separate report, policy, fingerprint |
+| Architecture [§5](../../Architecture/Tailor.architecture.md#5-artefacts), [§13](../../Architecture/Tailor.architecture.md#13-diagnostics-failure-policy-and-exit-codes), [§15](../../Architecture/Tailor.architecture.md#15-determinism), [§19](../../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies) item 1 | Separate report, policy, fingerprint |
 | Plan M4 criteria 3, 5 | AC-2–AC-9, AC-11 |
 
 ## Scope
@@ -37,7 +37,7 @@ Validate an AppSpec against a physical tree covering every check in AS §20.3, c
 
 | Item | Detail |
 |---|---|
-| `DotNetRepack.Validation.AppSpec.AppSpecValidator.Validate(LoadedAppSpec, IAppTree, AppSpecValidationOptions)` → `AppSpecValidationResult` | `State`, `Diagnostics`, `SpecHash`, `TreeFingerprint`, `Model`, `Mode`, `WarningsAsErrors` |
+| `Tailor.Validation.AppSpec.AppSpecValidator.Validate(LoadedAppSpec, IAppTree, AppSpecValidationOptions)` → `AppSpecValidationResult` | `State`, `Diagnostics`, `SpecHash`, `TreeFingerprint`, `Model`, `Mode`, `WarningsAsErrors` |
 | `ValidationMode` | `Default`, `Strict`, `Permissive` |
 | `IAppSpecCheck` | One class per check group (table below); run in fixed order |
 | `ValidationReportWriter` | `validation-report.json`: `kind: ValidationReport`, `schemaVersion`, `specHash`, `treeFingerprint`, `state`, `mode`, `counts {errors, warnings, info}`, `diagnostics[]` (code, severity, message, path, JSON pointer, related) sorted |
@@ -80,9 +80,9 @@ Validate an AppSpec against a physical tree covering every check in AS §20.3, c
 
 ## Test Requirements
 
-- Unit: `tests/DotNetRepack.Validation.Tests/AppSpec/` with synthetic trees and in-memory specs; trait `WU=403`.
-- Integration: `tests/DotNetRepack.IntegrationTests/Validation/AppSpecValidationTests` over the matrix with WU-305 AppSpecs; trait `Category=Integration`, `Category=Matrix`, `WU=403`.
-- Run: `dotnet test --project tests/DotNetRepack.Validation.Tests --filter-trait "WU=403"`; `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=403"`.
+- Unit: `tests/Tailor.Validation.Tests/AppSpec/` with synthetic trees and in-memory specs; trait `WU=403`.
+- Integration: `tests/Tailor.IntegrationTests/Validation/AppSpecValidationTests` over the matrix with WU-305 AppSpecs; trait `Category=Integration`, `Category=Matrix`, `WU=403`.
+- Run: `dotnet test --project tests/Tailor.Validation.Tests --filter-trait "WU=403"`; `dotnet test --project tests/Tailor.IntegrationTests --filter-trait "WU=403"`.
 - Record Test Evidence in the PR.
 
 ## Definition of Done
@@ -91,7 +91,7 @@ Validate an AppSpec against a physical tree covering every check in AS §20.3, c
 
 ## Agent Notes
 
-- Do not reference `DotNetRepack.Analysis` (architecture §3.1). Use the Model `RuntimeFactsDetector` (WU-305) for runtime/framework checks — they compare declared values with detected facts and need no heuristics.
+- Do not reference `Tailor.Analysis` (architecture §3.1). Use the Model `RuntimeFactsDetector` (WU-305) for runtime/framework checks — they compare declared values with detected facts and need no heuristics.
 - Keep checks pure functions over `EffectiveApplicationModel` + readers so WU-602 can reuse them on staged trees.
 
 ## Open Questions

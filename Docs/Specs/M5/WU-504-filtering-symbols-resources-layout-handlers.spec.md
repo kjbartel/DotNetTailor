@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-503 |
 | Parallel with | WU-507, WU-601, WU-702 |
-| Target project(s)/paths | `src/DotNetRepack.Transforms/{Filtering,Symbols,Documentation,Resources,Layout,Common}/`, `tests/DotNetRepack.Transforms.Tests/{Filtering,Symbols,Documentation,Resources,Layout}/` |
+| Target project(s)/paths | `src/Tailor.Transforms/{Filtering,Symbols,Documentation,Resources,Layout,Common}/`, `tests/Tailor.Transforms.Tests/{Filtering,Symbols,Documentation,Resources,Layout}/` |
 | Size | L |
 | Branch / PR | `wu/504-filtering-symbols-resources-layout-handlers` / `WU-504: filtering-symbols-resources-layout-handlers` |
 
@@ -28,7 +28,7 @@ Implement the phase-6 (`FilteringLayout`) handlers that turn `rules[]`, `default
 | [TS §18](../../Requirements/Transformation_Specification.md#18-file-and-folder-layout-rules) | Layout mapping, default location retained, collisions |
 | [TS §20.2](../../Requirements/Transformation_Specification.md#20-removal-rules), [TS §21](../../Requirements/Transformation_Specification.md#21-transformation-defaults) | Semantic removal, safe defaults |
 | [RQ §5.3](../../Requirements/Repackage_tool_Requirements_v1.1.md) | Folder layout normalisation as a material packaging change |
-| Architecture [§9](../../Architecture/DotNetRepack.architecture.md#9-transformation-handlers), [§19](../../Architecture/DotNetRepack.architecture.md#19-resolved--open-inconsistencies) items 4, 16 | Handler table, preserve-by-default, material operations |
+| Architecture [§9](../../Architecture/Tailor.architecture.md#9-transformation-handlers), [§19](../../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies) items 4, 16 | Handler table, preserve-by-default, material operations |
 | Plan M5 criteria 2, 4 | AC-5, AC-11, AC-12 |
 
 ## Scope
@@ -46,7 +46,7 @@ Implement the phase-6 (`FilteringLayout`) handlers that turn `rules[]`, `default
 
 ## Deliverables
 
-Namespace `DotNetRepack.Transforms`.
+Namespace `Tailor.Transforms`.
 
 | Type | Behaviour |
 |---|---|
@@ -94,9 +94,9 @@ Namespace `DotNetRepack.Transforms`.
 
 ## Test Requirements
 
-- Unit: `tests/DotNetRepack.Transforms.Tests/<Handler>/`, with synthetic EAMs and a real `Planner` with only these handlers registered. Trait `WU=504`.
+- Unit: `tests/Tailor.Transforms.Tests/<Handler>/`, with synthetic EAMs and a real `Planner` with only these handlers registered. Trait `WU=504`.
 - Integration (matrix copies, WU-305 AppSpecs): ConsoleApp, WpfApp and PluginHost × net8/net10 × FD/SC (`il`), plus ConsoleApp `fdportable-il`. Traits `Category=Integration`, `Category=Matrix`, `WU=504`.
-- Run: `dotnet test --project tests/DotNetRepack.Transforms.Tests --filter-trait "WU=504"`; `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=504"`.
+- Run: `dotnet test --project tests/Tailor.Transforms.Tests --filter-trait "WU=504"`; `dotnet test --project tests/Tailor.IntegrationTests --filter-trait "WU=504"`.
 - Record Test Evidence below and in the PR.
 
 ## Definition of Done
@@ -107,7 +107,7 @@ Namespace `DotNetRepack.Transforms`.
 
 - Transforms references Planning (architecture §3.1). Do not reference Execution.
 - Keep each handler in its own folder and file so that WU-1003 guides can point at them.
-- Scenario TransformSpecs created here (`filtering`, `symbols-dir`, `symbols-zip`, `docs`, `resources-en`, `other-rid`) should live under `tests/DotNetRepack.IntegrationTests/TransformSpecs/` for reuse by WU-505, WU-506 and WU-603.
+- Scenario TransformSpecs created here (`filtering`, `symbols-dir`, `symbols-zip`, `docs`, `resources-en`, `other-rid`) should live under `tests/Tailor.IntegrationTests/TransformSpecs/` for reuse by WU-505, WU-506 and WU-603.
 
 ## Open Questions
 

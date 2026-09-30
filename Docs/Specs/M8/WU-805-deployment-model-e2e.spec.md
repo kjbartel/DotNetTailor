@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-803, WU-804, WU-603 |
 | Parallel with | WU-704, WU-900–WU-902 |
-| Target | `tests/DotNetRepack.IntegrationTests/DeploymentModel/`, `tests/DotNetRepack.IntegrationTests/Fixtures/deployment/*.transform.json`; fixes in `src/DotNetRepack.*` only where E2E exposes defects |
+| Target | `tests/Tailor.IntegrationTests/DeploymentModel/`, `tests/Tailor.IntegrationTests/Fixtures/deployment/*.transform.json`; fixes in `src/Tailor.*` only where E2E exposes defects |
 | Size | M |
 
 ## Goal
@@ -23,7 +23,7 @@ Prove M8 end to end through the CLI: FD⇄SC for console, WinForms and WPF (net8
 | [TS §19](../../Requirements/Transformation_Specification.md#19-addition-rules), [TS §20](../../Requirements/Transformation_Specification.md#20-removal-rules) | Provenance; safe removals |
 | [CK §5](../../Requirements/Read_to_run_Cake.md#5-deployment-model-transformations) | FD⇄SC combinations |
 | [RQ §5.3](../../Requirements/Repackage_tool_Requirements_v1.1.md#5-supported-transformation-categories) | Deployment model changes |
-| [Plan M8 criteria](../../Plans/DotNetRepack.plan.md#m8-deployment-model-conversion--v040-preview), [Architecture §16](../../Architecture/DotNetRepack.architecture.md#16-testing-strategy) | Milestone gate; harness-only launch |
+| [Plan M8 criteria](../../Plans/Tailor.plan.md#m8-deployment-model-conversion--v040-preview), [Architecture §16](../../Architecture/Tailor.architecture.md#16-testing-strategy) | Milestone gate; harness-only launch |
 
 ## Scope
 
@@ -47,7 +47,7 @@ Prove M8 end to end through the CLI: FD⇄SC for console, WinForms and WPF (net8
 - Follow WU-005/WU-006 spike reports and ADRs; **they override this spec where they differ** (e.g. allowlisted differences to SDK output).
 - Use the WU-405 regression harness and WU-603 CLI helpers.
 - SC launch must prove the app-local runtime is used (test-app runtime-location output per the WU-003 smoke contract); FD launch requires the net8/net10 shared runtimes on the CI image.
-- Comparison normalisation (normative for M8 SDK-equivalence, architecture §19 item 35), implemented once in `tests/DotNetRepack.IntegrationTests/Support/SdkEquivalenceNormaliser` and documented in its header:
+- Comparison normalisation (normative for M8 SDK-equivalence, architecture §19 item 35), implemented once in `tests/Tailor.IntegrationTests/Support/SdkEquivalenceNormaliser` and documented in its header:
   - JSON: semantic equality; object property order ignored; `frameworks`/`includedFrameworks` keyed by name; deps.json libraries and targets keyed by `name/version`.
   - RID-specific package assets: the tool output's `runtimeTargets` for the target RID (and its compatible parents) are flattened into `runtime`/`native` and other-RID entries dropped before comparing with the SDK RID-specific (SC) publish; the reverse applies for portable FD comparisons.
   - File sets by relative path; RID-specific asset files compared after the same flattening.
@@ -69,8 +69,8 @@ Prove M8 end to end through the CLI: FD⇄SC for console, WinForms and WPF (net8
 
 ## Test Requirements
 
-- xUnit v3 + golden files in `tests/DotNetRepack.IntegrationTests/`, tagged `Category=Integration`, `Category=Matrix` and `Category=Launch`; trait `WU=805`.
-- Run: `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=805"`.
+- xUnit v3 + golden files in `tests/Tailor.IntegrationTests/`, tagged `Category=Integration`, `Category=Matrix` and `Category=Launch`; trait `WU=805`.
+- Run: `dotnet test --project tests/Tailor.IntegrationTests --filter-trait "WU=805"`.
 - `LocalPackageFeedFixture` with isolated cache seeded from `Build-TestApps.ps1`; no network in default runs.
 - Record Test Evidence (scenario matrix, fingerprints, allowlist) in the PR.
 

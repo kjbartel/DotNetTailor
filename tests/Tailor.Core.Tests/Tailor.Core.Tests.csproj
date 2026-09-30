@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Tailor.Core\Tailor.Core.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-503 |
 | Parallel with | WU-504, WU-505, WU-601, WU-702 |
-| Target project(s)/paths | `src/DotNetRepack.Transforms/Additions/`, `tests/DotNetRepack.Transforms.Tests/Additions/` |
+| Target project(s)/paths | `src/Tailor.Transforms/Additions/`, `tests/Tailor.Transforms.Tests/Additions/` |
 | Size | S |
 | Branch / PR | `wu/507-additions-handler` / `WU-507: additions-handler` |
 
@@ -23,7 +23,7 @@ Implement the `additions` handler for user-provided files ([TS §19](../../Requi
 | [TS §19](../../Requirements/Transformation_Specification.md#19-addition-rules) | Addition sources, deterministic destination, provenance |
 | [TS §18.5](../../Requirements/Transformation_Specification.md#18-file-and-folder-layout-rules), [TS §22.4](../../Requirements/Transformation_Specification.md#22-rule-precedence-and-conflict-resolution) | Output-path collisions are errors |
 | [TS §29](../../Requirements/Transformation_Specification.md#29-external-sources-and-credentials), [TS §3.6](../../Requirements/Transformation_Specification.md#3-design-principles) | Pinned identities, determinism |
-| Architecture [§8](../../Architecture/DotNetRepack.architecture.md#8-selectors-precedence-and-actions), [§4](../../Architecture/DotNetRepack.architecture.md#4-processing-pipeline), [§17](../../Architecture/DotNetRepack.architecture.md#17-security) | `Add` action with `UserFile` source, phase 6, path confinement |
+| Architecture [§8](../../Architecture/Tailor.architecture.md#8-selectors-precedence-and-actions), [§4](../../Architecture/Tailor.architecture.md#4-processing-pipeline), [§17](../../Architecture/Tailor.architecture.md#17-security) | `Add` action with `UserFile` source, phase 6, path confinement |
 | Plan M5 criterion "user-provided file additions" | AC-1–AC-8 |
 
 ## Scope
@@ -66,8 +66,8 @@ Implement the `additions` handler for user-provided files ([TS §19](../../Requi
 
 ## Test Requirements
 
-- Unit: `tests/DotNetRepack.Transforms.Tests/Additions/` with synthetic EAMs, temp spec directories and a real `Planner` with only this handler registered. Trait `WU=507`.
-- Run: `dotnet test --project tests/DotNetRepack.Transforms.Tests --filter-trait "WU=507"`.
+- Unit: `tests/Tailor.Transforms.Tests/Additions/` with synthetic EAMs, temp spec directories and a real `Planner` with only this handler registered. Trait `WU=507`.
+- Run: `dotnet test --project tests/Tailor.Transforms.Tests --filter-trait "WU=507"`.
 - Record Test Evidence in the PR.
 
 ## Definition of Done
@@ -77,7 +77,7 @@ Implement the `additions` handler for user-provided files ([TS §19](../../Requi
 ## Agent Notes
 
 - Transforms references Planning (architecture §3.1). Do not reference Execution.
-- Add one scenario TransformSpec `additions` under `tests/DotNetRepack.IntegrationTests/TransformSpecs/` for WU-506/WU-603 reuse.
+- Add one scenario TransformSpec `additions` under `tests/Tailor.IntegrationTests/TransformSpecs/` for WU-506/WU-603 reuse.
 
 ## Open Questions
 

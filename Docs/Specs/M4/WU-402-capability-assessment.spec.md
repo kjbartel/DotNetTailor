@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-400 |
 | Parallel with | WU-401, WU-403, WU-500, WU-501 |
-| Target project(s)/paths | `src/DotNetRepack.Analysis/Capabilities/`, `tests/DotNetRepack.Analysis.Tests/Capabilities/`, `tests/DotNetRepack.IntegrationTests/Analysis/` |
+| Target project(s)/paths | `src/Tailor.Analysis/Capabilities/`, `tests/Tailor.Analysis.Tests/Capabilities/`, `tests/Tailor.IntegrationTests/Analysis/` |
 | Size | M |
 | Branch / PR | `wu/402-capability-assessment` / `WU-402: capability-assessment` |
 
@@ -23,7 +23,7 @@ Assess which transformations appear possible for the analysed state and write an
 | [AS §19](../../Requirements/Application_Specification.md#19-capability-assessment) | Capabilities, states, advisory nature |
 | [AS §22.2](../../Requirements/Application_Specification.md#222-example-artefacts) | Capability report as derived artefact |
 | [RQ §5](../../Requirements/Repackage_tool_Requirements_v1.1.md) | Transformation categories |
-| Architecture [§5](../../Architecture/DotNetRepack.architecture.md#5-artefacts), [§6.2](../../Architecture/DotNetRepack.architecture.md#62-appspec-shape-illustrative-the-wu-101-schema-is-normative), [§19](../../Architecture/DotNetRepack.architecture.md#19-resolved--open-inconsistencies) item 17, [§9.1](../../Architecture/DotNetRepack.architecture.md#91-readytorun-details) (skip reasons) | Separate artefact, R2R eligibility vocabulary |
+| Architecture [§5](../../Architecture/Tailor.architecture.md#5-artefacts), [§6.2](../../Architecture/Tailor.architecture.md#62-appspec-shape-illustrative-the-wu-101-schema-is-normative), [§19](../../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies) item 17, [§9.1](../../Architecture/Tailor.architecture.md#91-readytorun-details) (skip reasons) | Separate artefact, R2R eligibility vocabulary |
 
 ## Scope
 
@@ -35,7 +35,7 @@ Assess which transformations appear possible for the analysed state and write an
 
 | Item | Detail |
 |---|---|
-| `DotNetRepack.Analysis.Capabilities.CapabilityAssessor.Assess(ExecutionModelResult, EffectiveApplicationModel)` → `CapabilityReport` | Deterministic |
+| `Tailor.Analysis.Capabilities.CapabilityAssessor.Assess(ExecutionModelResult, EffectiveApplicationModel)` → `CapabilityReport` | Deterministic |
 | `Capability` | `Id` (`retarget`, `runtimePatch`, `libraryPatch`, `fdToSc`, `scToFd`, `readyToRun`), `State` (`Supported`, `Unsupported`, `Conditional`, `Unknown`), `Reasons[]` |
 | `CapabilityReason` | `Code` (stable camelCase, e.g. `alreadySelfContained`), `Message`, `Paths[]` (sorted, relative) |
 | `CapabilityReportWriter` | `capabilities.json` with header `kind: CapabilityReport`, `schemaVersion`, `specHash`, `treeFingerprint`; canonical JSON |
@@ -66,9 +66,9 @@ Assess which transformations appear possible for the analysed state and write an
 
 ## Test Requirements
 
-- Unit: `tests/DotNetRepack.Analysis.Tests/Capabilities/` with synthetic `ExecutionModelResult`/facts; trait `WU=402`.
-- Integration: `tests/DotNetRepack.IntegrationTests/Analysis/CapabilityTests` over the full matrix; trait `Category=Integration`, `Category=Matrix`, `WU=402`.
-- Run: `dotnet test --project tests/DotNetRepack.Analysis.Tests --filter-trait "WU=402"`; `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=402"`.
+- Unit: `tests/Tailor.Analysis.Tests/Capabilities/` with synthetic `ExecutionModelResult`/facts; trait `WU=402`.
+- Integration: `tests/Tailor.IntegrationTests/Analysis/CapabilityTests` over the full matrix; trait `Category=Integration`, `Category=Matrix`, `WU=402`.
+- Run: `dotnet test --project tests/Tailor.Analysis.Tests --filter-trait "WU=402"`; `dotnet test --project tests/Tailor.IntegrationTests --filter-trait "WU=402"`.
 - Record Test Evidence in the PR.
 
 ## Definition of Done

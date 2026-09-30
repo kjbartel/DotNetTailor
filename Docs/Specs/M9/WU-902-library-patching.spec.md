@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-700, WU-802, WU-503, WU-305 |
 | Parallel with | WU-603, M7, WU-803–WU-805, WU-900, WU-901 |
-| Target project(s)/paths | `src/DotNetRepack.Transforms/` (`Patch.Library` handler, asset selection), `src/DotNetRepack.Specifications/` (only if members are missing), `tests/DotNetRepack.Transforms.Tests/`, `tests/DotNetRepack.IntegrationTests/`, `tests/TestApps/` |
+| Target project(s)/paths | `src/Tailor.Transforms/` (`Patch.Library` handler, asset selection), `src/Tailor.Specifications/` (only if members are missing), `tests/Tailor.Transforms.Tests/`, `tests/Tailor.IntegrationTests/`, `tests/TestApps/` |
 | Size | L |
 
 ## Goal
@@ -25,7 +25,7 @@ Implement the `Patch.Library` handler. It updates **explicitly selected** non-co
 | [TS §32.8](../../Requirements/Transformation_Specification.md) | Explicit upgrades invariant |
 | [RQ §5.2](../../Requirements/Repackage_tool_Requirements_v1.1.md) | Patch selected non-core libraries (explicit opt-in) |
 | [CK §9.3](../../Requirements/Read_to_run_Cake.md) | Library updates via NuGet, no silent upgrades |
-| [Architecture §8, §9, §10, §17](../../Architecture/DotNetRepack.architecture.md) | Explicit-upgrade check, `Patch.Library`, acquisition/provenance, secrets |
+| [Architecture §8, §9, §10, §17](../../Architecture/Tailor.architecture.md) | Explicit-upgrade check, `Patch.Library`, acquisition/provenance, secrets |
 
 ## Scope
 
@@ -54,7 +54,7 @@ Implement the `Patch.Library` handler. It updates **explicitly selected** non-co
 ## Design Notes
 
 - The architecture is the baseline. The WU-007 spike/ADR (NuGet.Protocol usage, source mapping) overrides it where they differ.
-- Library policies (`exact`, `patch`, `minor`, `range`) and runtime version policies (`matchSource`, `latestPatch`, `exact`, `range`) are separate types over one Acquisition range resolver ([Architecture §10](../../Architecture/DotNetRepack.architecture.md)). Acquisition stays policy-free.
+- Library policies (`exact`, `patch`, `minor`, `range`) and runtime version policies (`matchSource`, `latestPatch`, `exact`, `range`) are separate types over one Acquisition range resolver ([Architecture §10](../../Architecture/Tailor.architecture.md)). Acquisition stays policy-free.
 - Read the nuspec and file list from the downloaded package (`PackageArchiveReader`). Do not guess asset layout.
 - Package sources come from `nuget.config` names/URLs only. Credentials never appear in the plan, logs or artefacts.
 - An input without deps.json cannot use library patching. This is a validation error with a clear remedy.
@@ -78,7 +78,7 @@ Implement the `Patch.Library` handler. It updates **explicitly selected** non-co
 - Offline local package feed fixture built by a script from checked-in `.nuspec` + generated minimal assemblies, or copied from the CI package cache. Use an authenticated-feed mock only if WU-700 provides one.
 - Integration over the library test app in `artifacts/testapps/`. Launch smoke only in the harness.
 - Record Test Evidence: commands, TRX, feed package hashes and plan hashes.
-- Run: `dotnet test --project tests/DotNetRepack.Transforms.Tests --filter-trait "WU=902"`; `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=902"` (integration tests carry `Category=Integration`, `Category=Matrix`, and `Category=Launch` for smoke runs).
+- Run: `dotnet test --project tests/Tailor.Transforms.Tests --filter-trait "WU=902"`; `dotnet test --project tests/Tailor.IntegrationTests --filter-trait "WU=902"` (integration tests carry `Category=Integration`, `Category=Matrix`, and `Category=Launch` for smoke runs).
 
 ## Definition of Done
 

@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-202, WU-003 |
 | Parallel with | M3–M7 |
-| Target | `src/DotNetRepack.Transforms/Configuration/RuntimeConfig/`, `tests/DotNetRepack.Transforms.Tests/Configuration/` |
+| Target | `src/Tailor.Transforms/Configuration/RuntimeConfig/`, `tests/Tailor.Transforms.Tests/Configuration/` |
 | Size | S |
 
 ## Goal
@@ -23,7 +23,7 @@ Pure, deterministic transformation of `*.runtimeconfig.json` between FD and SC s
 | [TS §11.4](../../Requirements/Transformation_Specification.md), [TS §12.2](../../Requirements/Transformation_Specification.md#12-patching-specification) | Reused by retarget (WU-901) and FD runtime patch (WU-900) |
 | [CK §5](../../Requirements/Read_to_run_Cake.md#5-deployment-model-transformations), [CK §6.1](../../Requirements/Read_to_run_Cake.md#6-target-framework-and-runtime-requirements) | FD⇄SC; update `.runtimeconfig.json` |
 | [RQ §5.3](../../Requirements/Repackage_tool_Requirements_v1.1.md#5-supported-transformation-categories) | Deployment model changes |
-| [Architecture §9](../../Architecture/DotNetRepack.architecture.md#9-transformation-handlers), [§4](../../Architecture/DotNetRepack.architecture.md#4-processing-pipeline) | DeploymentModel handler; ConfigGeneration phase |
+| [Architecture §9](../../Architecture/Tailor.architecture.md#9-transformation-handlers), [§4](../../Architecture/Tailor.architecture.md#4-processing-pipeline) | DeploymentModel handler; ConfigGeneration phase |
 
 ## Scope
 
@@ -72,9 +72,9 @@ Pure, deterministic transformation of `*.runtimeconfig.json` between FD and SC s
 
 ## Test Requirements
 
-- xUnit v3 + golden files in `tests/DotNetRepack.Transforms.Tests/Configuration/`.
+- xUnit v3 + golden files in `tests/Tailor.Transforms.Tests/Configuration/`.
 - Matrix comparisons (`Category=Matrix`) read `artifacts/testapps`; unit fixtures are small checked-in JSON files.
-- Run: `dotnet test --project tests/DotNetRepack.Transforms.Tests --filter-trait "WU=801"`.
+- Run: `dotnet test --project tests/Tailor.Transforms.Tests --filter-trait "WU=801"`.
 - No network. Record Test Evidence in the PR.
 
 ## Definition of Done

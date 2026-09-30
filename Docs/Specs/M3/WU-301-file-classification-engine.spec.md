@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-300, WU-200 |
 | Parallel with | WU-201, WU-202, WU-600 |
-| Target project(s)/paths | `src/DotNetRepack.Model/Classification/`, `tests/DotNetRepack.Model.Tests/Classification/`, `tests/DotNetRepack.IntegrationTests/Model/` |
+| Target project(s)/paths | `src/Tailor.Model/Classification/`, `tests/Tailor.Model.Tests/Classification/`, `tests/Tailor.IntegrationTests/Model/` |
 | Size | M |
 | Branch / PR | `wu/301-file-classification-engine` / `WU-301: file-classification-engine` |
 
@@ -24,7 +24,7 @@ Assign exactly one primary classification to every in-scope file, using per-fold
 | [AS §3.3](../../Requirements/Application_Specification.md#33-complete-coverage), [AS §3.4](../../Requirements/Application_Specification.md#34-catch-all-behaviour), [AS §24](../../Requirements/Application_Specification.md#24-global-invariants) items 3, 7 | Complete coverage, no silent omissions |
 | [AS §14.3](../../Requirements/Application_Specification.md#143-classification) | `.dll` is not assumed managed |
 | [RD §4](../../Requirements/R2R_tool_Design.md#4-file-classification-model) | Every file classified exactly once |
-| Architecture [§7.2, §7.4](../../Architecture/DotNetRepack.architecture.md#7-effective-application-model-semantics) | Matchers, predicates, vocabulary, inspection facts |
+| Architecture [§7.2, §7.4](../../Architecture/Tailor.architecture.md#7-effective-application-model-semantics) | Matchers, predicates, vocabulary, inspection facts |
 | Plan M3 criteria 3 (classification ties), 5 (coverage) | AC-5, AC-9 |
 
 ## Scope
@@ -42,7 +42,7 @@ Assign exactly one primary classification to every in-scope file, using per-fold
 
 | Item | Detail |
 |---|---|
-| `DotNetRepack.Model.Classification.IFileFactsProvider` | Lazy, cached per path; wraps WU-200 PE facts (and WU-201 satellite/reference-assembly facts when available) over `IAppTree.OpenRead` |
+| `Tailor.Model.Classification.IFileFactsProvider` | Lazy, cached per path; wraps WU-200 PE facts (and WU-201 satellite/reference-assembly facts when available) over `IAppTree.OpenRead` |
 | `BuiltInClassificationGroups` | Default definitions for `managed`, `platformManaged`, `native`, `platformNative`, `config`, `resource`, `symbols`, `xmlDoc`, `content`. A spec group with the same id replaces the built-in |
 | `ClassificationEngine.Classify(AppSpec, FolderMatchResult, IFileFactsProvider)` → `ClassificationResult` | `Files` (sorted by path), `Diagnostics` |
 | `ClassifiedFile` | `Path`, `FolderPath`, `FolderDefinitionId`, `GroupId`, `IsCatchAll`, `Status` (`Classified`, `Ambiguous`, `Unclassified`), `MatchedGroupIds` (for diagnostics) |
@@ -72,9 +72,9 @@ Assign exactly one primary classification to every in-scope file, using per-fold
 
 ## Test Requirements
 
-- Unit: `tests/DotNetRepack.Model.Tests/Classification/`, synthetic `InMemoryAppTree` with fake `IFileFactsProvider`; small real PE fixture bytes for AC-2/AC-8. Trait `WU=301`.
-- Integration: `tests/DotNetRepack.IntegrationTests/Model/ClassificationCoverageTests` over `artifacts/testapps/manifest.json` (WU-003); trait `Category=Integration`, `Category=Matrix`. Skip with an explicit reason locally when the matrix is absent; CI must not skip.
-- Run: `dotnet test --project tests/DotNetRepack.Model.Tests --filter-trait "WU=301"` and `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=301"`.
+- Unit: `tests/Tailor.Model.Tests/Classification/`, synthetic `InMemoryAppTree` with fake `IFileFactsProvider`; small real PE fixture bytes for AC-2/AC-8. Trait `WU=301`.
+- Integration: `tests/Tailor.IntegrationTests/Model/ClassificationCoverageTests` over `artifacts/testapps/manifest.json` (WU-003); trait `Category=Integration`, `Category=Matrix`. Skip with an explicit reason locally when the matrix is absent; CI must not skip.
+- Run: `dotnet test --project tests/Tailor.Model.Tests --filter-trait "WU=301"` and `dotnet test --project tests/Tailor.IntegrationTests --filter-trait "WU=301"`.
 - Record Test Evidence in the PR.
 
 ## Definition of Done

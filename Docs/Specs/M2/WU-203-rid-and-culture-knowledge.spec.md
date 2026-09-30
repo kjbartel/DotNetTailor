@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-100 |
 | Parallel with | WU-200–WU-202, M1 |
-| Target project(s)/paths | `src/DotNetRepack.Inspection/Rids/`, `src/DotNetRepack.Inspection/Cultures/`, embedded data under `src/DotNetRepack.Inspection/Data/`, `tests/DotNetRepack.Inspection.Tests/Rids/`, `tests/DotNetRepack.Inspection.Tests/Cultures/`, `tests/DotNetRepack.IntegrationTests/Inspection/` |
+| Target project(s)/paths | `src/Tailor.Inspection/Rids/`, `src/Tailor.Inspection/Cultures/`, embedded data under `src/Tailor.Inspection/Data/`, `tests/Tailor.Inspection.Tests/Rids/`, `tests/Tailor.Inspection.Tests/Cultures/`, `tests/Tailor.IntegrationTests/Inspection/` |
 | Size | M |
 
 ## Goal
@@ -19,9 +19,9 @@ Provide deterministic, host-independent knowledge of RIDs (parsing, portable gra
 
 | Area | Requirements | Architecture |
 |---|---|---|
-| Platform / RIDs | [AS §8](../../Requirements/Application_Specification.md), [TS §13.3](../../Requirements/Transformation_Specification.md), [TS §20.2](../../Requirements/Transformation_Specification.md), [RQ §11](../../Requirements/Repackage_tool_Requirements_v1.1.md) | [§7.1](../../Architecture/DotNetRepack.architecture.md#71-folder-matching) (`<rid>` token), [§12](../../Architecture/DotNetRepack.architecture.md#12-platform-abstraction) (RID knowledge only in platform projects and Inspection) |
-| Cultures | [AS §10.3](../../Requirements/Application_Specification.md), [AS §17](../../Requirements/Application_Specification.md), [TS §15.2](../../Requirements/Transformation_Specification.md) | [§7.1](../../Architecture/DotNetRepack.architecture.md#71-folder-matching) (`<culture>` token), [§8](../../Architecture/DotNetRepack.architecture.md#8-selectors-precedence-and-actions) (`culture`, `rid` predicates) |
-| Determinism | [AS §3.6](../../Requirements/Application_Specification.md), [TS §3.6](../../Requirements/Transformation_Specification.md) | [§15](../../Architecture/DotNetRepack.architecture.md#15-determinism) |
+| Platform / RIDs | [AS §8](../../Requirements/Application_Specification.md), [TS §13.3](../../Requirements/Transformation_Specification.md), [TS §20.2](../../Requirements/Transformation_Specification.md), [RQ §11](../../Requirements/Repackage_tool_Requirements_v1.1.md) | [§7.1](../../Architecture/Tailor.architecture.md#71-folder-matching) (`<rid>` token), [§12](../../Architecture/Tailor.architecture.md#12-platform-abstraction) (RID knowledge only in platform projects and Inspection) |
+| Cultures | [AS §10.3](../../Requirements/Application_Specification.md), [AS §17](../../Requirements/Application_Specification.md), [TS §15.2](../../Requirements/Transformation_Specification.md) | [§7.1](../../Architecture/Tailor.architecture.md#71-folder-matching) (`<culture>` token), [§8](../../Architecture/Tailor.architecture.md#8-selectors-precedence-and-actions) (`culture`, `rid` predicates) |
+| Determinism | [AS §3.6](../../Requirements/Application_Specification.md), [TS §3.6](../../Requirements/Transformation_Specification.md) | [§15](../../Architecture/Tailor.architecture.md#15-determinism) |
 
 ## Scope
 
@@ -56,13 +56,13 @@ Embedded data (`EmbeddedResource`, canonical JSON, committed):
 
 ## Design Notes
 
-- **Determinism first** ([§15](../../Architecture/DotNetRepack.architecture.md#15-determinism)): recognition decisions use only the embedded catalogues. ICU/NLS differences between hosts and `InvariantGlobalization=true` must not change results. `CultureInfoCrossCheck` is diagnostic-only (e.g. an `inspect` hint), never a matching input; under invariant mode it returns `Unavailable` without throwing (`CultureNotFoundException` caught).
+- **Determinism first** ([§15](../../Architecture/Tailor.architecture.md#15-determinism)): recognition decisions use only the embedded catalogues. ICU/NLS differences between hosts and `InvariantGlobalization=true` must not change results. `CultureInfoCrossCheck` is diagnostic-only (e.g. an `inspect` hint), never a matching input; under invariant mode it returns `Unavailable` without throwing (`CultureNotFoundException` caught).
 - Culture comparison is ordinal-ignore-case; output uses canonical casing from the catalogue.
 - `CulturePattern`: `en` matches only `en`; `en-*` matches any culture whose name starts with `en-` and has at least one further subtag (`en-US`, `en-GB`, `en-Latn-US`), not `en` itself; `*` matches any known culture; explicit names match exactly. Patterns must be syntactically valid BCP-47 prefixes; `e*`, `en*`, `*-US` are invalid (`RPK2310`).
 - `<culture>` token matching for folders (WU-300) = `IsKnown(name)`; unknown culture-looking folders are content, not resources ([AS §10.7](../../Requirements/Application_Specification.md)).
 - RID parsing: `os[.version][-qualifier]-arch` per the .NET RID catalogue; lower-case normalisation; `any`, `base`, `win`, `unix`, `linux` are valid architecture-less RIDs.
 - Compatibility: `win-x64` target accepts assets for `win-x64`, `win`, `any`; rejects `win-x86`, `win-arm64`, `linux-x64`. Legacy asset RIDs (`win10-x64`) are compatible with `win-x64` via `ToPortable` (NuGet packages still ship them).
-- No hard-coded RID strings outside this namespace and `Platform.*` ([§12](../../Architecture/DotNetRepack.architecture.md#12-platform-abstraction)).
+- No hard-coded RID strings outside this namespace and `Platform.*` ([§12](../../Architecture/Tailor.architecture.md#12-platform-abstraction)).
 
 ## Acceptance Criteria
 
@@ -78,10 +78,10 @@ Embedded data (`EmbeddedResource`, canonical JSON, committed):
 
 ## Test Requirements
 
-- xUnit v3 in `tests/DotNetRepack.Inspection.Tests/`; pure in-memory theory tests; trait `WU=203`.
-- Matrix check (AC-9) in `tests/DotNetRepack.IntegrationTests/Inspection/RidCultureMatrixTests`; traits `Category=Integration`, `Category=Matrix`, `WU=203`; skip with reason locally when the matrix is absent, CI must not skip.
+- xUnit v3 in `tests/Tailor.Inspection.Tests/`; pure in-memory theory tests; trait `WU=203`.
+- Matrix check (AC-9) in `tests/Tailor.IntegrationTests/Inspection/RidCultureMatrixTests`; traits `Category=Integration`, `Category=Matrix`, `WU=203`; skip with reason locally when the matrix is absent, CI must not skip.
 - AC-7 needs an invariant-mode run: use a separate test class that sets `System.Globalization.Invariant` via `runtimeconfig.template.json` in a dedicated small test project, or spawn the test host with the env var — choose one and document it in Test Evidence.
-- Run: `dotnet test --project tests/DotNetRepack.Inspection.Tests --filter-trait "WU=203"`; `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=203"`.
+- Run: `dotnet test --project tests/Tailor.Inspection.Tests --filter-trait "WU=203"`; `dotnet test --project tests/Tailor.IntegrationTests --filter-trait "WU=203"`.
 - Record Test Evidence below and in the PR.
 
 ## Definition of Done
@@ -98,7 +98,7 @@ Embedded data (`EmbeddedResource`, canonical JSON, committed):
 
 - The request asks for "CultureInfo validation"; this spec makes the embedded catalogue authoritative and `CultureInfo` a non-authoritative cross-check, because host ICU data and invariant mode would otherwise break determinism. Confirm.
 - Which culture set is authoritative (ICU full list vs the ~13 SDK satellite cultures plus common ones)? Proposed: the ICU culture list shipped with .NET 10 at the time of the WU, frozen.
-- Adding a separate invariant-mode test project would change the architecture's "one test project per src project" rule ([§3](../../Architecture/DotNetRepack.architecture.md#3-solution-layout)).
+- Adding a separate invariant-mode test project would change the architecture's "one test project per src project" rule ([§3](../../Architecture/Tailor.architecture.md#3-solution-layout)).
 
 ## Test Evidence
 

@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-305, WU-102 |
 | Parallel with | WU-400–WU-403 |
-| Target project(s)/paths | `src/DotNetRepack.Planning/Selectors/`, `tests/DotNetRepack.Planning.Tests/Selectors/`, `tests/DotNetRepack.IntegrationTests/Planning/Selectors/` |
+| Target project(s)/paths | `src/Tailor.Planning/Selectors/`, `tests/Tailor.Planning.Tests/Selectors/`, `tests/Tailor.IntegrationTests/Planning/Selectors/` |
 | Size | M |
 | Branch / PR | `wu/500-selector-engine` / `WU-500: selector-engine` |
 
@@ -24,7 +24,7 @@ Evaluate WU-102 `Selector` trees (`all`/`any`/`not` + semantic predicates + phys
 | [TS §3.2](../../Requirements/Transformation_Specification.md#3-design-principles), [TS §32](../../Requirements/Transformation_Specification.md#32-global-invariants) items 3, 4, 7 | Rule based, application-aware, deterministic |
 | [TS §24.2](../../Requirements/Transformation_Specification.md#24-validation-and-failure-policies) | "Requested selector matches nothing" is a reportable condition |
 | [AS §10](../../Requirements/Application_Specification.md#10-folder-model), [AS §11](../../Requirements/Application_Specification.md#11-file-classification-model), [AS §12](../../Requirements/Application_Specification.md#12-file-associations-and-semantic-groups), [AS §16](../../Requirements/Application_Specification.md#16-plugin-model) | Semantic facts the predicates read |
-| Architecture [§8](../../Architecture/DotNetRepack.architecture.md#8-selectors-precedence-and-actions), [§7](../../Architecture/DotNetRepack.architecture.md#7-effective-application-model-semantics), [§15](../../Architecture/DotNetRepack.architecture.md#15-determinism) | Grammar, EAM facts, ordering |
+| Architecture [§8](../../Architecture/Tailor.architecture.md#8-selectors-precedence-and-actions), [§7](../../Architecture/Tailor.architecture.md#7-effective-application-model-semantics), [§15](../../Architecture/Tailor.architecture.md#15-determinism) | Grammar, EAM facts, ordering |
 
 ## Scope
 
@@ -39,7 +39,7 @@ Evaluate WU-102 `Selector` trees (`all`/`any`/`not` + semantic predicates + phys
 
 ## Deliverables
 
-Namespace `DotNetRepack.Planning.Selectors`.
+Namespace `Tailor.Planning.Selectors`.
 
 | Type | API / responsibility |
 |---|---|
@@ -93,9 +93,9 @@ Namespace `DotNetRepack.Planning.Selectors`.
 
 ## Test Requirements
 
-- Unit: `tests/DotNetRepack.Planning.Tests/Selectors/`. Synthetic EAMs built from `InMemoryAppTree` + fake facts providers (WU-300/WU-301). Trait `WU=500`.
-- Integration: `tests/DotNetRepack.IntegrationTests/Planning/Selectors/` over matrix copies with WU-305 hand-authored AppSpecs. Traits `Category=Integration`, `Category=Matrix`, `WU=500`.
-- Run: `dotnet test --project tests/DotNetRepack.Planning.Tests --filter-trait "WU=500"` and `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=500"`.
+- Unit: `tests/Tailor.Planning.Tests/Selectors/`. Synthetic EAMs built from `InMemoryAppTree` + fake facts providers (WU-300/WU-301). Trait `WU=500`.
+- Integration: `tests/Tailor.IntegrationTests/Planning/Selectors/` over matrix copies with WU-305 hand-authored AppSpecs. Traits `Category=Integration`, `Category=Matrix`, `WU=500`.
+- Run: `dotnet test --project tests/Tailor.Planning.Tests --filter-trait "WU=500"` and `dotnet test --project tests/Tailor.IntegrationTests --filter-trait "WU=500"`.
 - Record Test Evidence below and in the PR.
 
 ## Definition of Done
@@ -106,7 +106,7 @@ Namespace `DotNetRepack.Planning.Selectors`.
 
 ## Agent Notes
 
-- `DotNetRepack.Planning` may reference only Validation (and through it Model, Specifications, Core), per architecture §3.1.
+- `Tailor.Planning` may reference only Validation (and through it Model, Specifications, Core), per architecture §3.1.
 - Keep `ISelectableArtefact` free of EAM types so that WU-503's projected-state adapter can implement it.
 - Reuse WU-203 `IRidKnowledge`/`ICultureKnowledge` for RID closure and culture validation. Do not duplicate the RID graph.
 

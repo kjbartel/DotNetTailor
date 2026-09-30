@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-007, WU-100 |
 | Parallel with | M2–M6 |
-| Target | `src/DotNetRepack.Acquisition/` (`Packages/`), `tests/DotNetRepack.Acquisition.Tests/` |
+| Target | `src/Tailor.Acquisition/` (`Packages/`), `tests/Tailor.Acquisition.Tests/` |
 | Size | L |
 
 ## Goal
@@ -24,7 +24,7 @@ Provide a deterministic, credential-safe NuGet acquisition service that resolves
 | [TS §19.4](../../Requirements/Transformation_Specification.md#19-addition-rules) | Provenance of added artefacts |
 | [TS §3.6](../../Requirements/Transformation_Specification.md) | Determinism; pinned external inputs |
 | [RQ §5](../../Requirements/Repackage_tool_Requirements_v1.1.md#5-supported-transformation-categories) | Patching/deployment/optimisation need external packages |
-| [Architecture §10](../../Architecture/DotNetRepack.architecture.md#10-acquisition), [§13](../../Architecture/DotNetRepack.architecture.md#13-diagnostics-failure-policy-and-exit-codes), [§15](../../Architecture/DotNetRepack.architecture.md#15-determinism), [§17](../../Architecture/DotNetRepack.architecture.md#17-security), [§19 item 18](../../Architecture/DotNetRepack.architecture.md#19-resolved--open-inconsistencies) | Service design, exit code 4, security, offline `latestPatch` |
+| [Architecture §10](../../Architecture/Tailor.architecture.md#10-acquisition), [§13](../../Architecture/Tailor.architecture.md#13-diagnostics-failure-policy-and-exit-codes), [§15](../../Architecture/Tailor.architecture.md#15-determinism), [§17](../../Architecture/Tailor.architecture.md#17-security), [§19 item 18](../../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies) | Service design, exit code 4, security, offline `latestPatch` |
 
 ## Scope
 
@@ -90,10 +90,10 @@ Provide a deterministic, credential-safe NuGet acquisition service that resolves
 
 ## Test Requirements
 
-- xUnit v3 (MTP) in `tests/DotNetRepack.Acquisition.Tests/`; golden files for canonical provenance JSON.
+- xUnit v3 (MTP) in `tests/Tailor.Acquisition.Tests/`; golden files for canonical provenance JSON.
 - `LocalPackageFeedFixture`: temp folder feed, temp global packages folder and temp `nuget.config`; never touches the user's cache. Synthetic packages built with `NuGet.Packaging.PackageBuilder`; optional seeding of real packs from the global packages folder populated by `build/Build-TestApps.ps1`.
 - `Category=Network` tests (nightly only; skipped unless `DOTNET_REPACK_TEST_NETWORK=1`): resolve and acquire `Microsoft.NETCore.App.Host.win-x64` `8.0.*` from nuget.org.
-- Run: `dotnet test --project tests/DotNetRepack.Acquisition.Tests --filter-trait "WU=700"`.
+- Run: `dotnet test --project tests/Tailor.Acquisition.Tests --filter-trait "WU=700"`.
 - Record Test Evidence (test-evidence skill) in the PR.
 
 ## Definition of Done

@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-702, WU-004 |
 | Parallel with | M6, M8 |
-| Target | `src/DotNetRepack.Execution/ReadyToRun/`, `tests/DotNetRepack.Execution.Tests/` |
+| Target | `src/Tailor.Execution/ReadyToRun/`, `tests/Tailor.Execution.Tests/` |
 | Size | L |
 
 ## Goal
@@ -24,7 +24,7 @@ Execute `Optimise` actions: locate crossgen2 in the pinned package, verify it, g
 | [RD §8](../../Requirements/R2R_tool_Design.md) | Compilation units executed as planned |
 | [CK §6.2](../../Requirements/Read_to_run_Cake.md#6-target-framework-and-runtime-requirements) | crossgen2, `win-x64` |
 | [RQ §5.4](../../Requirements/Repackage_tool_Requirements_v1.1.md#5-supported-transformation-categories) | Semantics unchanged |
-| [Architecture §9.1](../../Architecture/DotNetRepack.architecture.md#91-readytorun-details), [§11](../../Architecture/DotNetRepack.architecture.md#11-execution-and-safety), [§15](../../Architecture/DotNetRepack.architecture.md#15-determinism), [§17](../../Architecture/DotNetRepack.architecture.md#17-security) | Invocation rules, staging, determinism, process security |
+| [Architecture §9.1](../../Architecture/Tailor.architecture.md#91-readytorun-details), [§11](../../Architecture/Tailor.architecture.md#11-execution-and-safety), [§15](../../Architecture/Tailor.architecture.md#15-determinism), [§17](../../Architecture/Tailor.architecture.md#17-security) | Invocation rules, staging, determinism, process security |
 
 ## Scope
 
@@ -73,10 +73,10 @@ Execute `Optimise` actions: locate crossgen2 in the pinned package, verify it, g
 
 ## Test Requirements
 
-- xUnit v3 + golden files in `tests/DotNetRepack.Execution.Tests/`.
+- xUnit v3 + golden files in `tests/Tailor.Execution.Tests/`.
 - Unit tests use a fake `IProcessRunner` and synthetic package layouts.
 - Real crossgen2 tests (`Category=Matrix`) use `LocalPackageFeedFixture` seeded from the global packages folder populated by `Build-TestApps.ps1` R2R publishes; no network. `Category=Network` only for fetching packages not in the seed.
-- Run: `dotnet test --project tests/DotNetRepack.Execution.Tests --filter-trait "WU=703"`.
+- Run: `dotnet test --project tests/Tailor.Execution.Tests --filter-trait "WU=703"`.
 - Record Test Evidence in the PR.
 
 ## Definition of Done
@@ -86,7 +86,7 @@ Execute `Optimise` actions: locate crossgen2 in the pinned package, verify it, g
 
 ## Agent Notes
 
-- Do not reference `DotNetRepack.Acquisition` from `DotNetRepack.Execution` (architecture §3.1); use the `IPackageLocator` seam.
+- Do not reference `Tailor.Acquisition` from `Tailor.Execution` (architecture §3.1); use the `IPackageLocator` seam.
 - Keep argument construction in one place for WU-900 R2R invalidation reuse.
 
 ## Open Questions

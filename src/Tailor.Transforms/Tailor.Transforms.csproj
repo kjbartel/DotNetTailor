@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Tailor.Planning\Tailor.Planning.csproj" />
+    <ProjectReference Include="..\Tailor.Acquisition\Tailor.Acquisition.csproj" />
+    <ProjectReference Include="..\Tailor.Platform.Abstractions\Tailor.Platform.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

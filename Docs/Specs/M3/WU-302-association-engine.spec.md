@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-301 |
 | Parallel with | WU-303, WU-304 |
-| Target project(s)/paths | `src/DotNetRepack.Model/Associations/`, `tests/DotNetRepack.Model.Tests/Associations/` |
+| Target project(s)/paths | `src/Tailor.Model/Associations/`, `tests/Tailor.Model.Tests/Associations/` |
 | Size | S |
 | Branch / PR | `wu/302-association-engine` / `WU-302: association-engine` |
 
@@ -23,7 +23,7 @@ Link associated files (symbols, XML docs, `.config`, runtimeconfig, deps.json, s
 | [AS §12](../../Requirements/Application_Specification.md#12-file-associations-and-semantic-groups) (12.2–12.6) | Primary files, types, naming, semantics, missing files |
 | [AS §17.2](../../Requirements/Application_Specification.md#172-classification), [AS §18.2](../../Requirements/Application_Specification.md#182-debug-symbols), [AS §18.3](../../Requirements/Application_Specification.md#183-xml-documentation) | Satellites, PDBs, XML docs |
 | [AS §24](../../Requirements/Application_Specification.md#24-global-invariants) item 8 | Explicit associations |
-| Architecture [§7.3](../../Architecture/DotNetRepack.architecture.md#7-effective-application-model-semantics) | Normative rule set |
+| Architecture [§7.3](../../Architecture/Tailor.architecture.md#7-effective-application-model-semantics) | Normative rule set |
 | Plan M4 criterion 3 (missing required association) | AC-5 |
 
 ## Scope
@@ -36,7 +36,7 @@ Link associated files (symbols, XML docs, `.config`, runtimeconfig, deps.json, s
 
 | Item | Detail |
 |---|---|
-| `DotNetRepack.Model.Associations.AssociationEngine.Associate(AppSpec, ClassificationResult, IFileFactsProvider)` → `AssociationResult` | `Associations`, `AbsentOptional`, `Diagnostics` |
+| `Tailor.Model.Associations.AssociationEngine.Associate(AppSpec, ClassificationResult, IFileFactsProvider)` → `AssociationResult` | `Associations`, `AbsentOptional`, `Diagnostics` |
 | `Association` | `PrimaryPath`, `AssociatedPath`, `Type` (`symbols`, `xmlDoc`, `config`, `runtimeConfig`, `depsJson`, `satelliteResource`, extensible string), `RuleId`, `Required` |
 | `AbsentOptionalAssociation` | `PrimaryPath`, `RuleId` — recorded in the model, not emitted as diagnostic |
 | `AssociationPattern` | Parser for `{name}.pdb`, `{name}.xml`, `{file}.config`, `{name}.runtimeconfig.json`, `{name}.deps.json`, `<culture>/{name}.resources.dll`; patterns are relative to the primary's folder and confined to it and its direct children |
@@ -64,8 +64,8 @@ Link associated files (symbols, XML docs, `.config`, runtimeconfig, deps.json, s
 
 ## Test Requirements
 
-- Unit only: `tests/DotNetRepack.Model.Tests/Associations/`, synthetic `InMemoryAppTree` + fake facts; trait `WU=302`.
-- Run: `dotnet test --project tests/DotNetRepack.Model.Tests --filter-trait "WU=302"`.
+- Unit only: `tests/Tailor.Model.Tests/Associations/`, synthetic `InMemoryAppTree` + fake facts; trait `WU=302`.
+- Run: `dotnet test --project tests/Tailor.Model.Tests --filter-trait "WU=302"`.
 - Matrix coverage is exercised by WU-305 golden files.
 - Record Test Evidence in the PR.
 

@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-503, WU-200, WU-701 |
 | Parallel with | WU-504, WU-505, M6 |
-| Target | `src/DotNetRepack.Transforms/Optimisation/ReadyToRun/`, `tests/DotNetRepack.Transforms.Tests/` |
+| Target | `src/Tailor.Transforms/Optimisation/ReadyToRun/`, `tests/Tailor.Transforms.Tests/` |
 | Size | M |
 
 ## Goal
@@ -24,7 +24,7 @@ Implement the `optimisation.readyToRun` handler's planning half: determine R2R e
 | [RD §8](../../Requirements/R2R_tool_Design.md) | Eligibility states, compilation units, no plugin co-compilation |
 | [CK §6.2](../../Requirements/Read_to_run_Cake.md#6-target-framework-and-runtime-requirements) | crossgen2, `win-x64` (R2R optional per architecture §19 item 14) |
 | [RQ §5.4](../../Requirements/Repackage_tool_Requirements_v1.1.md#5-supported-transformation-categories) | Optimisation must not change semantics |
-| [Architecture §8](../../Architecture/DotNetRepack.architecture.md#8-selectors-precedence-and-actions), [§9.1](../../Architecture/DotNetRepack.architecture.md#91-readytorun-details), [§4](../../Architecture/DotNetRepack.architecture.md#4-processing-pipeline) | Handler contract, phase 7, R2R rules |
+| [Architecture §8](../../Architecture/Tailor.architecture.md#8-selectors-precedence-and-actions), [§9.1](../../Architecture/Tailor.architecture.md#91-readytorun-details), [§4](../../Architecture/Tailor.architecture.md#4-processing-pipeline) | Handler contract, phase 7, R2R rules |
 
 ## Scope
 
@@ -93,10 +93,10 @@ Every managed assembly in the projected output gets exactly one entry. Non-manag
 
 ## Test Requirements
 
-- xUnit v3 + golden files in `tests/DotNetRepack.Transforms.Tests/`; plan golden files per scenario.
+- xUnit v3 + golden files in `tests/Tailor.Transforms.Tests/`; plan golden files per scenario.
 - Eligibility fixtures from `artifacts/testapps` (`Category=Matrix`) plus small checked-in or build-time generated assemblies for edge cases.
 - Runtime packs and crossgen2 packages via `LocalPackageFeedFixture` (offline); no network in default runs.
-- Run: `dotnet test --project tests/DotNetRepack.Transforms.Tests --filter-trait "WU=702"`.
+- Run: `dotnet test --project tests/Tailor.Transforms.Tests --filter-trait "WU=702"`.
 - Record Test Evidence in the PR.
 
 ## Definition of Done

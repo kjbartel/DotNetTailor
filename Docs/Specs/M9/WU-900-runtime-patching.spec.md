@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-803, WU-702, WU-703 |
 | Parallel with | WU-901, WU-902, WU-805 |
-| Target project(s)/paths | `src/DotNetRepack.Transforms/` (`Patch.Runtime` handler), `src/DotNetRepack.Inspection/` (R2R version-bubble facts, only if missing), `src/DotNetRepack.Specifications/` (runtime patch options, only if missing), `tests/DotNetRepack.Transforms.Tests/`, `tests/DotNetRepack.IntegrationTests/` |
+| Target project(s)/paths | `src/Tailor.Transforms/` (`Patch.Runtime` handler), `src/Tailor.Inspection/` (R2R version-bubble facts, only if missing), `src/Tailor.Specifications/` (runtime patch options, only if missing), `tests/Tailor.Transforms.Tests/`, `tests/Tailor.IntegrationTests/` |
 | Size | L |
 
 ## Goal
@@ -24,13 +24,13 @@ Implement the `Patch.Runtime` handler. It moves an app to another runtime patch 
 | [TS §29.3](../../Requirements/Transformation_Specification.md), [TS §32.7–32.8](../../Requirements/Transformation_Specification.md) | Pinned resolved versions, determinism, explicit upgrades |
 | [RQ §5.2](../../Requirements/Repackage_tool_Requirements_v1.1.md), [RQ §12](../../Requirements/Repackage_tool_Requirements_v1.1.md) | Patch runtime versions (8.0.x → 8.0.y), determinism, auditability |
 | [CK §9.1](../../Requirements/Read_to_run_Cake.md), [CK §12](../../Requirements/Read_to_run_Cake.md) | SC framework patch replacement (managed + native), diagnostics |
-| [Architecture §4, §9, §9.1, §10, §15, §19 item 18](../../Architecture/DotNetRepack.architecture.md) | Phase 4, `Patch.Runtime`, R2R rules, acquisition policies, determinism, `latestPatch` pinning |
+| [Architecture §4, §9, §9.1, §10, §15, §19 item 18](../../Architecture/Tailor.architecture.md) | Phase 4, `Patch.Runtime`, R2R rules, acquisition policies, determinism, `latestPatch` pinning |
 
 ## Scope
 
 **In**
 - `Patch.Runtime` handler: category `patch.runtime`, phase `Patch`, registered in DI by category.
-- Target version resolution: `RuntimeVersionPolicy` `exact` or `latestPatch` (or `range` within the same major), mapped onto a range with the WU-102 `RuntimeVersionPolicy.ToRangeString` and resolved at plan time through Acquisition, then pinned in the plan (version + sha512). No implicit target version. `--offline` uses the highest cached version in range and warns ([Architecture §19 item 18](../../Architecture/DotNetRepack.architecture.md)).
+- Target version resolution: `RuntimeVersionPolicy` `exact` or `latestPatch` (or `range` within the same major), mapped onto a range with the WU-102 `RuntimeVersionPolicy.ToRangeString` and resolved at plan time through Acquisition, then pinned in the plan (version + sha512). No implicit target version. `--offline` uses the highest cached version in range and warns ([Architecture §19 item 18](../../Architecture/Tailor.architecture.md)).
 - SC: for each shared framework present (NETCore, WindowsDesktop with `Profile` filtering, AspNetCore), compute the source→target RuntimeList diff and emit actions:
   - `Replace`: same relative path, different `FileVersion`/hash.
   - `Add`: present only in the target list.
@@ -85,7 +85,7 @@ Implement the `Patch.Runtime` handler. It moves an app to another runtime patch 
 - Offline local package feed fixture: a folder feed with two same-major runtime pack versions (NETCore + WindowsDesktop `win-x64`) plus crossgen2, referenced by a test `nuget.config`. It is populated by a build script and CI cache, never committed.
 - Integration over `artifacts/testapps/` (pinned-patch SC console, WPF, R2R bubble variant). Launch smoke only in the test harness.
 - Record Test Evidence: commands, TRX, feed package list with hashes, and plan hashes of both runs.
-- Run: `dotnet test --project tests/DotNetRepack.Transforms.Tests --filter-trait "WU=900"`; `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=900"` (integration tests carry `Category=Integration`, `Category=Matrix`, and `Category=Launch` for smoke runs).
+- Run: `dotnet test --project tests/Tailor.Transforms.Tests --filter-trait "WU=900"`; `dotnet test --project tests/Tailor.IntegrationTests --filter-trait "WU=900"` (integration tests carry `Category=Integration`, `Category=Matrix`, and `Category=Launch` for smoke runs).
 
 ## Definition of Done
 

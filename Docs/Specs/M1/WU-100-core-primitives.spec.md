@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-000 |
 | Parallel with | WU-001–WU-007 |
-| Target project(s)/paths | `src/DotNetRepack.Core/`, `tests/DotNetRepack.Core.Tests/`, `tests/DotNetRepack.Testing/` |
+| Target project(s)/paths | `src/Tailor.Core/`, `tests/Tailor.Core.Tests/`, `tests/Tailor.Testing/` |
 | Size | L |
 
 ## Goal
@@ -19,10 +19,10 @@ Provide the dependency-free primitives every other project builds on: root-confi
 
 | Area | Requirements | Architecture |
 |---|---|---|
-| Relative, portable, confined paths | [AS §23.3](../../Requirements/Application_Specification.md), [AS §24](../../Requirements/Application_Specification.md) (9), [AS §15.2](../../Requirements/Application_Specification.md), [TS §24.4](../../Requirements/Transformation_Specification.md) | [§3.1](../../Architecture/DotNetRepack.architecture.md#31-project-responsibilities-and-allowed-dependencies), [§7.1](../../Architecture/DotNetRepack.architecture.md#71-folder-matching), [§17](../../Architecture/DotNetRepack.architecture.md#17-security) |
-| Diagnostics, policies | [TS §24](../../Requirements/Transformation_Specification.md), [RQ §12](../../Requirements/Repackage_tool_Requirements_v1.1.md) | [§13](../../Architecture/DotNetRepack.architecture.md#13-diagnostics-failure-policy-and-exit-codes) |
-| Determinism, canonical JSON, fingerprint | [AS §3.6](../../Requirements/Application_Specification.md), [TS §3.6](../../Requirements/Transformation_Specification.md), [RQ §8](../../Requirements/Repackage_tool_Requirements_v1.1.md), [AS §5.2](../../Requirements/Application_Specification.md) | [§5](../../Architecture/DotNetRepack.architecture.md#5-artefacts), [§15](../../Architecture/DotNetRepack.architecture.md#15-determinism), [§19](../../Architecture/DotNetRepack.architecture.md#19-resolved--open-inconsistencies) item 22 |
-| Schema version | [AS §5.3](../../Requirements/Application_Specification.md), [TS §5.3](../../Requirements/Transformation_Specification.md) | [§6.1](../../Architecture/DotNetRepack.architecture.md#61-common-rules) |
+| Relative, portable, confined paths | [AS §23.3](../../Requirements/Application_Specification.md), [AS §24](../../Requirements/Application_Specification.md) (9), [AS §15.2](../../Requirements/Application_Specification.md), [TS §24.4](../../Requirements/Transformation_Specification.md) | [§3.1](../../Architecture/Tailor.architecture.md#31-project-responsibilities-and-allowed-dependencies), [§7.1](../../Architecture/Tailor.architecture.md#71-folder-matching), [§17](../../Architecture/Tailor.architecture.md#17-security) |
+| Diagnostics, policies | [TS §24](../../Requirements/Transformation_Specification.md), [RQ §12](../../Requirements/Repackage_tool_Requirements_v1.1.md) | [§13](../../Architecture/Tailor.architecture.md#13-diagnostics-failure-policy-and-exit-codes) |
+| Determinism, canonical JSON, fingerprint | [AS §3.6](../../Requirements/Application_Specification.md), [TS §3.6](../../Requirements/Transformation_Specification.md), [RQ §8](../../Requirements/Repackage_tool_Requirements_v1.1.md), [AS §5.2](../../Requirements/Application_Specification.md) | [§5](../../Architecture/Tailor.architecture.md#5-artefacts), [§15](../../Architecture/Tailor.architecture.md#15-determinism), [§19](../../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies) item 22 |
+| Schema version | [AS §5.3](../../Requirements/Application_Specification.md), [TS §5.3](../../Requirements/Transformation_Specification.md) | [§6.1](../../Architecture/Tailor.architecture.md#61-common-rules) |
 
 ## Scope
 
@@ -37,7 +37,7 @@ Provide the dependency-free primitives every other project builds on: root-confi
 - `SchemaVersion` + `SchemaCompatibility` (kind-agnostic; used by WU-101/WU-102).
 - `ContentHash` (SHA-256), `ContentHasher`, `TreeFingerprint` (single implementation; WU-305 consumes it and only adds sidecar exclusion).
 - `IPackageLocator` contract (architecture §3.2): implemented by Acquisition (WU-700), consumed by Execution (WU-601, WU-703), wired by the Cli.
-- `Golden` golden-file test helper in `tests/DotNetRepack.Testing` (architecture [§16](../../Architecture/DotNetRepack.architecture.md#16-testing-strategy)); WU-100 is its first consumer and owns canonical JSON.
+- `Golden` golden-file test helper in `tests/Tailor.Testing` (architecture [§16](../../Architecture/Tailor.architecture.md#16-testing-strategy)); WU-100 is its first consumer and owns canonical JSON.
 
 **Out**
 - Reparse-point / junction canonicalisation (Platform, WU-600/WU-800).
@@ -48,7 +48,7 @@ Provide the dependency-free primitives every other project builds on: root-confi
 
 ## Deliverables
 
-Namespace root `DotNetRepack.Core`. The project references no other repo project and no third-party packages.
+Namespace root `Tailor.Core`. The project references no other repo project and no third-party packages.
 
 | Namespace | Key public types / APIs |
 |---|---|
@@ -62,12 +62,12 @@ Namespace root `DotNetRepack.Core`. The project references no other repo project
 | `.Hashing` | `readonly struct ContentHash` (32 bytes, `ToString()` = 64 lowercase hex, `Parse`); `static ContentHasher`: `Compute(ReadOnlySpan<byte>)`, `ComputeAsync(Stream, CancellationToken)`, `ComputeFileAsync(string, CancellationToken)`; `sealed record TreeEntry(RelativePath Path, long Size, ContentHash Hash)`; `static TreeFingerprint.Compute(IEnumerable<TreeEntry>, PathPolicy) → ContentHash`. |
 | `.Packages` | `interface IPackageLocator { Result<string> GetPackageRoot(string id, string version, string sha512); }` (contract only; no implementation in Core). |
 
-Test support (`tests/DotNetRepack.Testing`, namespace `DotNetRepack.Testing`; no package or project references; not referenced by any `src` project):
+Test support (`tests/Tailor.Testing`, namespace `Tailor.Testing`; no package or project references; not referenced by any `src` project):
 
 | Type | API |
 |---|---|
 | `static class Golden` | `AssertMatches(string actual, string name, GoldenOptions? options = null, [CallerFilePath] string callerPath = "")`. Resolves `<dir of callerPath>/Golden/<caller file name without .cs>/<name>.golden<ext>`; `name` may contain `/`-separated segments (no `..`, not rooted). Update mode when `DOTNET_REPACK_UPDATE_GOLDEN=1`. Delegates to `GoldenStore`. |
-| `sealed record GoldenOptions` | `Extension` (`.json` default, `.txt` for text); `Scrubbers` (ordered ordinal literal `(find, replacement)` pairs applied to `actual` only); `WithTemp(string tempRoot)` → `{TEMP}`, `WithRepoRoot()` → `{REPO}` (directory containing `DotNetRepack.slnx`, found upward from `callerPath`); path scrubbers match both the raw and the JSON-escaped (`\\`) form. |
+| `sealed record GoldenOptions` | `Extension` (`.json` default, `.txt` for text); `Scrubbers` (ordered ordinal literal `(find, replacement)` pairs applied to `actual` only); `WithTemp(string tempRoot)` → `{TEMP}`, `WithRepoRoot()` → `{REPO}` (directory containing `Tailor.slnx`, found upward from `callerPath`); path scrubbers match both the raw and the JSON-escaped (`\\`) form. |
 | `sealed class GoldenStore` | `GoldenStore(bool update)`; `AssertMatches(string actual, string goldenPath, GoldenOptions?)`. Testable without the env var. |
 | `sealed class GoldenMismatchException : Exception` | Message: golden path, received path, unified diff summary (first differing hunks, capped). |
 
@@ -85,20 +85,20 @@ Diagnostic codes owned: `RPK0001`–`RPK0099` (core). Code sub-range convention 
 
 ## Design Notes
 
-- Architecture [§3.1](../../Architecture/DotNetRepack.architecture.md#31-project-responsibilities-and-allowed-dependencies), [§13](../../Architecture/DotNetRepack.architecture.md#13-diagnostics-failure-policy-and-exit-codes), [§15](../../Architecture/DotNetRepack.architecture.md#15-determinism) are normative.
+- Architecture [§3.1](../../Architecture/Tailor.architecture.md#31-project-responsibilities-and-allowed-dependencies), [§13](../../Architecture/Tailor.architecture.md#13-diagnostics-failure-policy-and-exit-codes), [§15](../../Architecture/Tailor.architecture.md#15-determinism) are normative.
 - `RelativePath` normalisation: `\` → `/`; collapse repeated separators; drop `.` segments; strip trailing `/`; empty → `Root`. Rejected (error result, `RPK0001`–`RPK0009`): rooted (`/x`, `\x`), drive (`C:\`, `C:x`), UNC / device (`\\server`, `\\?\`, `\\.\`), any `..` segment, NUL/control chars, Windows-invalid chars `<>:"|?*`, segments ending in `.` or space, reserved device names (`CON`, `PRN`, `AUX`, `NUL`, `COM1`–`COM9`, `LPT1`–`LPT9`, with or without extension). Reserved-name and invalid-char checks live on `PathPolicy.Windows` so a future Linux policy can differ.
 - `ToFullPath` checks confinement lexically (`Path.GetFullPath` + prefix check with trailing separator). Reparse-point resolution is out of scope.
 - Structural descriptors (`IsStructural = true`, [TS §24.4](../../Requirements/Transformation_Specification.md)) always remain `Error` regardless of policy or mode. `IsStructural` and `IsPolicyConfigurable` are mutually exclusive (registry rejects both set).
-- Failure modes ([§13](../../Architecture/DotNetRepack.architecture.md#13-diagnostics-failure-policy-and-exit-codes)): `Default` — warnings never count as failures. `Strict` — warnings count as failures (exit 3, mapped by WU-105). `Permissive` — warnings never count as failures, and `Error` diagnostics whose descriptor is `IsPolicyConfigurable` ([TS §24.2](../../Requirements/Transformation_Specification.md)) are downgraded to `Warning`; structural and other errors are unaffected. An explicit TransformSpec condition policy takes precedence over the mode for policy-configurable descriptors.
+- Failure modes ([§13](../../Architecture/Tailor.architecture.md#13-diagnostics-failure-policy-and-exit-codes)): `Default` — warnings never count as failures. `Strict` — warnings count as failures (exit 3, mapped by WU-105). `Permissive` — warnings never count as failures, and `Error` diagnostics whose descriptor is `IsPolicyConfigurable` ([TS §24.2](../../Requirements/Transformation_Specification.md)) are downgraded to `Warning`; structural and other errors are unaffected. An explicit TransformSpec condition policy takes precedence over the mode for policy-configurable descriptors.
 - Diagnostic sort order: `Location.Document`, `Location.JsonPointer`, `Location.Path` (policy comparer), `Code`, `Message` — all ordinal/total.
-- Canonical JSON: UTF-8 without BOM, LF (deliberate for cross-machine byte stability, architecture [§15](../../Architecture/DotNetRepack.architecture.md#15-determinism), [§19](../../Architecture/DotNetRepack.architecture.md#19-resolved--open-inconsistencies) item 38), 2-space indent, trailing LF at EOF, property order = model declaration order, dictionaries serialised with ordinal key order, no timestamps. `UnsafeRelaxedJsonEscaping` is acceptable because output is never HTML-embedded; keeps `<culture>` readable.
+- Canonical JSON: UTF-8 without BOM, LF (deliberate for cross-machine byte stability, architecture [§15](../../Architecture/Tailor.architecture.md#15-determinism), [§19](../../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies) item 38), 2-space indent, trailing LF at EOF, property order = model declaration order, dictionaries serialised with ordinal key order, no timestamps. `UnsafeRelaxedJsonEscaping` is acceptable because output is never HTML-embedded; keeps `<culture>` readable.
 - `TreeFingerprint`: entries sorted with `OrdinalIgnoreCaseThenOrdinalComparer`; per entry UTF-8 bytes of `{path}\0{size}\0{hash}\n`; SHA-256 over the concatenation. Duplicate paths under the policy comparer throw `ArgumentException`.
 - All types are immutable and thread-safe (parallel inspection, risk R12).
 - `Golden` comparison is ordinal text equality after applying only the supplied scrubbers; nothing else is normalised (a `\r\n` in `actual` fails unless the test supplies a scrubber for it). Golden files are read and written as UTF-8 without BOM, LF (`.gitattributes` forces LF under `tests/**/Golden/**`). On mismatch or missing golden: write `<name>.received<ext>` beside the golden path (git-ignored) and throw `GoldenMismatchException`. On match: delete a stale received file. Update mode writes the golden file and passes; CI never sets it (WU-002 guard).
 
 ## Acceptance Criteria
 
-- [ ] AC-1 `DotNetRepack.Core.csproj` has no `ProjectReference` and no `PackageReference` (test inspects the assembly's references: only framework assemblies).
+- [ ] AC-1 `Tailor.Core.csproj` has no `ProjectReference` and no `PackageReference` (test inspects the assembly's references: only framework assemblies).
 - [ ] AC-2 `RelativePath.TryParse` normalises `a\\b/./c/` to `a/b/c` and `""`/`"."` to `Root` (theory test).
 - [ ] AC-3 `RelativePath.TryParse` rejects each of `/a`, `\a`, `C:\a`, `C:a`, `\\s\x`, `\\?\C:\a`, `a/../b`, `..`, `a/b..` (trailing dot), `a /b` (trailing space), `a<b`, `a\u0001`, `con`, `aux.txt` with an error diagnostic carrying an `RPK00nn` code and no exception; `a/b..c` is accepted.
 - [ ] AC-4 `PathPolicy.Windows.Comparer` treats `A/B.dll` and `a/b.DLL` as equal and orders a mixed list identically regardless of input order; `OrdinalIgnoreCaseThenOrdinalComparer` yields a total order (property/theory test over permutations).
@@ -118,15 +118,15 @@ Diagnostic codes owned: `RPK0001`–`RPK0099` (core). Code sub-range convention 
 - [ ] AC-18 With `update: true` it writes the golden file (UTF-8 no BOM, no `\r`) and passes; `Golden` enables update mode only when `DOTNET_REPACK_UPDATE_GOLDEN=1`.
 - [ ] AC-19 Scrubbers: `WithTemp`/`WithRepoRoot` replace raw and JSON-escaped paths with `{TEMP}`/`{REPO}`; without scrubbers, `a\r\nb` vs golden `a\nb` fails.
 - [ ] AC-20 `Golden.AssertMatches(..., "x/y")` from `FooTests.cs` resolves `<test dir>/Golden/FooTests/x/y.golden.json`; `.txt` via `GoldenOptions.Extension`; names containing `..` or rooted names throw `ArgumentException`.
-- [ ] AC-21 `DotNetRepack.Testing.csproj` has no `PackageReference`/`ProjectReference`; no `src` project references it.
+- [ ] AC-21 `Tailor.Testing.csproj` has no `PackageReference`/`ProjectReference`; no `src` project references it.
 
 ## Test Requirements
 
-- xUnit v3 on MTP, project `tests/DotNetRepack.Core.Tests/`. Golden-file comparison via `DotNetRepack.Testing.Golden` for the canonical JSON sample only. `Golden` itself is tested in `tests/DotNetRepack.Core.Tests/Testing/GoldenStoreTests.cs` against temp directories through `GoldenStore` (no env-var mutation).
+- xUnit v3 on MTP, project `tests/Tailor.Core.Tests/`. Golden-file comparison via `Tailor.Testing.Golden` for the canonical JSON sample only. `Golden` itself is tested in `tests/Tailor.Core.Tests/Testing/GoldenStoreTests.cs` against temp directories through `GoldenStore` (no env-var mutation).
 - Names: classes `<TypeUnderTest>Tests`, methods `<Subject><Condition><ExpectedResult>` without underscores (e.g. `TryParseRejectsRootedPath`).
 - Synthetic in-memory data only; no test-app matrix dependency.
 - Mark tests `[Trait("WU", "100")]`.
-- Run: `dotnet test --project tests/DotNetRepack.Core.Tests --filter-trait "WU=100"` · focused: `--filter-class "*RelativePathTests"`.
+- Run: `dotnet test --project tests/Tailor.Core.Tests --filter-trait "WU=100"` · focused: `--filter-class "*RelativePathTests"`.
 - Record Test Evidence (command, commit, pass/fail counts) in the section below and in the PR.
 
 ## Definition of Done
@@ -146,7 +146,7 @@ Diagnostic codes owned: `RPK0001`–`RPK0099` (core). Code sub-range convention 
 
 - **Resolved** — `--permissive` semantics: see Design Notes (architecture §13, §19 item 27).
 - Whether reserved device names should be rejected for app-tree paths (they cannot exist on Windows) or only for spec-authored paths.
-- Whether `Golden` tests should move to a dedicated `DotNetRepack.Testing.Tests` project (adds a 16th test project) instead of `DotNetRepack.Core.Tests`; proposed: stay in Core.Tests until `DotNetRepack.Testing` grows.
+- Whether `Golden` tests should move to a dedicated `Tailor.Testing.Tests` project (adds a 16th test project) instead of `Tailor.Core.Tests`; proposed: stay in Core.Tests until `Tailor.Testing` grows.
 - **Resolved** — `TreeFingerprint` ownership: Core (this WU); WU-305 reuses `Core.Hashing.TreeFingerprint` and adds only sidecar exclusion (architecture §3.2).
 
 ## Test Evidence

@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-801, WU-802, WU-701, WU-503, WU-201, WU-800, WU-702 |
 | Parallel with | WU-703, WU-704, WU-803–WU-805, WU-900, WU-902 |
-| Target project(s)/paths | `src/DotNetRepack.Transforms/` (`Retarget` handler, compatibility analyser), `src/DotNetRepack.Acquisition/` (known-breaking-API data, if placed there), `src/DotNetRepack.Specifications/` (compatibility policy, only if missing), `tests/DotNetRepack.Transforms.Tests/`, `tests/DotNetRepack.IntegrationTests/`, `tests/TestApps/` (BinaryFormatter fixture) |
+| Target project(s)/paths | `src/Tailor.Transforms/` (`Retarget` handler, compatibility analyser), `src/Tailor.Acquisition/` (known-breaking-API data, if placed there), `src/Tailor.Specifications/` (compatibility policy, only if missing), `tests/Tailor.Transforms.Tests/`, `tests/Tailor.IntegrationTests/`, `tests/TestApps/` (BinaryFormatter fixture) |
 | Size | L |
 
 ## Goal
@@ -25,8 +25,8 @@ Implement the `Retarget` handler. It changes the TFM (e.g. `net8.0` → `net10.0
 | [TS §28](../../Requirements/Transformation_Specification.md), [TS §29.3](../../Requirements/Transformation_Specification.md) | `${targetTfm}` variables, pinned versions |
 | [RQ §5.1](../../Requirements/Repackage_tool_Requirements_v1.1.md), [RQ §11](../../Requirements/Repackage_tool_Requirements_v1.1.md) | Retarget + compatibility validation; target runtime independent of tool runtime |
 | [CK §9.2](../../Requirements/Read_to_run_Cake.md), [CK §6.1](../../Requirements/Read_to_run_Cake.md) | TFM retargeting for FD and SC, required assemblies present |
-| [Architecture §4, §9, §9.1, §9.2, §10](../../Architecture/DotNetRepack.architecture.md) | Phase 3, `Retarget` handler, crossgen2 major = target major, apphost, catalogue |
-| [Plan risk R6](../../Plans/DotNetRepack.plan.md) | Undetectable breaking changes: document the limits |
+| [Architecture §4, §9, §9.1, §9.2, §10](../../Architecture/Tailor.architecture.md) | Phase 3, `Retarget` handler, crossgen2 major = target major, apphost, catalogue |
+| [Plan risk R6](../../Plans/Tailor.plan.md) | Undetectable breaking changes: document the limits |
 
 ## Scope
 
@@ -86,7 +86,7 @@ Implement the `Retarget` handler. It changes the TFM (e.g. `net8.0` → `net10.0
 - Integration over `artifacts/testapps/` net8 FD/SC console, WinForms and WPF. Launch smoke only in the harness.
 - Unit tests for the analyser against small synthetic metadata (no network).
 - Record Test Evidence: commands, TRX, feed contents and plan hashes.
-- Run: `dotnet test --project tests/DotNetRepack.Transforms.Tests --filter-trait "WU=901"`; `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=901"` (integration tests carry `Category=Integration`, `Category=Matrix`, and `Category=Launch` for smoke runs).
+- Run: `dotnet test --project tests/Tailor.Transforms.Tests --filter-trait "WU=901"`; `dotnet test --project tests/Tailor.IntegrationTests --filter-trait "WU=901"` (integration tests carry `Category=Integration`, `Category=Matrix`, and `Category=Launch` for smoke runs).
 
 ## Definition of Done
 

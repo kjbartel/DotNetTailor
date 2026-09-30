@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-903, WU-1000, WU-1001 |
 | Parallel with | WU-1004 |
-| Target project(s)/paths | `Docs/Guides/` (guides), `templates/` (TransformSpec templates), `src/DotNetRepack.Cli/DotNetRepack.Cli.csproj` (pack templates as package content), `tests/DotNetRepack.IntegrationTests/` (template + example validation), `tests/DotNetRepack.Specifications.Tests/` (doc example schema validation) |
+| Target project(s)/paths | `Docs/Guides/` (guides), `templates/` (TransformSpec templates), `src/Tailor.Cli/Tailor.Cli.csproj` (pack templates as package content), `tests/Tailor.IntegrationTests/` (template + example validation), `tests/Tailor.Specifications.Tests/` (doc example schema validation) |
 | Size | M |
 
 ## Goal
@@ -24,7 +24,7 @@ Ship user guides and reusable TransformSpec templates, including `enterprise-win
 | [TS §14.3](../../Requirements/Transformation_Specification.md), [TS §28](../../Requirements/Transformation_Specification.md), [TS §33](../../Requirements/Transformation_Specification.md) | R2R scope, template variables, conceptual example |
 | [CK §6.2](../../Requirements/Read_to_run_Cake.md), [CK §7.1](../../Requirements/Read_to_run_Cake.md), [CK §7.3](../../Requirements/Read_to_run_Cake.md), [CK §8](../../Requirements/Read_to_run_Cake.md) | Historical enterprise defaults: win-x64 only, English-only, symbols package |
 | [RQ §10](../../Requirements/Repackage_tool_Requirements_v1.1.md) | Interactive and CI usage |
-| [Architecture §6, §14, §19 item 4](../../Architecture/DotNetRepack.architecture.md) | Spec shapes, CLI, template decision |
+| [Architecture §6, §14, §19 item 4](../../Architecture/Tailor.architecture.md) | Spec shapes, CLI, template decision |
 
 ## Scope
 
@@ -54,9 +54,9 @@ Ship user guides and reusable TransformSpec templates, including `enterprise-win
 
 ## Design Notes
 
-- [Architecture §19 item 4](../../Architecture/DotNetRepack.architecture.md): English-only and other-RID removal are **not** defaults; they live in this template.
+- [Architecture §19 item 4](../../Architecture/Tailor.architecture.md): English-only and other-RID removal are **not** defaults; they live in this template.
 - Reuse the WU-903 TS §33 fixture for the combination recipe. Do not maintain two copies: the recipe links to or includes the same file, verified by test.
-- Use American spelling for CLI terms (`analyze`) to match the CLI ([Architecture §14](../../Architecture/DotNetRepack.architecture.md)).
+- Use American spelling for CLI terms (`analyze`) to match the CLI ([Architecture §14](../../Architecture/Tailor.architecture.md)).
 - Keep the schemas normative. Guides show examples and explain, but do not redefine members.
 
 ## Acceptance Criteria
@@ -74,7 +74,7 @@ Ship user guides and reusable TransformSpec templates, including `enterprise-win
 - xUnit v3 on MTP. Integration tier over `artifacts/testapps/` with the offline local package feed (crossgen2 packs for R2R).
 - Launch smoke only in the harness.
 - Integration tests carry `Category=Integration`, `Category=Matrix`, `Category=Launch` as applicable; doc-example tests carry no category.
-- Run: `dotnet test --project tests/DotNetRepack.Specifications.Tests --filter-trait "WU=1003"`; `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=1003"`.
+- Run: `dotnet test --project tests/Tailor.Specifications.Tests --filter-trait "WU=1003"`; `dotnet test --project tests/Tailor.IntegrationTests --filter-trait "WU=1003"`.
 - Record Test Evidence: commands, TRX and matrix results table.
 
 ## Definition of Done
@@ -89,5 +89,5 @@ Ship user guides and reusable TransformSpec templates, including `enterprise-win
 
 ## Open Questions
 
-- How users get templates from an installed tool: package content only, release assets, or a `dotnet-repack template export <name>` verb (new CLI surface, not planned).
+- How users get templates from an installed tool: package content only, release assets, or a `dotnet-tailor template export <name>` verb (new CLI surface, not planned).
 - **Resolved** — WU-1000/WU-1001 cross-links: both are dependencies in the plan.

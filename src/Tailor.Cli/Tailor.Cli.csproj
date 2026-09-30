@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>true</IsPackable>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>dotnet-tailor</ToolCommandName>
+    <PackageId>dotnet-tailor</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Tailor.Analysis\Tailor.Analysis.csproj" />
+    <ProjectReference Include="..\Tailor.Validation\Tailor.Validation.csproj" />
+    <ProjectReference Include="..\Tailor.Planning\Tailor.Planning.csproj" />
+    <ProjectReference Include="..\Tailor.Execution\Tailor.Execution.csproj" />
+    <ProjectReference Include="..\Tailor.Transforms\Tailor.Transforms.csproj" />
+    <ProjectReference Include="..\Tailor.Platform.Windows\Tailor.Platform.Windows.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-100, WU-007 |
 | Parallel with | WU-102, WU-105, M2 |
-| Target project(s)/paths | `src/DotNetRepack.Specifications/` (`Common/`, `AppSpec/`), `schemas/appspec/v1/appspec.schema.json`, `tests/DotNetRepack.Specifications.Tests/` (`Common/`, `AppSpec/`, `Fixtures/AppSpec/`) |
+| Target project(s)/paths | `src/Tailor.Specifications/` (`Common/`, `AppSpec/`), `schemas/appspec/v1/appspec.schema.json`, `tests/Tailor.Specifications.Tests/` (`Common/`, `AppSpec/`, `Fixtures/AppSpec/`) |
 | Size | L |
 
 ## Goal
@@ -19,16 +19,16 @@ Define the v1 AppSpec object model, its tolerant read and canonical write, the g
 
 | Area | Requirements | Architecture |
 |---|---|---|
-| Identity, schema, versioning | [AS §5](../../Requirements/Application_Specification.md), [AS §24](../../Requirements/Application_Specification.md) (11) | [§6.1](../../Architecture/DotNetRepack.architecture.md#61-common-rules) |
-| Model sections | [AS §6](../../Requirements/Application_Specification.md)–[§18](../../Requirements/Application_Specification.md), [AS §21](../../Requirements/Application_Specification.md) (`includes` as data), [AS §23.3](../../Requirements/Application_Specification.md) | [§6.2](../../Architecture/DotNetRepack.architecture.md#62-appspec-shape-illustrative-the-wu-101-schema-is-normative), [§7](../../Architecture/DotNetRepack.architecture.md#7-effective-application-model-semantics) |
-| State-only, exclusions | [AS §1](../../Requirements/Application_Specification.md), [AS §19.3](../../Requirements/Application_Specification.md), [AS §20](../../Requirements/Application_Specification.md), [RQ §8](../../Requirements/Repackage_tool_Requirements_v1.1.md) | [§19](../../Architecture/DotNetRepack.architecture.md#19-resolved--open-inconsistencies) items 1, 17, 19, 22 |
-| Canonical output, determinism | [AS §3.6](../../Requirements/Application_Specification.md), [AS §3.5](../../Requirements/Application_Specification.md) | [§5](../../Architecture/DotNetRepack.architecture.md#5-artefacts), [§15](../../Architecture/DotNetRepack.architecture.md#15-determinism) |
-| Validator library | [RQ §12](../../Requirements/Repackage_tool_Requirements_v1.1.md) | [§20](../../Architecture/DotNetRepack.architecture.md#20-open-questions), [§21](../../Architecture/DotNetRepack.architecture.md#21-spikes-feeding-this-document) (WU-007 ADR) |
+| Identity, schema, versioning | [AS §5](../../Requirements/Application_Specification.md), [AS §24](../../Requirements/Application_Specification.md) (11) | [§6.1](../../Architecture/Tailor.architecture.md#61-common-rules) |
+| Model sections | [AS §6](../../Requirements/Application_Specification.md)–[§18](../../Requirements/Application_Specification.md), [AS §21](../../Requirements/Application_Specification.md) (`includes` as data), [AS §23.3](../../Requirements/Application_Specification.md) | [§6.2](../../Architecture/Tailor.architecture.md#62-appspec-shape-illustrative-the-wu-101-schema-is-normative), [§7](../../Architecture/Tailor.architecture.md#7-effective-application-model-semantics) |
+| State-only, exclusions | [AS §1](../../Requirements/Application_Specification.md), [AS §19.3](../../Requirements/Application_Specification.md), [AS §20](../../Requirements/Application_Specification.md), [RQ §8](../../Requirements/Repackage_tool_Requirements_v1.1.md) | [§19](../../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies) items 1, 17, 19, 22 |
+| Canonical output, determinism | [AS §3.6](../../Requirements/Application_Specification.md), [AS §3.5](../../Requirements/Application_Specification.md) | [§5](../../Architecture/Tailor.architecture.md#5-artefacts), [§15](../../Architecture/Tailor.architecture.md#15-determinism) |
+| Validator library | [RQ §12](../../Requirements/Repackage_tool_Requirements_v1.1.md) | [§20](../../Architecture/Tailor.architecture.md#20-open-questions), [§21](../../Architecture/Tailor.architecture.md#21-spikes-feeding-this-document) (WU-007 ADR) |
 
 ## Scope
 
 **In**
-- Shared infrastructure in `DotNetRepack.Specifications.Common` (used by WU-102/WU-103).
+- Shared infrastructure in `Tailor.Specifications.Common` (used by WU-102/WU-103).
 - AppSpec v1 model covering every AS section below, serialisation, per-document structural checks.
 - Schema generation with `JsonSchemaExporter`, committed schema, drift test.
 - Sample fixtures, including the `folderspec.json`-equivalent AppSpec.
@@ -36,13 +36,13 @@ Define the v1 AppSpec object model, its tolerant read and canonical write, the g
 **Out**
 - Include resolution / merging (WU-103). `includes` is modelled as data only.
 - Validation against a tree, cross-reference checks (`idRef` targets, `folder:<id>` targets) (WU-300, WU-403).
-- Capability assessment and validation state (not in the AppSpec, [§19](../../Architecture/DotNetRepack.architecture.md#19-resolved--open-inconsistencies) items 1, 17).
-- `knownUnresolved` references (open, [§19](../../Architecture/DotNetRepack.architecture.md#19-resolved--open-inconsistencies) item 20).
+- Capability assessment and validation state (not in the AppSpec, [§19](../../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies) items 1, 17).
+- `knownUnresolved` references (open, [§19](../../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies) item 20).
 - CLI `schema export` wiring (WU-105).
 
 ## Deliverables
 
-### Shared (`DotNetRepack.Specifications.Common`)
+### Shared (`Tailor.Specifications.Common`)
 
 | Type | Responsibility |
 |---|---|
@@ -63,7 +63,7 @@ Reader pipeline (stop at first failing stage, except that stage 3 reports all vi
 4. Deserialise (`UnmappedMemberHandling.Disallow`) → `RPK1011` with pointer from `JsonException.Path`.
 5. Per-document structural checks supplied by the format (`RPK11xx`/`RPK12xx`).
 
-### AppSpec (`DotNetRepack.Specifications.AppSpec`)
+### AppSpec (`Tailor.Specifications.AppSpec`)
 
 Root `sealed record AppSpecDocument : SpecificationDocument`. All top-level sections are optional in the schema (needed for subsidiary documents, WU-103); completeness is checked later by WU-403.
 
@@ -87,21 +87,21 @@ Per-document structural checks (`RPK1100`–`1199`): duplicate `id` among `folde
 - Post-processing: `$schema` = JSON Schema 2020-12, `$id` (placeholder URI constant, see Open Questions), `title`, `description` from `[Description]`, `additionalProperties: false` on every object, `required` from `required` members, `kind` as `const`, `schemaVersion` `pattern ^\d+\.\d+$`, string-or-array members as `oneOf`.
 - `AppSpecFormat.Instance` exposes supported version `1.0`.
 
-### Fixtures (`tests/DotNetRepack.Specifications.Tests/Fixtures/AppSpec/`)
+### Fixtures (`tests/Tailor.Specifications.Tests/Fixtures/AppSpec/`)
 
 - `minimal.appspec.json` (header only).
-- `architecture-example.appspec.json` (the [§6.2](../../Architecture/DotNetRepack.architecture.md#62-appspec-shape-illustrative-the-wu-101-schema-is-normative) example, completed to be schema-valid).
-- `folderspec-equivalent.appspec.json`: same intent as [folderspec.json](../../Requirements/folderspec.json) in canonical v1 form per [§19](../../Architecture/DotNetRepack.architecture.md#19-resolved--open-inconsistencies) item 19 — `<lang_spec>` → `<culture>`, `\` → `/`, `duplicate_references: false` → `duplicates: "error"`, snake_case → camelCase, `file_types` → `classifications`, `id_ref` → `idRef`, recursive `plugins` nesting via `idRef` with `mask: "**"` kept, `reference_paths` mapped to `references` (see Open Questions for `current/runtimes`).
+- `architecture-example.appspec.json` (the [§6.2](../../Architecture/Tailor.architecture.md#62-appspec-shape-illustrative-the-wu-101-schema-is-normative) example, completed to be schema-valid).
+- `folderspec-equivalent.appspec.json`: same intent as [folderspec.json](../../Requirements/folderspec.json) in canonical v1 form per [§19](../../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies) item 19 — `<lang_spec>` → `<culture>`, `\` → `/`, `duplicate_references: false` → `duplicates: "error"`, snake_case → camelCase, `file_types` → `classifications`, `id_ref` → `idRef`, recursive `plugins` nesting via `idRef` with `mask: "**"` kept, `reference_paths` mapped to `references` (see Open Questions for `current/runtimes`).
 - `commented.appspec.json` (comments + trailing commas), and invalid fixtures: `unknown-member`, `wrong-kind`, `bad-version`, `major-2`, `minor-newer-known-members`, `minor-newer-unknown-member`, `escaping-reference`, `duplicate-sibling-id`.
 
 ## Design Notes
 
-- Header and version rules: [§6.1](../../Architecture/DotNetRepack.architecture.md#61-common-rules). "Newer minor accepted with a warning only if every member is known" = stage 2 emits `RPK1006` warning, stage 3/4 still reject unknown members.
-- Comments are not preserved; round-trip is semantic (read → write → read equal) and canonical output is byte-stable ([§5](../../Architecture/DotNetRepack.architecture.md#5-artefacts)).
+- Header and version rules: [§6.1](../../Architecture/Tailor.architecture.md#61-common-rules). "Newer minor accepted with a warning only if every member is known" = stage 2 emits `RPK1006` warning, stage 3/4 still reject unknown members.
+- Comments are not preserved; round-trip is semantic (read → write → read equal) and canonical output is byte-stable ([§5](../../Architecture/Tailor.architecture.md#5-artefacts)).
 - String-or-array members (e.g. `glob`, `is`) use a `StringList` type with a custom converter; `JsonSchemaExporter` cannot describe custom converters, so `SchemaGenerator` patches those nodes via `TransformSchemaNode`. Canonical write always emits arrays.
 - Extensible vocabularies (`role`, association `type`, group ids) are strings in the schema with built-in constants in code ([AS §10.6](../../Requirements/Application_Specification.md), [AS §11.2](../../Requirements/Application_Specification.md)).
 - `generator.version` is written as supplied; tests set it explicitly so golden files do not depend on the build's informational version.
-- No creation timestamps in the model ([§19](../../Architecture/DotNetRepack.architecture.md#19-resolved--open-inconsistencies) item 22).
+- No creation timestamps in the model ([§19](../../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies) item 22).
 
 ## Acceptance Criteria
 
@@ -120,9 +120,9 @@ Per-document structural checks (`RPK1100`–`1199`): duplicate `id` among `folde
 
 ## Test Requirements
 
-- xUnit v3 + golden files (`DotNetRepack.Testing.Golden`) in `tests/DotNetRepack.Specifications.Tests/`; fixtures copied to output (`<None Include="Fixtures/**" CopyToOutputDirectory="PreserveNewest" />`).
+- xUnit v3 + golden files (`Tailor.Testing.Golden`) in `tests/Tailor.Specifications.Tests/`; fixtures copied to output (`<None Include="Fixtures/**" CopyToOutputDirectory="PreserveNewest" />`).
 - No test-app matrix dependency; synthetic and fixture documents only. Trait `WU=101`.
-- Run: `dotnet test --project tests/DotNetRepack.Specifications.Tests --filter-trait "WU=101"` · focused: `--filter-class "*SchemaDriftTests"`.
+- Run: `dotnet test --project tests/Tailor.Specifications.Tests --filter-trait "WU=101"` · focused: `--filter-class "*SchemaDriftTests"`.
 - Record Test Evidence below and in the PR.
 
 ## Definition of Done
@@ -140,7 +140,7 @@ Per-document structural checks (`RPK1100`–`1199`): duplicate `id` among `folde
 
 ## Open Questions
 
-- `$schema`/`$id` URI hosting ([§20](../../Architecture/DotNetRepack.architecture.md#20-open-questions)); use a placeholder constant until decided.
+- `$schema`/`$id` URI hosting ([§20](../../Architecture/Tailor.architecture.md#20-open-questions)); use a placeholder constant until decided.
 - Grammar for compound reference entries such as FS `current\runtimes` / `root\runtimes`: proposed `current/runtimes` = path relative to the named root. The architecture lists only `current`, `parent`, `root`, `folder:<id>` and root-relative paths.
 - `frameworkContexts[].appliesTo` is proposed to satisfy [AS §9.3](../../Requirements/Application_Specification.md); the architecture example has no scoping member.
 - Explicit file exceptions (`match.files`) shape per [AS §11.3](../../Requirements/Application_Specification.md)/[§11.5](../../Requirements/Application_Specification.md) is proposed, not specified.

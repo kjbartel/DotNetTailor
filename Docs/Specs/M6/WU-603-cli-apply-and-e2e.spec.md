@@ -8,13 +8,13 @@
 | Status | Not started |
 | Depends on | WU-602, WU-506, WU-405, WU-604 |
 | Parallel with | WU-702, WU-703 |
-| Target project(s)/paths | `src/DotNetRepack.Cli/Commands/Apply/`, `src/DotNetRepack.Cli/Composition/`, `tests/DotNetRepack.Cli.Tests/Apply/`, `tests/DotNetRepack.IntegrationTests/Cli/Apply/`, `tests/DotNetRepack.IntegrationTests/TransformSpecs/`, `tests/DotNetRepack.IntegrationTests/Support/` (launch helper) |
+| Target project(s)/paths | `src/Tailor.Cli/Commands/Apply/`, `src/Tailor.Cli/Composition/`, `tests/Tailor.Cli.Tests/Apply/`, `tests/Tailor.IntegrationTests/Cli/Apply/`, `tests/Tailor.IntegrationTests/TransformSpecs/`, `tests/Tailor.IntegrationTests/Support/` (launch helper) |
 | Size | L |
 | Branch / PR | `wu/603-cli-apply-and-e2e` / `WU-603: cli-apply-and-e2e` |
 
 ## Goal
 
-Ship `dotnet-repack apply` end to end: pre-flight safety, plan, execute, post-validate, commit, reports, exit codes and Ctrl+C handling. Prove the v0.2.0-preview capability with end-to-end tests on the test-app matrix for filtering, layout, symbols (directory and zip), docs and culture pruning, including launch smoke runs in the test harness.
+Ship `dotnet-tailor apply` end to end: pre-flight safety, plan, execute, post-validate, commit, reports, exit codes and Ctrl+C handling. Prove the v0.2.0-preview capability with end-to-end tests on the test-app matrix for filtering, layout, symbols (directory and zip), docs and culture pruning, including launch smoke runs in the test harness.
 
 ## Requirement Traceability
 
@@ -24,7 +24,7 @@ Ship `dotnet-repack apply` end to end: pre-flight safety, plan, execute, post-va
 | [RQ §2.2](../../Requirements/Repackage_tool_Requirements_v1.1.md) | No application execution by the tool (launching happens only in tests) |
 | [TS §2.4](../../Requirements/Transformation_Specification.md#2-lifecycle), [TS §24](../../Requirements/Transformation_Specification.md#24-validation-and-failure-policies), [TS §25.4](../../Requirements/Transformation_Specification.md#25-output-state-requirements) | Execution lifecycle, policies, output assertions |
 | [TS §15](../../Requirements/Transformation_Specification.md#15-resource-and-localisation-policy), [TS §16](../../Requirements/Transformation_Specification.md#16-debug-symbol-policy), [TS §17](../../Requirements/Transformation_Specification.md#17-documentation-policy), [TS §18](../../Requirements/Transformation_Specification.md#18-file-and-folder-layout-rules) | E2E scenarios |
-| Architecture [§4](../../Architecture/DotNetRepack.architecture.md#4-processing-pipeline), [§11](../../Architecture/DotNetRepack.architecture.md#11-execution-and-safety), [§13](../../Architecture/DotNetRepack.architecture.md#13-diagnostics-failure-policy-and-exit-codes), [§14](../../Architecture/DotNetRepack.architecture.md#14-cli), [§16](../../Architecture/DotNetRepack.architecture.md#16-testing-strategy), [§19](../../Architecture/DotNetRepack.architecture.md#19-resolved--open-inconsistencies) item 21 | Pipeline, exit codes, synopsis, launch smoke in harness only |
+| Architecture [§4](../../Architecture/Tailor.architecture.md#4-processing-pipeline), [§11](../../Architecture/Tailor.architecture.md#11-execution-and-safety), [§13](../../Architecture/Tailor.architecture.md#13-diagnostics-failure-policy-and-exit-codes), [§14](../../Architecture/Tailor.architecture.md#14-cli), [§16](../../Architecture/Tailor.architecture.md#16-testing-strategy), [§19](../../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies) item 21 | Pipeline, exit codes, synopsis, launch smoke in harness only |
 | Plan M6 criteria 1–4; release point v0.2.0-preview | AC-4–AC-13 |
 
 ## Scope
@@ -46,7 +46,7 @@ Ship `dotnet-repack apply` end to end: pre-flight safety, plan, execute, post-va
 | `Cli.Commands.Apply.ApplyCommand` | Replaces the WU-105 stub and the WU-506 dry-run-only branch |
 | `Cli.Composition` | Registers Platform.Windows `IPathCanonicaliser`, WU-504 and WU-507 handlers, the WU-604 deps.json pruning handler and modifier, projection handler, `NoAcquisitionPlanner`, WU-601 executors |
 | `Support/LaunchSmoke` (tests only) | Starts `<output>/<host>.exe --smoke` (WU-003 contract) with `ArgumentList`, a 30 s timeout and captured output. Asserts exit 0 |
-| Scenario TransformSpecs (`tests/DotNetRepack.IntegrationTests/TransformSpecs/`) | Reuse the WU-504 set (`filtering`, `docs`, `resources-en`, `symbols-dir`, `symbols-zip`, `other-rid`) and add `symbols-preserve`, `symbols-exclude`, `layout`, each with `output.assert` where applicable |
+| Scenario TransformSpecs (`tests/Tailor.IntegrationTests/TransformSpecs/`) | Reuse the WU-504 set (`filtering`, `docs`, `resources-en`, `symbols-dir`, `symbols-zip`, `other-rid`) and add `symbols-preserve`, `symbols-exclude`, `layout`, each with `output.assert` where applicable |
 | `ApplyE2ETests` | Scenario × matrix entries below |
 | v0.2.0 readiness | Checklist in the PR: M6 criteria mapped to test names; `--help` for `apply` updated in golden files |
 
@@ -76,7 +76,7 @@ Ship `dotnet-repack apply` end to end: pre-flight safety, plan, execute, post-va
 
 ## Design Notes
 
-- Launching is a test-harness function only ([architecture §19](../../Architecture/DotNetRepack.architecture.md#19-resolved--open-inconsistencies) item 21). The tool never starts the application.
+- Launching is a test-harness function only ([architecture §19](../../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies) item 21). The tool never starts the application.
 - `--strict` promotes warnings before commit. A run that would exit 3 must roll back, so a committed output always means exit 0.
 - Dry-run adds the WU-600 pre-flight checks to the WU-506 path, and still creates nothing.
 - GUI apps (WinForms/WPF) are validated structurally. Launch smoke runs only for console apps in M6 (plan M6 criterion 1). GUI `--smoke` can be added under `Category=Launch` when stable.
@@ -100,9 +100,9 @@ Ship `dotnet-repack apply` end to end: pre-flight safety, plan, execute, post-va
 
 ## Test Requirements
 
-- Unit: `tests/DotNetRepack.Cli.Tests/Apply/` (parsing, composition, exit mapping, cancellation wiring). Trait `WU=603`.
-- E2E: `tests/DotNetRepack.IntegrationTests/Cli/Apply/`, in-process CLI over matrix copies. Traits `Category=Integration`, `Category=Matrix`, `WU=603`. Launch tests also carry `Category=Launch`.
-- Run: `dotnet test --project tests/DotNetRepack.Cli.Tests --filter-trait "WU=603"`, `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=603"`.
+- Unit: `tests/Tailor.Cli.Tests/Apply/` (parsing, composition, exit mapping, cancellation wiring). Trait `WU=603`.
+- E2E: `tests/Tailor.IntegrationTests/Cli/Apply/`, in-process CLI over matrix copies. Traits `Category=Integration`, `Category=Matrix`, `WU=603`. Launch tests also carry `Category=Launch`.
+- Run: `dotnet test --project tests/Tailor.Cli.Tests --filter-trait "WU=603"`, `dotnet test --project tests/Tailor.IntegrationTests --filter-trait "WU=603"`.
 - Requires `build/Build-TestApps.ps1` output. Locally, skip with a reason when it is absent; CI fails when it is absent.
 - Record Test Evidence below and in the PR (matrix manifest hash, scenario × entry count, launch results).
 
@@ -113,7 +113,7 @@ Ship `dotnet-repack apply` end to end: pre-flight safety, plan, execute, post-va
 
 ## Agent Notes
 
-- Reuse the WU-404/WU-506 in-process CLI helpers and the WU-405 `MatrixFixture`. WU-704 and WU-805 will reuse `LaunchSmoke` and the scenario set, so keep them in `tests/DotNetRepack.IntegrationTests/Support/`.
+- Reuse the WU-404/WU-506 in-process CLI helpers and the WU-405 `MatrixFixture`. WU-704 and WU-805 will reuse `LaunchSmoke` and the scenario set, so keep them in `tests/Tailor.IntegrationTests/Support/`.
 - Register fault-injecting executors only in tests, through `CliApplication.RunAsync(..., services)`.
 
 ## Open Questions

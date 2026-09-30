@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-302, WU-304, WU-202 |
 | Parallel with | WU-600, WU-700, WU-801 |
-| Target project(s)/paths | `src/DotNetRepack.Model/` (`EffectiveModelBuilder`, `Artefacts/`, `Fingerprints/`, `Execution/`), `tests/DotNetRepack.Model.Tests/Artefacts/`, `tests/DotNetRepack.Model.Tests/Execution/`, `tests/DotNetRepack.IntegrationTests/AppSpecs/`, `tests/DotNetRepack.IntegrationTests/Model/` |
+| Target project(s)/paths | `src/Tailor.Model/` (`EffectiveModelBuilder`, `Artefacts/`, `Fingerprints/`, `Execution/`), `tests/Tailor.Model.Tests/Artefacts/`, `tests/Tailor.Model.Tests/Execution/`, `tests/Tailor.IntegrationTests/AppSpecs/`, `tests/Tailor.IntegrationTests/Model/` |
 | Size | M |
 | Branch / PR | `wu/305-derived-artefact-writers` / `WU-305: derived-artefact-writers` |
 
@@ -23,7 +23,7 @@ Compose the M3 stages into one `EffectiveApplicationModel` build and write the s
 | [AS §22](../../Requirements/Application_Specification.md#22-derived-analysis-artefacts) | Derived, non-authoritative artefacts |
 | [AS §13.3](../../Requirements/Application_Specification.md#133-rule-based-representation), [AS §15.5](../../Requirements/Application_Specification.md#155-derived-dependency-graph) | Identities/graphs materialised outside the spec |
 | [AS §3.6](../../Requirements/Application_Specification.md#36-determinism), [RQ §8](../../Requirements/Repackage_tool_Requirements_v1.1.md) | Determinism, separate artefacts |
-| Architecture [§4](../../Architecture/DotNetRepack.architecture.md#4-processing-pipeline) (model build order), [§5](../../Architecture/DotNetRepack.architecture.md#5-artefacts), [§15](../../Architecture/DotNetRepack.architecture.md#15-determinism) | Artefact set, canonical JSON, tree fingerprint |
+| Architecture [§4](../../Architecture/Tailor.architecture.md#4-processing-pipeline) (model build order), [§5](../../Architecture/Tailor.architecture.md#5-artefacts), [§15](../../Architecture/Tailor.architecture.md#15-determinism) | Artefact set, canonical JSON, tree fingerprint |
 | Plan M3 criteria 1, 2, 5 | AC-6, AC-7, AC-8 |
 
 ## Scope
@@ -36,22 +36,22 @@ Compose the M3 stages into one `EffectiveApplicationModel` build and write the s
 
 | Item | Detail |
 |---|---|
-| `DotNetRepack.Model.EffectiveModelBuilder.Build(AppSpec, IAppTree, EffectiveModelOptions)` → `EffectiveApplicationModel` | Options: `SidecarSet`, `IFrameworkCatalogue`, knowledge services. Model aggregates all stage results + merged `Diagnostics` (sorted by code, path, pointer) |
-| `DotNetRepack.Model.Fingerprints.AppTreeFingerprint` | Builds `TreeEntry` values for in-scope files (sidecars excluded) and delegates to `Core.Hashing.TreeFingerprint` (WU-100); no second hashing implementation |
-| `DotNetRepack.Model.Execution.RuntimeFactsDetector` | Pure, non-heuristic detection over WU-202/WU-200 facts: per entry point deployment model (`includedFrameworks` → SC, `framework(s)` → FD, host-file fallback reported separately), framework references and versions, TFM (runtimeconfig, else `TargetFrameworkAttribute`), RID from deps.json `runtimeTarget`. Each fact carries its source; no confidence scoring (WU-400 adds it) |
+| `Tailor.Model.EffectiveModelBuilder.Build(AppSpec, IAppTree, EffectiveModelOptions)` → `EffectiveApplicationModel` | Options: `SidecarSet`, `IFrameworkCatalogue`, knowledge services. Model aggregates all stage results + merged `Diagnostics` (sorted by code, path, pointer) |
+| `Tailor.Model.Fingerprints.AppTreeFingerprint` | Builds `TreeEntry` values for in-scope files (sidecars excluded) and delegates to `Core.Hashing.TreeFingerprint` (WU-100); no second hashing implementation |
+| `Tailor.Model.Execution.RuntimeFactsDetector` | Pure, non-heuristic detection over WU-202/WU-200 facts: per entry point deployment model (`includedFrameworks` → SC, `framework(s)` → FD, host-file fallback reported separately), framework references and versions, TFM (runtimeconfig, else `TargetFrameworkAttribute`), RID from deps.json `runtimeTarget`. Each fact carries its source; no confidence scoring (WU-400 adds it) |
 | `SpecHash` | SHA-256 of the canonical JSON of the merged AppSpec (provisional) |
-| `DotNetRepack.Model.Artefacts.DerivedArtefactWriter.WriteAll(model, directory)` | Uses WU-100 canonical JSON writer; each file has header `kind`, `schemaVersion` (`1.0`), `specHash`, `treeFingerprint` |
+| `Tailor.Model.Artefacts.DerivedArtefactWriter.WriteAll(model, directory)` | Uses WU-100 canonical JSON writer; each file has header `kind`, `schemaVersion` (`1.0`), `specHash`, `treeFingerprint` |
 | `inventory.json` | Folders (path, definition id/chain, role, match kind) and files (path, size, sha256) |
 | `classification-map.json` | File → group id, catch-all flag, status |
 | `assemblies.json` | Managed assemblies: identity, TFM, architecture, R2R/composite, reference-assembly, satellite, role (application/plugin/framework), associations |
 | `dependency-graph.json` | Nodes + edges with outcome and root index |
 | `plugin-graph.json` | Plugin units, edges with contributing references, SCC/cycle list |
 | `runtime-inventory.json` | runtimeconfig frameworks / includedFrameworks per entry, deps.json `runtimeTarget`, host files present (`hostfxr.dll`, `hostpolicy.dll`, `coreclr.dll`), framework references (verified/unverified) |
-| Hand-authored AppSpecs | `tests/DotNetRepack.IntegrationTests/AppSpecs/<app>.<fd\|sc>.appspec.json` for every WU-003 app |
+| Hand-authored AppSpecs | `tests/Tailor.IntegrationTests/AppSpecs/<app>.<fd\|sc>.appspec.json` for every WU-003 app |
 
 ## Design Notes
 
-- No timestamps, absolute paths, machine names or GUIDs in artefacts ([§15](../../Architecture/DotNetRepack.architecture.md#15-determinism)). Paths are `RelativePath` with `/`.
+- No timestamps, absolute paths, machine names or GUIDs in artefacts ([§15](../../Architecture/Tailor.architecture.md#15-determinism)). Paths are `RelativePath` with `/`.
 - Collections sorted ordinal-ignore-case by path/id; property order fixed by record declaration.
 - Writers never write into the app tree unless the target directory is the sidecar `.repack/` supplied by the caller.
 - Artefacts are regenerable views; they carry no authority and are not read back by the engine.
@@ -70,9 +70,9 @@ Compose the M3 stages into one `EffectiveApplicationModel` build and write the s
 
 ## Test Requirements
 
-- Unit: `tests/DotNetRepack.Model.Tests/Artefacts/` with synthetic trees; trait `WU=305`.
-- Integration: `tests/DotNetRepack.IntegrationTests/Model/DerivedArtefactGoldenTests` over `artifacts/testapps/manifest.json`; trait `Category=Integration`, `Category=Matrix`, `WU=305`. CI must not skip.
-- Run: `dotnet test --project tests/DotNetRepack.Model.Tests --filter-trait "WU=305"`; `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=305"`.
+- Unit: `tests/Tailor.Model.Tests/Artefacts/` with synthetic trees; trait `WU=305`.
+- Integration: `tests/Tailor.IntegrationTests/Model/DerivedArtefactGoldenTests` over `artifacts/testapps/manifest.json`; trait `Category=Integration`, `Category=Matrix`, `WU=305`. CI must not skip.
+- Run: `dotnet test --project tests/Tailor.Model.Tests --filter-trait "WU=305"`; `dotnet test --project tests/Tailor.IntegrationTests --filter-trait "WU=305"`.
 - Record Test Evidence (including matrix `manifest.json` hash) in the PR.
 
 ## Definition of Done

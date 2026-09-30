@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-101, WU-203 |
 | Parallel with | WU-200–WU-202, WU-103 |
-| Target project(s)/paths | `src/DotNetRepack.Model/Tree/`, `src/DotNetRepack.Model/Folders/`, `tests/DotNetRepack.Model.Tests/Folders/` |
+| Target project(s)/paths | `src/Tailor.Model/Tree/`, `src/Tailor.Model/Folders/`, `tests/Tailor.Model.Tests/Folders/` |
 | Size | L |
 | Branch / PR | `wu/300-folder-matching-engine` / `WU-300: folder-matching-engine` |
 
@@ -25,7 +25,7 @@ Match every folder of an application tree to exactly one effective folder defini
 | [AS §23.3](../../Requirements/Application_Specification.md#233-path-handling) | Paths relative to app root |
 | [RD §3.2](../../Requirements/R2R_tool_Design.md#32-core-concepts), [RD §3.4](../../Requirements/R2R_tool_Design.md#34-invariants) | One definition per folder, no ambiguity, no alias cycles, no escaping paths, deterministic traversal |
 | [RQ §4.1](../../Requirements/Repackage_tool_Requirements_v1.1.md) | Read-only access to the tree |
-| Architecture [§7.1](../../Architecture/DotNetRepack.architecture.md#71-folder-matching), [§15](../../Architecture/DotNetRepack.architecture.md#15-determinism), [§19](../../Architecture/DotNetRepack.architecture.md#19-resolved--open-inconsistencies) items 2, 5, 19 | Normative design |
+| Architecture [§7.1](../../Architecture/Tailor.architecture.md#71-folder-matching), [§15](../../Architecture/Tailor.architecture.md#15-determinism), [§19](../../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies) items 2, 5, 19 | Normative design |
 | Plan M3 criteria 3 (ambiguity, alias cycle, escaping/reparse codes) | AC-6, AC-8, AC-10, AC-11 |
 
 ## Scope
@@ -47,11 +47,11 @@ Match every folder of an application tree to exactly one effective folder defini
 
 | Item | Detail |
 |---|---|
-| `DotNetRepack.Model.Tree.IAppTree` | Read-only: `EnumerateDirectories(RelativePath)`, `EnumerateFiles(RelativePath)`, `GetEntry(RelativePath)`, `OpenRead(RelativePath)`. Entries expose `Path`, `IsDirectory`, `Length`, `IsReparsePoint`, `ResolvedTarget` (absolute or `null`). Enumeration sorted ordinal-ignore-case |
+| `Tailor.Model.Tree.IAppTree` | Read-only: `EnumerateDirectories(RelativePath)`, `EnumerateFiles(RelativePath)`, `GetEntry(RelativePath)`, `OpenRead(RelativePath)`. Entries expose `Path`, `IsDirectory`, `Length`, `IsReparsePoint`, `ResolvedTarget` (absolute or `null`). Enumeration sorted ordinal-ignore-case |
 | `PhysicalAppTree` | BCL-based (`FileSystemInfo.LinkTarget`, `ResolveLinkTarget(true)`, `FileAttributes.ReparsePoint`); long-path safe; never writes |
 | `InMemoryAppTree` + `InMemoryAppTreeBuilder` | In `src` (reused later for projected trees and by other test projects); fluent `AddFile(path, bytes)`, `AddDirectory`, `AddReparsePoint(path, target)` |
 | `SidecarSet` | Relative paths excluded from scope: loaded AppSpec document(s) located inside the root and the artefacts directory (default `.repack/`) when inside the root |
-| `DotNetRepack.Model.Folders.FolderMask` | Parsed mask: segments, `Rank` per segment (`Literal` > `SingleSegment` (`*`, `?`, `[…]`, `<culture>`, `<rid>`) > `CatchAll` (`**`)) |
+| `Tailor.Model.Folders.FolderMask` | Parsed mask: segments, `Rank` per segment (`Literal` > `SingleSegment` (`*`, `?`, `[…]`, `<culture>`, `<rid>`) > `CatchAll` (`**`)) |
 | `FolderDefinitionResolver` | Expands `idRef` lazily per level with override semantics; detects alias cycles |
 | `FolderMatcher.Match(AppSpec, IAppTree, SidecarSet, IRidKnowledge, ICultureKnowledge)` → `FolderMatchResult` | `Folders` (pre-order), `Diagnostics` |
 | `MatchedFolder` | `Path`, `DefinitionId`, `DefinitionChain` (e.g. `root/plugins/plugins`), `Role`, `MatchKind` (`Root`, `Explicit`, `Recursed`), `Mask`, `ParentPath`, effective definition members (classification groups, references, duplicates) |
@@ -59,14 +59,14 @@ Match every folder of an application tree to exactly one effective folder defini
 
 ## Design Notes
 
-- Follow architecture [§7.1](../../Architecture/DotNetRepack.architecture.md#71-folder-matching); do not restate it in code comments.
+- Follow architecture [§7.1](../../Architecture/Tailor.architecture.md#71-folder-matching); do not restate it in code comments.
 - **Mask semantics.** Masks are `/`-separated, root-relative to the parent folder. `<culture>` and `<rid>` are whole-segment tokens validated via WU-203 knowledge. `**` matches **one or more** segments (never zero), so every `idRef` step consumes at least one folder level.
 - **Candidate set** for folder `F`: child definitions of `F`'s nearest explicitly matched ancestor whose mask matches the remaining relative path. If none match, inherit from the nearest ancestor with `recurse: true` (`MatchKind.Recursed`). Child definitions apply relative to the explicitly matched folder only and do **not** re-apply below recursed folders; authors use `idRef` to repeat a structure (architecture §7.1, provisional).
 - **Specificity.** Segment rank: `Literal` > `SingleSegment` > `CatchAll`. A mask's rank is the rank of its **least-specific segment**; ties are broken by segment count (more segments = more specific). The single highest candidate wins. Two or more candidates with the same rank and segment count that match `F` → `RPK3002` naming the folder and all definition ids and chains. `F` and its subtree are then not matched further; traversal continues elsewhere to collect all diagnostics.
 - **idRef.** Explicit members on the referencing node replace the referenced members; collection members (`folders`, references, groups) are replaced wholesale, not merged. Resolution of a node that is itself only an alias (`A → B → A`, or `A → A`) without consuming a folder level is `RPK3004` listing the chain. Nesting a definition inside itself (FS `plugins` inside `plugins`) is legal because expansion happens per matched folder level.
 - **Confinement.** Reject invalid masks before traversal. For reparse points: a target outside the canonical root → `RPK3006` (error, entry excluded); a directory target inside the root → `RPK3007` (warning, not traversed, guarantees termination); file reparse points inside the root are treated as ordinary files.
 - **Sidecars** are excluded before matching and never produce diagnostics.
-- Model depends only on Specifications and Inspection ([§3.1](../../Architecture/DotNetRepack.architecture.md#31-project-responsibilities-and-allowed-dependencies)); do not reference `Platform.Abstractions`; use BCL link APIs inside `PhysicalAppTree`.
+- Model depends only on Specifications and Inspection ([§3.1](../../Architecture/Tailor.architecture.md#31-project-responsibilities-and-allowed-dependencies)); do not reference `Platform.Abstractions`; use BCL link APIs inside `PhysicalAppTree`.
 
 ## Acceptance Criteria
 
@@ -89,9 +89,9 @@ Match every folder of an application tree to exactly one effective folder defini
 
 ## Test Requirements
 
-- xUnit v3 + golden files (`DotNetRepack.Testing.Golden`) in `tests/DotNetRepack.Model.Tests/Folders/`; tag tests `[Trait("WU", "300")]`.
+- xUnit v3 + golden files (`Tailor.Testing.Golden`) in `tests/Tailor.Model.Tests/Folders/`; tag tests `[Trait("WU", "300")]`.
 - Unit tests use `InMemoryAppTree` synthetic trees only; physical tests (AC-11, AC-14) use temp dirs and clean up.
-- Run: `dotnet test --project tests/DotNetRepack.Model.Tests --filter-trait "WU=300"`.
+- Run: `dotnet test --project tests/Tailor.Model.Tests --filter-trait "WU=300"`.
 - No matrix (`artifacts/testapps`) dependency in this WU.
 - Record Test Evidence (commands, filters, pass/fail/skip counts, commit SHA) in the PR.
 

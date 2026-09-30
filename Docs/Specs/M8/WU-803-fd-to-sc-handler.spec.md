@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-800, WU-801, WU-802, WU-503 |
 | Parallel with | WU-603, M7 |
-| Target | `src/DotNetRepack.Transforms/DeploymentModel/`, `src/DotNetRepack.Transforms/Configuration/ConfigGenerationHandler.cs`, `tests/DotNetRepack.Transforms.Tests/DeploymentModel/` |
+| Target | `src/Tailor.Transforms/DeploymentModel/`, `src/Tailor.Transforms/Configuration/ConfigGenerationHandler.cs`, `tests/Tailor.Transforms.Tests/DeploymentModel/` |
 | Size | L |
 
 ## Goal
@@ -24,7 +24,7 @@ Plan framework-dependent → self-contained conversion for `win-x64`: add runtim
 | [TS §22.4](../../Requirements/Transformation_Specification.md#22-rule-precedence-and-conflict-resolution), [TS §23](../../Requirements/Transformation_Specification.md#23-transformation-dependencies-and-ordering), [TS §29.3](../../Requirements/Transformation_Specification.md#29-external-sources-and-credentials) | Collisions, ordering, pinned versions |
 | [CK §5](../../Requirements/Read_to_run_Cake.md#5-deployment-model-transformations) | FD→SC, FD→FD |
 | [RQ §5.3](../../Requirements/Repackage_tool_Requirements_v1.1.md#5-supported-transformation-categories) | Inclusion of shared runtimes |
-| [Architecture §9](../../Architecture/DotNetRepack.architecture.md#9-transformation-handlers), [§9.2](../../Architecture/DotNetRepack.architecture.md#92-apphost), [§4](../../Architecture/DotNetRepack.architecture.md#4-processing-pipeline), [§8](../../Architecture/DotNetRepack.architecture.md#8-selectors-precedence-and-actions) | DeploymentModel handler, phases 5 and 8, action model |
+| [Architecture §9](../../Architecture/Tailor.architecture.md#9-transformation-handlers), [§9.2](../../Architecture/Tailor.architecture.md#92-apphost), [§4](../../Architecture/Tailor.architecture.md#4-processing-pipeline), [§8](../../Architecture/Tailor.architecture.md#8-selectors-precedence-and-actions) | DeploymentModel handler, phases 5 and 8, action model |
 
 ## Scope
 
@@ -74,9 +74,9 @@ Plan framework-dependent → self-contained conversion for `win-x64`: add runtim
 
 ## Test Requirements
 
-- xUnit v3 + golden files in `tests/DotNetRepack.Transforms.Tests/DeploymentModel/`; plan golden files per scenario.
+- xUnit v3 + golden files in `tests/Tailor.Transforms.Tests/DeploymentModel/`; plan golden files per scenario.
 - Matrix inputs under `Category=Matrix`, launch under `Category=Launch`; packs via `LocalPackageFeedFixture`; no network.
-- Run: `dotnet test --project tests/DotNetRepack.Transforms.Tests --filter-trait "WU=803"`.
+- Run: `dotnet test --project tests/Tailor.Transforms.Tests --filter-trait "WU=803"`.
 - Record Test Evidence in the PR.
 
 ## Definition of Done

@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-404, WU-003, WU-002 |
 | Parallel with | WU-406, M5, WU-1002 |
-| Target project(s)/paths | `tests/DotNetRepack.RegressionTests/`, `.github/workflows/` (regression job only) |
+| Target project(s)/paths | `tests/Tailor.RegressionTests/`, `.github/workflows/` (regression job only) |
 | Size | M |
 | Branch / PR | `wu/405-regression-harness` / `WU-405: regression-harness` |
 
@@ -22,7 +22,7 @@ Provide a regression harness that runs `analyze` + `validate` over the full test
 |---|---|
 | [AS §2.3](../../Requirements/Application_Specification.md#23-user-refinement), [AS §20.4](../../Requirements/Application_Specification.md#204-manual-modification) | User edits must be revalidated and detected |
 | [AS §3.6](../../Requirements/Application_Specification.md#36-determinism), [RQ §12](../../Requirements/Repackage_tool_Requirements_v1.1.md) | Determinism, testability |
-| Architecture [§16](../../Architecture/DotNetRepack.architecture.md#16-testing-strategy) | Regression tests over the matrix with golden files |
+| Architecture [§16](../../Architecture/Tailor.architecture.md#16-testing-strategy) | Regression tests over the matrix with golden files |
 | Plan M4 criteria 1, 3 | AC-2, AC-4 |
 
 ## Scope
@@ -35,11 +35,11 @@ Provide a regression harness that runs `analyze` + `validate` over the full test
 
 | Item | Detail |
 |---|---|
-| `tests/DotNetRepack.RegressionTests/MatrixFixture` | Reads `artifacts/testapps/manifest.json`; copies each entry to a temp dir; exposes the non-deterministic file list for scrubbing |
+| `tests/Tailor.RegressionTests/MatrixFixture` | Reads `artifacts/testapps/manifest.json`; copies each entry to a temp dir; exposes the non-deterministic file list for scrubbing |
 | `AnalyzeValidateRegressionTests` | Per entry: `analyze --spec-out <tmp> --artifacts <tmp>` → `validate`; golden files of draft AppSpec, all artefacts, `capabilities.json`, `validation-report.json` (`.golden.json`) and console output (`.golden.txt`) |
 | `DeterminismTests` | Two runs per entry; byte comparison of every output |
 | `Scenarios/*.scenario.json` + `ScenarioRunner` | `{ app, specEdits: [{op, path, value}] (JSON Patch subset add/replace/remove), treeEdits: [{op: add\|remove\|copy, path, from?}], expect: { codes: [], exitCode } }` applied to a golden draft and a temp tree copy |
-| CI job | `.github/workflows/` job running `DotNetRepack.RegressionTests` on `windows-latest` after restoring the matrix cache; TRX upload |
+| CI job | `.github/workflows/` job running `Tailor.RegressionTests` on `windows-latest` after restoring the matrix cache; TRX upload |
 
 **Required scenarios**
 
@@ -59,7 +59,7 @@ Provide a regression harness that runs `analyze` + `validate` over the full test
 
 - Never write into `artifacts/testapps`; always copy to temp.
 - Scrub only: tool version in `generator`, hashes of files listed as non-deterministic in the WU-003 manifest and values derived from them (`treeFingerprint`, `specHash` where affected). Scrubbers are listed in one place.
-- Golden files live under `tests/DotNetRepack.RegressionTests/Golden/AnalyzeValidateRegressionTests/<app>/<variant>/<output>.golden.json` (`name` = `<app>/<variant>/<output>`).
+- Golden files live under `tests/Tailor.RegressionTests/Golden/AnalyzeValidateRegressionTests/<app>/<variant>/<output>.golden.json` (`name` = `<app>/<variant>/<output>`).
 - Scenario expectations assert code presence and exit code; message text is compared against separate golden files.
 
 ## Acceptance Criteria
@@ -75,8 +75,8 @@ Provide a regression harness that runs `analyze` + `validate` over the full test
 
 ## Test Requirements
 
-- xUnit v3 + golden files (`DotNetRepack.Testing.Golden`); traits `Category=Integration`, `Category=Matrix`, `WU=405`.
-- Run: `dotnet test --project tests/DotNetRepack.RegressionTests --filter-trait "WU=405"`.
+- xUnit v3 + golden files (`Tailor.Testing.Golden`); traits `Category=Integration`, `Category=Matrix`, `WU=405`.
+- Run: `dotnet test --project tests/Tailor.RegressionTests --filter-trait "WU=405"`.
 - Requires `build/Build-TestApps.ps1` output; locally, skip with an explicit reason when absent; CI fails when absent.
 - Record Test Evidence (matrix manifest hash, entry count, scenario count, pass/fail) in the PR.
 

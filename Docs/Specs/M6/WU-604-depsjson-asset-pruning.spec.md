@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-202, WU-601 |
 | Parallel with | WU-505, WU-506, WU-602, WU-702 |
-| Target project(s)/paths | `src/DotNetRepack.Transforms/Configuration/DepsJson/Pruning/`, `tests/DotNetRepack.Transforms.Tests/Configuration/DepsJson/` |
+| Target project(s)/paths | `src/Tailor.Transforms/Configuration/DepsJson/Pruning/`, `tests/Tailor.Transforms.Tests/Configuration/DepsJson/` |
 | Size | M |
 | Branch / PR | `wu/604-depsjson-asset-pruning` / `WU-604: depsjson-asset-pruning` |
 
@@ -23,7 +23,7 @@ Keep `*.deps.json` consistent with filtering so that v0.2.0 outputs launch: when
 | [TS §20](../../Requirements/Transformation_Specification.md#20-removal-rules), [TS §15](../../Requirements/Transformation_Specification.md#15-resource-and-localisation-policy) | Semantic removal of resources and RID assets keeps the app consistent |
 | [TS §32](../../Requirements/Transformation_Specification.md#32-global-invariants) item 8 | No unrequested changes (no version changes) |
 | [RQ §5.3](../../Requirements/Repackage_tool_Requirements_v1.1.md), [RQ §12](../../Requirements/Repackage_tool_Requirements_v1.1.md) | Packaging changes; safe, deterministic output |
-| Architecture [§4](../../Architecture/DotNetRepack.architecture.md#4-processing-pipeline) (phase 8 ConfigGeneration), [§9](../../Architecture/DotNetRepack.architecture.md#9-transformation-handlers), [§15](../../Architecture/DotNetRepack.architecture.md#15-determinism) | Config generation after filtering; determinism |
+| Architecture [§4](../../Architecture/Tailor.architecture.md#4-processing-pipeline) (phase 8 ConfigGeneration), [§9](../../Architecture/Tailor.architecture.md#9-transformation-handlers), [§15](../../Architecture/Tailor.architecture.md#15-determinism) | Config generation after filtering; determinism |
 | Plan M6 criterion 1 (outputs launch after pruning) | AC-6 |
 
 ## Scope
@@ -64,9 +64,9 @@ Keep `*.deps.json` consistent with filtering so that v0.2.0 outputs launch: when
 
 ## Test Requirements
 
-- Unit: `tests/DotNetRepack.Transforms.Tests/Configuration/DepsJson/` with checked-in deps.json fixtures. Trait `WU=604`.
-- Matrix comparisons read `artifacts/testapps`: traits `Category=Matrix`, `WU=604`. Launch checks (AC-6): traits `Category=Integration`, `Category=Matrix`, `Category=Launch`, `WU=604` in `tests/DotNetRepack.IntegrationTests/Execution/DepsJsonPruning/`.
-- Run: `dotnet test --project tests/DotNetRepack.Transforms.Tests --filter-trait "WU=604"`; `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=604"`.
+- Unit: `tests/Tailor.Transforms.Tests/Configuration/DepsJson/` with checked-in deps.json fixtures. Trait `WU=604`.
+- Matrix comparisons read `artifacts/testapps`: traits `Category=Matrix`, `WU=604`. Launch checks (AC-6): traits `Category=Integration`, `Category=Matrix`, `Category=Launch`, `WU=604` in `tests/Tailor.IntegrationTests/Execution/DepsJsonPruning/`.
+- Run: `dotnet test --project tests/Tailor.Transforms.Tests --filter-trait "WU=604"`; `dotnet test --project tests/Tailor.IntegrationTests --filter-trait "WU=604"`.
 - Record Test Evidence in the PR.
 
 ## Definition of Done
@@ -80,4 +80,4 @@ Keep `*.deps.json` consistent with filtering so that v0.2.0 outputs launch: when
 
 ## Open Questions
 
-- **Resolved** — `IConfigModifier` lives in `DotNetRepack.Planning.Actions` (architecture §3.2); Transforms implement it, Execution (WU-601) consumes it.
+- **Resolved** — `IConfigModifier` lives in `Tailor.Planning.Actions` (architecture §3.2); Transforms implement it, Execution (WU-601) consumes it.

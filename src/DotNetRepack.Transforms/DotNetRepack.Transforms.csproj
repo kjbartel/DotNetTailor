@@ -1,9 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <ItemGroup>
-    <ProjectReference Include="..\DotNetRepack.Planning\DotNetRepack.Planning.csproj" />
-    <ProjectReference Include="..\DotNetRepack.Acquisition\DotNetRepack.Acquisition.csproj" />
-    <ProjectReference Include="..\DotNetRepack.Platform.Abstractions\DotNetRepack.Platform.Abstractions.csproj" />
-  </ItemGroup>
-
-</Project>

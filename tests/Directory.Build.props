@@ -7,15 +7,15 @@
     <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
 
-  <!-- DotNetRepack.Testing is the shared test-support library, not a test project. -->
-  <PropertyGroup Condition="'$(MSBuildProjectName)' != 'DotNetRepack.Testing'">
+  <!-- Tailor.Testing is the shared test-support library, not a test project. -->
+  <PropertyGroup Condition="'$(MSBuildProjectName)' != 'Tailor.Testing'">
     <IsTestProject>true</IsTestProject>
     <OutputType>Exe</OutputType>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(MSBuildProjectName)' != 'DotNetRepack.Testing'">
+  <ItemGroup Condition="'$(MSBuildProjectName)' != 'Tailor.Testing'">
     <PackageReference Include="xunit.v3" />
-    <ProjectReference Include="$(MSBuildThisFileDirectory)DotNetRepack.Testing\DotNetRepack.Testing.csproj" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)Tailor.Testing\Tailor.Testing.csproj" />
     <Using Include="Xunit" />
   </ItemGroup>
 

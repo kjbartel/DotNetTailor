@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-503, WU-504 |
 | Parallel with | WU-507, WU-601, WU-702 |
-| Target project(s)/paths | `src/DotNetRepack.Planning/Projection/`, `src/DotNetRepack.Validation/TransformSpec/` (output-assertion extension of `StateAssertionEvaluator`), `tests/DotNetRepack.Planning.Tests/Projection/`, `tests/DotNetRepack.Validation.Tests/TransformSpec/` |
+| Target project(s)/paths | `src/Tailor.Planning/Projection/`, `src/Tailor.Validation/TransformSpec/` (output-assertion extension of `StateAssertionEvaluator`), `tests/Tailor.Planning.Tests/Projection/`, `tests/Tailor.Validation.Tests/TransformSpec/` |
 | Size | M |
 | Branch / PR | `wu/505-projected-appspec-and-output-assertions` / `WU-505: projected-appspec-and-output-assertions` |
 
@@ -24,7 +24,7 @@ In phase 9, derive the projected output AppSpec (state only, no history) from th
 | [TS §30.4](../../Requirements/Transformation_Specification.md#30-relationship-to-application-specification), [TS §19.4](../../Requirements/Transformation_Specification.md#19-addition-rules), [TS §32](../../Requirements/Transformation_Specification.md#32-global-invariants) items 14, 15 | Output AppSpec describes resulting state; history-free; projected validation |
 | [TS §26.3](../../Requirements/Transformation_Specification.md#26-dry-run-and-planning-behaviour), [RQ §7](../../Requirements/Repackage_tool_Requirements_v1.1.md) | Projected AppSpec as a dry-run output |
 | [AS §1](../../Requirements/Application_Specification.md#1-purpose), [AS §3](../../Requirements/Application_Specification.md#3-design-principles), [AS §24](../../Requirements/Application_Specification.md#24-global-invariants), [RQ §8](../../Requirements/Repackage_tool_Requirements_v1.1.md) | State only, rule based, catch-all, no logs or history |
-| Architecture [§8](../../Architecture/DotNetRepack.architecture.md#8-selectors-precedence-and-actions) (projected AppSpec bullet), [§4](../../Architecture/DotNetRepack.architecture.md#4-processing-pipeline) phase 9, [§5](../../Architecture/DotNetRepack.architecture.md#5-artefacts) | Derivation, placement, canonical JSON |
+| Architecture [§8](../../Architecture/Tailor.architecture.md#8-selectors-precedence-and-actions) (projected AppSpec bullet), [§4](../../Architecture/Tailor.architecture.md#4-processing-pipeline) phase 9, [§5](../../Architecture/Tailor.architecture.md#5-artefacts) | Derivation, placement, canonical JSON |
 | Plan M5 criterion 4 | AC-6, AC-7 |
 
 ## Scope
@@ -92,9 +92,9 @@ In phase 9, derive the projected output AppSpec (state only, no history) from th
 
 ## Test Requirements
 
-- Unit: `tests/DotNetRepack.Planning.Tests/Projection/`, `tests/DotNetRepack.Validation.Tests/TransformSpec/` (output members), with synthetic trees. Trait `WU=505`.
+- Unit: `tests/Tailor.Planning.Tests/Projection/`, `tests/Tailor.Validation.Tests/TransformSpec/` (output members), with synthetic trees. Trait `WU=505`.
 - Integration: scenario TransformSpecs from WU-504 over matrix copies. Traits `Category=Integration`, `Category=Matrix`, `WU=505`.
-- Run: `dotnet test --project tests/DotNetRepack.Planning.Tests --filter-trait "WU=505"`, `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=505"`.
+- Run: `dotnet test --project tests/Tailor.Planning.Tests --filter-trait "WU=505"`, `dotnet test --project tests/Tailor.IntegrationTests --filter-trait "WU=505"`.
 - Record Test Evidence below and in the PR.
 
 ## Definition of Done

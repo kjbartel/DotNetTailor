@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Tailor.Inspection\Tailor.Inspection.csproj" />
+  </ItemGroup>
+
+</Project>

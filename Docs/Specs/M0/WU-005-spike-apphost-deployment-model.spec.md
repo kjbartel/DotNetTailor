@@ -4,7 +4,7 @@
 |---|---|
 | ID | WU-005 |
 | Title | spike-apphost-deployment-model |
-| Milestone | [M0 Foundation & Repo Bootstrap](../../Plans/DotNetRepack.plan.md#m0-foundation--repo-bootstrap) |
+| Milestone | [M0 Foundation & Repo Bootstrap](../../Plans/Tailor.plan.md#m0-foundation--repo-bootstrap) |
 | Status | Not started |
 | Depends on | WU-003, WU-006 |
 | Parallel with | WU-004, WU-007, M1, WU-200, WU-201, WU-203 |
@@ -20,15 +20,15 @@ Prove that a custom apphost patcher plus runtimeconfig/deps.json rewriting can c
 
 | Source | Section | Relevance |
 |---|---|---|
-| [Architecture](../../Architecture/DotNetRepack.architecture.md#92-apphost) | §9.2 Apphost | Assumptions to confirm |
-| [Architecture](../../Architecture/DotNetRepack.architecture.md#9-transformation-handlers) | §9 DeploymentModel row | FD→SC / SC→FD steps |
-| [Architecture](../../Architecture/DotNetRepack.architecture.md#74-identities-and-inspection) | §7.4 Apphost binding, bundle marker | Reader facts (WU-202) |
-| [Architecture](../../Architecture/DotNetRepack.architecture.md#19-resolved--open-inconsistencies) | §19 item 12 (custom patcher, **Open**) | Decision to confirm |
+| [Architecture](../../Architecture/Tailor.architecture.md#92-apphost) | §9.2 Apphost | Assumptions to confirm |
+| [Architecture](../../Architecture/Tailor.architecture.md#9-transformation-handlers) | §9 DeploymentModel row | FD→SC / SC→FD steps |
+| [Architecture](../../Architecture/Tailor.architecture.md#74-identities-and-inspection) | §7.4 Apphost binding, bundle marker | Reader facts (WU-202) |
+| [Architecture](../../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies) | §19 item 12 (custom patcher, **Open**) | Decision to confirm |
 | [TS](../../Requirements/Transformation_Specification.md) | §13 Deployment Model Transformation | Semantics |
 | [RQ](../../Requirements/Repackage_tool_Requirements_v1.1.md) | §5.3 Deployment / Packaging Model Changes | Requirement |
 | [CK](../../Requirements/Read_to_run_Cake.md) | §5 Deployment Model Transformations | Historical detail |
 | [RD](../../Requirements/R2R_tool_Design.md) | §1.3 Non-Negotiable Principles | "Documented SDK behaviour only" conflict |
-| [Plan](../../Plans/DotNetRepack.plan.md#risks-register) | Risks R2, R3, R10; M8 criteria | Consumers |
+| [Plan](../../Plans/Tailor.plan.md#risks-register) | Risks R2, R3, R10; M8 criteria | Consumers |
 
 ## Scope
 
@@ -54,8 +54,8 @@ Prove that a custom apphost patcher plus runtimeconfig/deps.json rewriting can c
 
 - `Docs/Spikes/WU-005-spike-apphost-deployment-model.md`: Question, Method, Findings (Q1–Q9, each **Answer** + **Evidence**), Decision, Recommended ADR, Impact, Follow-ups.
 - `Docs/Decisions/ADR-0002-apphost-patching-and-deployment-model.md` (status `Proposed`): custom patcher vs HostModel, resource-copy mechanism, deps.json/runtimeconfig transformation approach.
-- Architecture update in the same PR: [§9.2](../../Architecture/DotNetRepack.architecture.md#92-apphost), §9 DeploymentModel row if the file set changes, [§19 item 12](../../Architecture/DotNetRepack.architecture.md#19-resolved--open-inconsistencies) status, the WU-005 row in [§21](../../Architecture/DotNetRepack.architecture.md#21-spikes-feeding-this-document).
-- `spikes/WU-005/` throwaway code with its own `Directory.Build.props`/`Directory.Packages.props` (`ManagePackageVersionsCentrally=false`), README with rerun steps. Not in `DotNetRepack.slnx`.
+- Architecture update in the same PR: [§9.2](../../Architecture/Tailor.architecture.md#92-apphost), §9 DeploymentModel row if the file set changes, [§19 item 12](../../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies) status, the WU-005 row in [§21](../../Architecture/Tailor.architecture.md#21-spikes-feeding-this-document).
+- `spikes/WU-005/` throwaway code with its own `Directory.Build.props`/`Directory.Packages.props` (`ManagePackageVersionsCentrally=false`), README with rerun steps. Not in `Tailor.slnx`.
 
 ## Design Notes
 
@@ -73,8 +73,8 @@ Prove that a custom apphost patcher plus runtimeconfig/deps.json rewriting can c
 - [ ] AC-4 Q7 findings state "lossless round-trip: yes/no" with a diff excerpt as evidence.
 - [ ] AC-5 `Docs/Decisions/ADR-0002-apphost-patching-and-deployment-model.md` exists, status `Proposed`, sections Context, Decision, Consequences, Alternatives.
 - [ ] AC-6 Architecture §9.2, §19 item 12 and the §21 WU-005 row are updated and link the report and ADR.
-- [ ] AC-7 `spikes/WU-005/` exists, is not referenced by `DotNetRepack.slnx`, and has a README.
-- [ ] AC-8 Solution build (`-warnaserror`), `dotnet test --solution DotNetRepack.slnx -c Release` and format verify still pass; no binaries committed.
+- [ ] AC-7 `spikes/WU-005/` exists, is not referenced by `Tailor.slnx`, and has a README.
+- [ ] AC-8 Solution build (`-warnaserror`), `dotnet test --solution Tailor.slnx -c Release` and format verify still pass; no binaries committed.
 
 ## Test Requirements
 
@@ -88,7 +88,7 @@ Prove that a custom apphost patcher plus runtimeconfig/deps.json rewriting can c
 
 ## Agent Notes
 
-- Load: [architecture §7.4, §9, §9.2, §12, §19, §21](../../Architecture/DotNetRepack.architecture.md), [WU-003 spec](WU-003-test-app-suite.spec.md), this spec.
+- Load: [architecture §7.4, §9, §9.2, §12, §19, §21](../../Architecture/Tailor.architecture.md), [WU-003 spec](WU-003-test-app-suite.spec.md), this spec.
 - Launching apps is test-harness activity only (architecture §19 item 21).
 - Keep architecture edits to the sections listed; WU-004/006/007 edit others in parallel.
 

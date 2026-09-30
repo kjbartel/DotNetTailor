@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-501, WU-403, WU-104 |
 | Parallel with | WU-404, WU-405 |
-| Target project(s)/paths | `src/DotNetRepack.Validation/TransformSpec/`, `src/DotNetRepack.Planning/Validation/`, `tests/DotNetRepack.Validation.Tests/TransformSpec/`, `tests/DotNetRepack.Planning.Tests/Validation/` |
+| Target project(s)/paths | `src/Tailor.Validation/TransformSpec/`, `src/Tailor.Planning/Validation/`, `tests/Tailor.Validation.Tests/TransformSpec/`, `tests/Tailor.Planning.Tests/Validation/` |
 | Size | M |
 | Branch / PR | `wu/502-transformspec-validation` / `WU-502: transformspec-validation` |
 
@@ -26,14 +26,14 @@ Turn a loaded TransformSpec plus a validated input AppSpec into a `ValidatedTran
 | [TS §24](../../Requirements/Transformation_Specification.md#24-validation-and-failure-policies) | Condition policies (`error\|warning\|skip\|preserve`), unconditional structural errors |
 | [TS §28.4](../../Requirements/Transformation_Specification.md#28-variables-and-parameters) | Variables resolved before planning (WU-104 resolver) |
 | [TS §29.2](../../Requirements/Transformation_Specification.md#29-external-sources-and-credentials) | No credentials (WU-102 structural checks passed through) |
-| Architecture [§3.1](../../Architecture/DotNetRepack.architecture.md#31-project-responsibilities-and-allowed-dependencies), [§13](../../Architecture/DotNetRepack.architecture.md#13-diagnostics-failure-policy-and-exit-codes), [§19](../../Architecture/DotNetRepack.architecture.md#19-resolved--open-inconsistencies) items 7, 16 | Project split, policy model, "material operation" definition |
+| Architecture [§3.1](../../Architecture/Tailor.architecture.md#31-project-responsibilities-and-allowed-dependencies), [§13](../../Architecture/Tailor.architecture.md#13-diagnostics-failure-policy-and-exit-codes), [§19](../../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies) items 7, 16 | Project split, policy model, "material operation" definition |
 | Plan M5 criterion 2 (failed input assertions) | AC-5, AC-6 |
 
 ## Scope
 
 **In**
-- `DotNetRepack.Validation.TransformSpec`: semantic checks and input-assertion evaluation. These do not use selectors or the planner.
-- `DotNetRepack.Planning.Validation`: the orchestrating pipeline. It compiles every selector (WU-500), computes rule precedence levels (WU-501) for the report, applies the `selectorMatchesNothing` policy, and builds the `PolicySet`.
+- `Tailor.Validation.TransformSpec`: semantic checks and input-assertion evaluation. These do not use selectors or the planner.
+- `Tailor.Planning.Validation`: the orchestrating pipeline. It compiles every selector (WU-500), computes rule precedence levels (WU-501) for the report, applies the `selectorMatchesNothing` policy, and builds the `PolicySet`.
 - A reusable `StateAssertionEvaluator` (input side). WU-505 extends it for output-only members.
 
 **Out**
@@ -96,13 +96,13 @@ Turn a loaded TransformSpec plus a validated input AppSpec into a `ValidatedTran
 - [ ] AC-7 `defaults.policies` that set a structural condition, or an unsupported mode, yield `RPK4404`.
 - [ ] AC-8 A rule selector that matches nothing yields `RPK4408` as a warning by default, as an error with `selectorMatchesNothing: error`, is suppressed with `skip`, and is escalated to failure under `--strict`.
 - [ ] AC-9 `ValidatedTransformSpec` contains a compiled selector and a precedence level for every selector-bearing member. Its golden file for the TS §33 fixture over the matrix PluginHost net8 FD entry is byte-stable across two runs.
-- [ ] AC-10 `DotNetRepack.Validation` has no reference to `DotNetRepack.Planning` (assembly-reference test).
+- [ ] AC-10 `Tailor.Validation` has no reference to `Tailor.Planning` (assembly-reference test).
 
 ## Test Requirements
 
-- Unit: `tests/DotNetRepack.Validation.Tests/TransformSpec/` and `tests/DotNetRepack.Planning.Tests/Validation/`, with synthetic AppSpecs/EAMs and in-memory TransformSpecs (WU-103 `InMemoryDocumentSource`). Trait `WU=502`.
-- Integration: one class in `tests/DotNetRepack.IntegrationTests/Planning/` over matrix copies and WU-305 AppSpecs, with traits `Category=Integration`, `Category=Matrix`, `WU=502`.
-- Run: `dotnet test --project tests/DotNetRepack.Validation.Tests --filter-trait "WU=502"`, `dotnet test --project tests/DotNetRepack.Planning.Tests --filter-trait "WU=502"`, `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=502"`.
+- Unit: `tests/Tailor.Validation.Tests/TransformSpec/` and `tests/Tailor.Planning.Tests/Validation/`, with synthetic AppSpecs/EAMs and in-memory TransformSpecs (WU-103 `InMemoryDocumentSource`). Trait `WU=502`.
+- Integration: one class in `tests/Tailor.IntegrationTests/Planning/` over matrix copies and WU-305 AppSpecs, with traits `Category=Integration`, `Category=Matrix`, `WU=502`.
+- Run: `dotnet test --project tests/Tailor.Validation.Tests --filter-trait "WU=502"`, `dotnet test --project tests/Tailor.Planning.Tests --filter-trait "WU=502"`, `dotnet test --project tests/Tailor.IntegrationTests --filter-trait "WU=502"`.
 - Record Test Evidence below and in the PR.
 
 ## Definition of Done

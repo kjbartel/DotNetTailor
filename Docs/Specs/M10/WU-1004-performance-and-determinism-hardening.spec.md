@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-903 |
 | Parallel with | WU-1003 |
-| Target project(s)/paths | `tests/DotNetRepack.PerformanceTests/` (new), `tests/Fixtures/Synthetic/` (generator), `tests/DotNetRepack.Inspection.Tests/` + `tests/DotNetRepack.Specifications.Tests/` (fuzz), `.github/workflows/determinism.yml`, `src/DotNetRepack.Inspection/`, `src/DotNetRepack.Model/` (parallelism, memory fixes), `Docs/Decisions/` (budget ADR) |
+| Target project(s)/paths | `tests/Tailor.PerformanceTests/` (new), `tests/Fixtures/Synthetic/` (generator), `tests/Tailor.Inspection.Tests/` + `tests/Tailor.Specifications.Tests/` (fuzz), `.github/workflows/determinism.yml`, `src/Tailor.Inspection/`, `src/Tailor.Model/` (parallelism, memory fixes), `Docs/Decisions/` (budget ADR) |
 | Size | L |
 
 ## Goal
@@ -22,8 +22,8 @@ Set and enforce a performance budget on a large synthetic app (thousands of file
 | [RQ §12](../../Requirements/Repackage_tool_Requirements_v1.1.md) | Determinism, safe failure, testability |
 | [TS §3.6](../../Requirements/Transformation_Specification.md), [TS §32.7](../../Requirements/Transformation_Specification.md) | Deterministic plans |
 | [CK §4.3](../../Requirements/Read_to_run_Cake.md) | Output equivalence for identical inputs (same tooling versions) |
-| [Architecture §15, §16, §17](../../Architecture/DotNetRepack.architecture.md) | Determinism rules, test strategy, untrusted binary parsing |
-| [Plan risks R1, R7, R12; M10 criteria](../../Plans/DotNetRepack.plan.md) | crossgen2 determinism, CI time, large trees, perf budget + matrix determinism |
+| [Architecture §15, §16, §17](../../Architecture/Tailor.architecture.md) | Determinism rules, test strategy, untrusted binary parsing |
+| [Plan risks R1, R7, R12; M10 criteria](../../Plans/Tailor.plan.md) | crossgen2 determinism, CI time, large trees, perf budget + matrix determinism |
 
 ## Scope
 
@@ -60,7 +60,7 @@ Set and enforce a performance budget on a large synthetic app (thousands of file
 
 ## Design Notes
 
-- [Architecture §15](../../Architecture/DotNetRepack.architecture.md) guarantees determinism for equal inputs **and equal environment**. [CK §4.3](../../Requirements/Read_to_run_Cake.md) does not require equivalence across tooling versions. The cross-machine job therefore pins the SDK (`global.json`), package versions (plan pinning) and the runner image. Differences in path, culture, TEMP and time zone must not change results.
+- [Architecture §15](../../Architecture/Tailor.architecture.md) guarantees determinism for equal inputs **and equal environment**. [CK §4.3](../../Requirements/Read_to_run_Cake.md) does not require equivalence across tooling versions. The cross-machine job therefore pins the SDK (`global.json`), package versions (plan pinning) and the runner image. Differences in path, culture, TEMP and time zone must not change results.
 - crossgen2 output follows the WU-004 ADR (plan risk R1). If byte determinism is not guaranteed, compare R2R files semantically as the ADR defines and list them in the exclusion file with the reason.
 - Parallel stages must not write to shared collections in completion order. Collect, then sort ordinal-ignore-case before any output.
 
@@ -78,8 +78,8 @@ Set and enforce a performance budget on a large synthetic app (thousands of file
 
 ## Test Requirements
 
-- xUnit v3 on MTP. Perf tests live in the separate project `tests/DotNetRepack.PerformanceTests/`, which the nightly workflow runs explicitly, so PR runs stay fast (plan risk R7); no extra `Category` value is introduced. The PR tier runs a fixed-seed fuzz smoke (≤ 60 s); the nightly run raises the iteration count via an environment variable.
-- Run: `dotnet test --project tests/DotNetRepack.PerformanceTests --filter-trait "WU=1004"`; fuzz: `dotnet test --project tests/DotNetRepack.Inspection.Tests --filter-trait "WU=1004"` and `dotnet test --project tests/DotNetRepack.Specifications.Tests --filter-trait "WU=1004"`.
+- xUnit v3 on MTP. Perf tests live in the separate project `tests/Tailor.PerformanceTests/`, which the nightly workflow runs explicitly, so PR runs stay fast (plan risk R7); no extra `Category` value is introduced. The PR tier runs a fixed-seed fuzz smoke (≤ 60 s); the nightly run raises the iteration count via an environment variable.
+- Run: `dotnet test --project tests/Tailor.PerformanceTests --filter-trait "WU=1004"`; fuzz: `dotnet test --project tests/Tailor.Inspection.Tests --filter-trait "WU=1004"` and `dotnet test --project tests/Tailor.Specifications.Tests --filter-trait "WU=1004"`.
 - Synthetic trees are generated into a temp/`artifacts/` folder, never committed. Fuzz regression inputs are small and committed.
 - Record Test Evidence: perf timing report, determinism manifests from both runners, fuzz run summary (seed, iterations, failures).
 

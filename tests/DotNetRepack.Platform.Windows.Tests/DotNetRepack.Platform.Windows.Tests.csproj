@@ -1,7 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\DotNetRepack.Platform.Windows\DotNetRepack.Platform.Windows.csproj" />
-  </ItemGroup>
-
-</Project>

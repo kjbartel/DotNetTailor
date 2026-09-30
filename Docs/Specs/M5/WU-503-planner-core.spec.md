@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-502 |
 | Parallel with | WU-404, WU-405 |
-| Target project(s)/paths | `src/DotNetRepack.Planning/{Handlers,Actions,Pipeline,State,Checks,Acquisition}/`, `tests/DotNetRepack.Planning.Tests/{Pipeline,Checks}/` |
+| Target project(s)/paths | `src/Tailor.Planning/{Handlers,Actions,Pipeline,State,Checks,Acquisition}/`, `tests/Tailor.Planning.Tests/{Pipeline,Checks}/` |
 | Size | L |
 | Branch / PR | `wu/503-planner-core` / `WU-503: planner-core` |
 
@@ -27,7 +27,7 @@ Provide the side-effect-free planner. It defines the handler contract, runs the 
 | [TS §19.4](../../Requirements/Transformation_Specification.md#19-addition-rules), [TS §29.3](../../Requirements/Transformation_Specification.md#29-external-sources-and-credentials) | Provenance; pinned external identities |
 | [TS §7.2](../../Requirements/Transformation_Specification.md#7-transformation-operations), [TS §32](../../Requirements/Transformation_Specification.md#32-global-invariants) items 7, 12, 17 | Extensible categories, determinism, plan before execution |
 | [RQ §7](../../Requirements/Repackage_tool_Requirements_v1.1.md), [RQ §12](../../Requirements/Repackage_tool_Requirements_v1.1.md) | No mutation in planning, auditable, testable |
-| Architecture [§4](../../Architecture/DotNetRepack.architecture.md#4-processing-pipeline), [§8](../../Architecture/DotNetRepack.architecture.md#8-selectors-precedence-and-actions), [§3.1](../../Architecture/DotNetRepack.architecture.md#31-project-responsibilities-and-allowed-dependencies), [§19](../../Architecture/DotNetRepack.architecture.md#19-resolved--open-inconsistencies) item 9 | Phases, handler contract, action model, wiring by category |
+| Architecture [§4](../../Architecture/Tailor.architecture.md#4-processing-pipeline), [§8](../../Architecture/Tailor.architecture.md#8-selectors-precedence-and-actions), [§3.1](../../Architecture/Tailor.architecture.md#31-project-responsibilities-and-allowed-dependencies), [§19](../../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies) item 9 | Phases, handler contract, action model, wiring by category |
 | Plan M5 criteria 2, 3 | AC-5–AC-11 |
 
 ## Scope
@@ -48,7 +48,7 @@ Provide the side-effect-free planner. It defines the handler contract, runs the 
 
 ## Deliverables
 
-Namespace `DotNetRepack.Planning`.
+Namespace `Tailor.Planning`.
 
 | Type | API / responsibility |
 |---|---|
@@ -120,9 +120,9 @@ Namespace `DotNetRepack.Planning`.
 
 ## Test Requirements
 
-- Unit: `tests/DotNetRepack.Planning.Tests/Pipeline/` and `…/Checks/`, with fake handlers, synthetic EAMs from `InMemoryAppTree`, and a fake `IAcquisitionPlanner`. Trait `WU=503`.
-- Integration: `tests/DotNetRepack.IntegrationTests/Planning/PlannerCoreTests` over a matrix copy (AC-10, AC-11). Traits `Category=Integration`, `Category=Matrix`, `WU=503`.
-- Run: `dotnet test --project tests/DotNetRepack.Planning.Tests --filter-trait "WU=503"`, `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=503"`.
+- Unit: `tests/Tailor.Planning.Tests/Pipeline/` and `…/Checks/`, with fake handlers, synthetic EAMs from `InMemoryAppTree`, and a fake `IAcquisitionPlanner`. Trait `WU=503`.
+- Integration: `tests/Tailor.IntegrationTests/Planning/PlannerCoreTests` over a matrix copy (AC-10, AC-11). Traits `Category=Integration`, `Category=Matrix`, `WU=503`.
+- Run: `dotnet test --project tests/Tailor.Planning.Tests --filter-trait "WU=503"`, `dotnet test --project tests/Tailor.IntegrationTests --filter-trait "WU=503"`.
 - Record Test Evidence below and in the PR.
 
 ## Definition of Done

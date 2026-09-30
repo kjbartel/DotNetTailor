@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-801, WU-802, WU-503, WU-803 |
 | Parallel with | WU-603, M7 |
-| Target | `src/DotNetRepack.Transforms/DeploymentModel/SelfContainedToFrameworkDependent.cs`, `tests/DotNetRepack.Transforms.Tests/DeploymentModel/` |
+| Target | `src/Tailor.Transforms/DeploymentModel/SelfContainedToFrameworkDependent.cs`, `tests/Tailor.Transforms.Tests/DeploymentModel/` |
 | Size | M |
 
 ## Goal
@@ -24,7 +24,7 @@ Plan self-contained → framework-dependent conversion: remove only files owned 
 | [TS §24.4](../../Requirements/Transformation_Specification.md#24-validation-and-failure-policies), [TS §29.3](../../Requirements/Transformation_Specification.md#29-external-sources-and-credentials) | Incompatible dependencies are errors; pinned catalogue identity |
 | [CK §5](../../Requirements/Read_to_run_Cake.md#5-deployment-model-transformations) | SC→FD |
 | [RQ §5.3](../../Requirements/Repackage_tool_Requirements_v1.1.md#5-supported-transformation-categories) | Removal of shared runtimes |
-| [Architecture §9](../../Architecture/DotNetRepack.architecture.md#9-transformation-handlers), [§10](../../Architecture/DotNetRepack.architecture.md#10-acquisition), [§19 item 10](../../Architecture/DotNetRepack.architecture.md#19-resolved--open-inconsistencies) | RuntimeList is authoritative for ownership |
+| [Architecture §9](../../Architecture/Tailor.architecture.md#9-transformation-handlers), [§10](../../Architecture/Tailor.architecture.md#10-acquisition), [§19 item 10](../../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies) | RuntimeList is authoritative for ownership |
 
 ## Scope
 
@@ -71,9 +71,9 @@ Plan self-contained → framework-dependent conversion: remove only files owned 
 
 ## Test Requirements
 
-- xUnit v3 + golden files in `tests/DotNetRepack.Transforms.Tests/DeploymentModel/`.
+- xUnit v3 + golden files in `tests/Tailor.Transforms.Tests/DeploymentModel/`.
 - Matrix inputs under `Category=Matrix`; fixtures derived from SC outputs with added native DLL / override assembly; packs via `LocalPackageFeedFixture`; no network.
-- Run: `dotnet test --project tests/DotNetRepack.Transforms.Tests --filter-trait "WU=804"`.
+- Run: `dotnet test --project tests/Tailor.Transforms.Tests --filter-trait "WU=804"`.
 - Record Test Evidence in the PR.
 
 ## Definition of Done

@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-202, WU-701, WU-003, WU-604 |
 | Parallel with | WU-603, M7, WU-800, WU-801 |
-| Target | `src/DotNetRepack.Transforms/Configuration/DepsJson/`, `tests/DotNetRepack.Transforms.Tests/Configuration/` |
+| Target | `src/Tailor.Transforms/Configuration/DepsJson/`, `tests/Tailor.Transforms.Tests/Configuration/` |
 | Size | M |
 
 ## Goal
@@ -23,7 +23,7 @@ Pure, deterministic transformation of `*.deps.json` between FD and SC: set the `
 | [TS §12.3](../../Requirements/Transformation_Specification.md#12-patching-specification), [TS §12.5](../../Requirements/Transformation_Specification.md#12-patching-specification) | Reused by library patching (WU-902); no unrequested changes |
 | [CK §5](../../Requirements/Read_to_run_Cake.md#5-deployment-model-transformations) | FD⇄SC |
 | [RQ §5.3](../../Requirements/Repackage_tool_Requirements_v1.1.md#5-supported-transformation-categories) | Deployment model changes |
-| [Architecture §9](../../Architecture/DotNetRepack.architecture.md#9-transformation-handlers), [§10](../../Architecture/DotNetRepack.architecture.md#10-acquisition) | `runtimeTarget` `/win-x64`, `runtimepack.*` libraries, catalogue |
+| [Architecture §9](../../Architecture/Tailor.architecture.md#9-transformation-handlers), [§10](../../Architecture/Tailor.architecture.md#10-acquisition) | `runtimeTarget` `/win-x64`, `runtimepack.*` libraries, catalogue |
 
 ## Scope
 
@@ -63,9 +63,9 @@ Pure, deterministic transformation of `*.deps.json` between FD and SC: set the `
 
 ## Test Requirements
 
-- xUnit v3 + golden files in `tests/DotNetRepack.Transforms.Tests/Configuration/`.
+- xUnit v3 + golden files in `tests/Tailor.Transforms.Tests/Configuration/`.
 - Matrix comparisons under `Category=Matrix`; runtime packs via `LocalPackageFeedFixture`; no network.
-- Run: `dotnet test --project tests/DotNetRepack.Transforms.Tests --filter-trait "WU=802"`.
+- Run: `dotnet test --project tests/Tailor.Transforms.Tests --filter-trait "WU=802"`.
 - Record Test Evidence in the PR.
 
 ## Definition of Done

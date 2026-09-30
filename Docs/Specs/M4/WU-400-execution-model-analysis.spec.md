@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-202, WU-305 |
 | Parallel with | WU-403, WU-500 |
-| Target project(s)/paths | `src/DotNetRepack.Analysis/Execution/`, `src/DotNetRepack.Analysis/Bootstrap/`, `tests/DotNetRepack.Analysis.Tests/Execution/`, `tests/DotNetRepack.IntegrationTests/Analysis/` |
+| Target project(s)/paths | `src/Tailor.Analysis/Execution/`, `src/Tailor.Analysis/Bootstrap/`, `tests/Tailor.Analysis.Tests/Execution/`, `tests/Tailor.IntegrationTests/Analysis/` |
 | Size | M |
 | Branch / PR | `wu/400-execution-model-analysis` / `WU-400: execution-model-analysis` |
 
@@ -23,7 +23,7 @@ Discover the application's execution model from an unknown tree — entry points
 | [AS §6.2](../../Requirements/Application_Specification.md#62-information), [AS §7](../../Requirements/Application_Specification.md#7-application-execution-model) | Identity, entry points, multiple entry points |
 | [AS §8](../../Requirements/Application_Specification.md#8-platform-and-architecture-model), [AS §9](../../Requirements/Application_Specification.md#9-target-framework-and-framework-model) | Platform/RID, TFM, frameworks, framework contexts, confidence |
 | [RQ §4.1](../../Requirements/Repackage_tool_Requirements_v1.1.md) | Non-mutating analysis |
-| Architecture [§1.2](../../Architecture/DotNetRepack.architecture.md#12-non-goals-v1) (single-file refusal), [§6.2](../../Architecture/DotNetRepack.architecture.md#62-appspec-shape-illustrative-the-wu-101-schema-is-normative), [§7.4](../../Architecture/DotNetRepack.architecture.md#7-effective-application-model-semantics) | Target AppSpec members and facts |
+| Architecture [§1.2](../../Architecture/Tailor.architecture.md#12-non-goals-v1) (single-file refusal), [§6.2](../../Architecture/Tailor.architecture.md#62-appspec-shape-illustrative-the-wu-101-schema-is-normative), [§7.4](../../Architecture/Tailor.architecture.md#7-effective-application-model-semantics) | Target AppSpec members and facts |
 | Plan M4 criterion 2 (confidence annotations) | AC-7 |
 
 ## Scope
@@ -36,8 +36,8 @@ Discover the application's execution model from an unknown tree — entry points
 
 | Item | Detail |
 |---|---|
-| `DotNetRepack.Analysis.Bootstrap.BootstrapAppSpec` | Built-in AppSpec (root `recurse: true`, built-in groups, standard associations, `references: [root]`, `duplicates: first`) used to build a provisional EAM via `EffectiveModelBuilder` |
-| `DotNetRepack.Analysis.Execution.ExecutionModelAnalyzer.Analyze(IAppTree, EffectiveApplicationModel bootstrap)` → `ExecutionModelResult` | `EntryPoints`, `DeploymentModel`, `FrameworkContexts`, `Platform`, `Diagnostics` |
+| `Tailor.Analysis.Bootstrap.BootstrapAppSpec` | Built-in AppSpec (root `recurse: true`, built-in groups, standard associations, `references: [root]`, `duplicates: first`) used to build a provisional EAM via `EffectiveModelBuilder` |
+| `Tailor.Analysis.Execution.ExecutionModelAnalyzer.Analyze(IAppTree, EffectiveApplicationModel bootstrap)` → `ExecutionModelResult` | `EntryPoints`, `DeploymentModel`, `FrameworkContexts`, `Platform`, `Diagnostics` |
 | `Confident<T>` | `Value`, `Confidence` (`Explicit`, `Derived`, `Inferred`, `Unknown`), `Source` (relative path + member) |
 | `EntryPoint` | `Host?` (apphost exe), `Assembly`, `Subsystem` (`console`/`gui`), `RuntimeConfig?`, `DepsJson?` |
 | Diagnostic codes (proposed, `RPK40xx`) | `RPK4001` no entry point found (warning), `RPK4002` conflicting deployment-model evidence (warning), `RPK4003` inconsistent framework contexts (warning); bundle refusal reuses the WU-200 bundle code at severity Error |
@@ -77,9 +77,9 @@ Discover the application's execution model from an unknown tree — entry points
 
 ## Test Requirements
 
-- Unit: `tests/DotNetRepack.Analysis.Tests/Execution/` with synthetic trees and fake facts; trait `WU=400`.
-- Integration: `tests/DotNetRepack.IntegrationTests/Analysis/ExecutionModelTests` over the full matrix; golden file per entry (framework patch versions scrubbed only if the WU-003 manifest marks them volatile); trait `Category=Integration`, `Category=Matrix`, `WU=400`.
-- Run: `dotnet test --project tests/DotNetRepack.Analysis.Tests --filter-trait "WU=400"`; `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=400"`.
+- Unit: `tests/Tailor.Analysis.Tests/Execution/` with synthetic trees and fake facts; trait `WU=400`.
+- Integration: `tests/Tailor.IntegrationTests/Analysis/ExecutionModelTests` over the full matrix; golden file per entry (framework patch versions scrubbed only if the WU-003 manifest marks them volatile); trait `Category=Integration`, `Category=Matrix`, `WU=400`.
+- Run: `dotnet test --project tests/Tailor.Analysis.Tests --filter-trait "WU=400"`; `dotnet test --project tests/Tailor.IntegrationTests --filter-trait "WU=400"`.
 - Record Test Evidence in the PR.
 
 ## Definition of Done

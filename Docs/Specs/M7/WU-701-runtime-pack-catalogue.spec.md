@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-700, WU-006 |
 | Parallel with | M3–M6 |
-| Target | `src/DotNetRepack.Acquisition/` (`RuntimePacks/`), `tests/DotNetRepack.Acquisition.Tests/` |
+| Target | `src/Tailor.Acquisition/` (`RuntimePacks/`), `tests/Tailor.Acquisition.Tests/` |
 | Size | M |
 
 ## Goal
@@ -24,7 +24,7 @@ Parse `data/RuntimeList.xml` of runtime packs into a deterministic catalogue: pe
 | [TS §19.2](../../Requirements/Transformation_Specification.md#19-addition-rules) | Runtime packs as addition sources |
 | [TS §20.2](../../Requirements/Transformation_Specification.md#20-removal-rules) | Removal of replaced framework components |
 | [CK §5](../../Requirements/Read_to_run_Cake.md#5-deployment-model-transformations) | FD⇄SC needs exact framework file sets |
-| [Architecture §10](../../Architecture/DotNetRepack.architecture.md#10-acquisition), [§7.5](../../Architecture/DotNetRepack.architecture.md), [§9](../../Architecture/DotNetRepack.architecture.md#9-transformation-handlers), [§19 item 10](../../Architecture/DotNetRepack.architecture.md#19-resolved--open-inconsistencies) | Catalogue is authoritative for framework ownership |
+| [Architecture §10](../../Architecture/Tailor.architecture.md#10-acquisition), [§7.5](../../Architecture/Tailor.architecture.md), [§9](../../Architecture/Tailor.architecture.md#9-transformation-handlers), [§19 item 10](../../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies) | Catalogue is authoritative for framework ownership |
 
 ## Scope
 
@@ -77,10 +77,10 @@ Parse `data/RuntimeList.xml` of runtime packs into a deterministic catalogue: pe
 
 ## Test Requirements
 
-- xUnit v3 + golden files; parser unit tests with small synthetic `RuntimeList.xml` fixtures under `tests/DotNetRepack.Acquisition.Tests/Fixtures/RuntimeList/`.
+- xUnit v3 + golden files; parser unit tests with small synthetic `RuntimeList.xml` fixtures under `tests/Tailor.Acquisition.Tests/Fixtures/RuntimeList/`.
 - Real-pack tests use `LocalPackageFeedFixture` (WU-700) seeded from the global packages folder populated by `Build-TestApps.ps1` (SC publishes restore runtime packs); tag `Category=Matrix`. Network download only under `Category=Network`.
 - AC-5/AC-6 compare against `artifacts/testapps/manifest.json`.
-- Run: `dotnet test --project tests/DotNetRepack.Acquisition.Tests --filter-trait "WU=701"`.
+- Run: `dotnet test --project tests/Tailor.Acquisition.Tests --filter-trait "WU=701"`.
 - Record Test Evidence in the PR.
 
 ## Definition of Done

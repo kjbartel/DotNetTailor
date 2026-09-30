@@ -8,7 +8,7 @@
 | Status | Not started |
 | Depends on | WU-400 |
 | Parallel with | WU-402, WU-403, WU-500, WU-501 |
-| Target project(s)/paths | `src/DotNetRepack.Analysis/Heuristics/`, `src/DotNetRepack.Analysis/Compaction/`, `src/DotNetRepack.Analysis/DraftAppSpecGenerator.cs`, `tests/DotNetRepack.Analysis.Tests/Heuristics/`, `tests/DotNetRepack.Analysis.Tests/Compaction/`, `tests/DotNetRepack.IntegrationTests/Analysis/` |
+| Target project(s)/paths | `src/Tailor.Analysis/Heuristics/`, `src/Tailor.Analysis/Compaction/`, `src/Tailor.Analysis/DraftAppSpecGenerator.cs`, `tests/Tailor.Analysis.Tests/Heuristics/`, `tests/Tailor.Analysis.Tests/Compaction/`, `tests/Tailor.IntegrationTests/Analysis/` |
 | Size | L |
 | Branch / PR | `wu/401-folder-role-heuristics-and-rule-compaction` / `WU-401: folder-role-heuristics-and-rule-compaction` |
 
@@ -24,7 +24,7 @@ Produce a concise, human-editable draft AppSpec from an unknown tree: assign fol
 | [AS §3.2](../../Requirements/Application_Specification.md#32-rule-based-representation), [AS §3.5](../../Requirements/Application_Specification.md#35-human-editability), [AS §11.5](../../Requirements/Application_Specification.md#115-wildcard-preference) | Rule-based, concise, wildcard preference |
 | [AS §10.4](../../Requirements/Application_Specification.md#104-recursion)–[§10.7](../../Requirements/Application_Specification.md#107-catch-all-folders), [AS §16.2](../../Requirements/Application_Specification.md#162-plugin-identification), [AS §17.2](../../Requirements/Application_Specification.md#172-classification) | Recursion, reuse, roles, catch-all, plugins, cultures |
 | [AS §9.4](../../Requirements/Application_Specification.md#94-confidence) | Confidence annotations |
-| Architecture [§3.1](../../Architecture/DotNetRepack.architecture.md#31-project-responsibilities-and-allowed-dependencies) (Analysis owns heuristics), [§6.2](../../Architecture/DotNetRepack.architecture.md#62-appspec-shape-illustrative-the-wu-101-schema-is-normative) | Draft shape |
+| Architecture [§3.1](../../Architecture/Tailor.architecture.md#31-project-responsibilities-and-allowed-dependencies) (Analysis owns heuristics), [§6.2](../../Architecture/Tailor.architecture.md#62-appspec-shape-illustrative-the-wu-101-schema-is-normative) | Draft shape |
 | Plan M4 criteria 1, 2 | AC-8, AC-9 |
 
 ## Scope
@@ -37,9 +37,9 @@ Produce a concise, human-editable draft AppSpec from an unknown tree: assign fol
 
 | Item | Detail |
 |---|---|
-| `DotNetRepack.Analysis.Heuristics.FolderRoleHeuristics` | Produces `FolderRoleAssignment` (path, role, confidence, evidence) per folder of the bootstrap EAM |
-| `DotNetRepack.Analysis.Compaction.RuleCompactor` | Converts per-folder assignments into a compact folder-definition tree |
-| `DotNetRepack.Analysis.DraftAppSpecGenerator.Generate(IAppTree, ExecutionModelResult, EffectiveApplicationModel bootstrap)` → `DraftAppSpecResult` | `AppSpec` (WU-101 model), `Diagnostics`, `SelfCheck` (EAM built from the draft) |
+| `Tailor.Analysis.Heuristics.FolderRoleHeuristics` | Produces `FolderRoleAssignment` (path, role, confidence, evidence) per folder of the bootstrap EAM |
+| `Tailor.Analysis.Compaction.RuleCompactor` | Converts per-folder assignments into a compact folder-definition tree |
+| `Tailor.Analysis.DraftAppSpecGenerator.Generate(IAppTree, ExecutionModelResult, EffectiveApplicationModel bootstrap)` → `DraftAppSpecResult` | `AppSpec` (WU-101 model), `Diagnostics`, `SelfCheck` (EAM built from the draft) |
 | Diagnostic codes (proposed, `RPK41xx`) | `RPK4101` draft self-check failed (error; indicates a heuristic bug), `RPK4102` low-confidence role assignment (info) |
 
 ## Design Notes
@@ -73,9 +73,9 @@ Produce a concise, human-editable draft AppSpec from an unknown tree: assign fol
 
 ## Test Requirements
 
-- Unit: `tests/DotNetRepack.Analysis.Tests/Heuristics/` and `/Compaction/` with synthetic trees; trait `WU=401`.
-- Integration: `tests/DotNetRepack.IntegrationTests/Analysis/DraftAppSpecTests` over the full matrix; golden files of drafts; trait `Category=Integration`, `Category=Matrix`, `WU=401`.
-- Run: `dotnet test --project tests/DotNetRepack.Analysis.Tests --filter-trait "WU=401"`; `dotnet test --project tests/DotNetRepack.IntegrationTests --filter-trait "WU=401"`.
+- Unit: `tests/Tailor.Analysis.Tests/Heuristics/` and `/Compaction/` with synthetic trees; trait `WU=401`.
+- Integration: `tests/Tailor.IntegrationTests/Analysis/DraftAppSpecTests` over the full matrix; golden files of drafts; trait `Category=Integration`, `Category=Matrix`, `WU=401`.
+- Run: `dotnet test --project tests/Tailor.Analysis.Tests --filter-trait "WU=401"`; `dotnet test --project tests/Tailor.IntegrationTests --filter-trait "WU=401"`.
 - Record Test Evidence in the PR.
 
 ## Definition of Done

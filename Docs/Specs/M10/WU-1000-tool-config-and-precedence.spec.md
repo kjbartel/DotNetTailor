@@ -8,12 +8,12 @@
 | Status | Not started |
 | Depends on | WU-105 |
 | Parallel with | M2–M9 |
-| Target project(s)/paths | `src/DotNetRepack.Cli/` (config discovery, merge, binding), `src/DotNetRepack.Core/` (settings model, if shared), `schemas/config/v1/` (generated schema), `tests/DotNetRepack.Cli.Tests/`, `Docs/Guides/configuration.md`, `Docs/Architecture/DotNetRepack.architecture.md` §14 + ADR |
+| Target project(s)/paths | `src/Tailor.Cli/` (config discovery, merge, binding), `src/Tailor.Core/` (settings model, if shared), `schemas/config/v1/` (generated schema), `tests/Tailor.Cli.Tests/`, `Docs/Guides/configuration.md`, `Docs/Architecture/Tailor.architecture.md` §14 + ADR |
 | Size | M |
 
 ## Goal
 
-Add a tool configuration file at repo and user level. Merge all configuration sources with one documented, deterministic precedence: **CLI (response files expanded inline) > environment variables > repo config > user config > defaults** ([Architecture §14](../../Architecture/DotNetRepack.architecture.md#14-cli)). Cover global options, strict/permissive mode and default tool-package version policies.
+Add a tool configuration file at repo and user level. Merge all configuration sources with one documented, deterministic precedence: **CLI (response files expanded inline) > environment variables > repo config > user config > defaults** ([Architecture §14](../../Architecture/Tailor.architecture.md#14-cli)). Cover global options, strict/permissive mode and default tool-package version policies.
 
 ## Requirement Traceability
 
@@ -23,15 +23,15 @@ Add a tool configuration file at repo and user level. Merge all configuration so
 | [CK §12](../../Requirements/Read_to_run_Cake.md), [RQ §12](../../Requirements/Repackage_tool_Requirements_v1.1.md) | Configurable error handling (fail-fast / warn-and-continue) |
 | [RQ §10](../../Requirements/Repackage_tool_Requirements_v1.1.md) | dotnet CLI conventions, automation/CI suitability |
 | [TS §29.2](../../Requirements/Transformation_Specification.md) | No credentials in configuration documents |
-| [Architecture §13, §14, §19 item 6](../../Architecture/DotNetRepack.architecture.md) | `--strict`/`--permissive`, global options, config file (M10) |
+| [Architecture §13, §14, §19 item 6](../../Architecture/Tailor.architecture.md) | `--strict`/`--permissive`, global options, config file (M10) |
 
 ## Scope
 
 **In**
-- Config file name: `dotnet-repack.json` ([Architecture §14](../../Architecture/DotNetRepack.architecture.md)). JSON, comments and trailing commas tolerated, `$schema` + `schemaVersion`.
+- Config file name: `dotnet-tailor.json` ([Architecture §14](../../Architecture/Tailor.architecture.md)). JSON, comments and trailing commas tolerated, `$schema` + `schemaVersion`.
 - Discovery:
   - Repo config: from the current directory upwards; the first file found wins (no multi-file merge between directories). Discovery stops at the git root (the first directory containing `.git`); outside a git repository it stops at the filesystem root.
-  - User config: `%APPDATA%\dotnet-repack\dotnet-repack.json` via `IPlatformKnowledge` (no hard-coded Windows path outside Platform).
+  - User config: `%APPDATA%\dotnet-tailor\dotnet-tailor.json` via `IPlatformKnowledge` (no hard-coded Windows path outside Platform).
   - `--config <file>` replaces repo discovery. `--no-config` disables repo and user config.
 - Settings (v1): `verbosity`, `mode` (`strict|permissive|default`), `artifacts`, `offline`, `vars` (map, merged per key), `defaults.toolPackages` (version for crossgen2/host packs; allowed values `matchTarget` — the tool-internal rule "follow the resolved target runtime version", architecture §10 — or an exact version). This is not a TransformSpec runtime version policy.
 - Environment variables: `DOTNET_REPACK_VERBOSITY`, `DOTNET_REPACK_MODE`, `DOTNET_REPACK_ARTIFACTS`, `DOTNET_REPACK_OFFLINE`, `DOTNET_REPACK_CONFIG`, `DOTNET_REPACK_VAR_<name>`.
@@ -53,7 +53,7 @@ Add a tool configuration file at repo and user level. Merge all configuration so
 
 ## Design Notes
 
-- [Architecture §14](../../Architecture/DotNetRepack.architecture.md) is normative for the file name, layers and discovery boundary (§19 item 31). The ADR records the implementation details only.
+- [Architecture §14](../../Architecture/Tailor.architecture.md) is normative for the file name, layers and discovery boundary (§19 item 31). The ADR records the implementation details only.
 - The merge must be a pure function `(sources[]) → EffectiveSettings + provenance`. Test it table-driven.
 - Configuration never changes transformation intent. It affects only tool behaviour and defaults the TransformSpec leaves open. The explicit-upgrade invariant ([TS §32.8](../../Requirements/Transformation_Specification.md)) is unaffected.
 - Config paths (`artifacts`) are resolved relative to the file that defines them.
@@ -63,7 +63,7 @@ Add a tool configuration file at repo and user level. Merge all configuration so
 - [ ] AC-1 A table-driven test covers each setting from every one of the five sources (CLI incl. response files, environment, repo, user, defaults), and the highest-precedence source wins in every combination.
 - [ ] AC-2 `vars` from env, repo and user config merge per key. A CLI `--var` overrides the same key from all other sources.
 - [ ] AC-3 Options from an `@file` response file behave exactly like the same tokens typed inline at that position (same layer; later token wins for scalars).
-- [ ] AC-4 Repo config is found from a nested working directory; a `dotnet-repack.json` above the git root is ignored. `--config` and `DOTNET_REPACK_CONFIG` select an explicit file. `--no-config` ignores both files.
+- [ ] AC-4 Repo config is found from a nested working directory; a `dotnet-tailor.json` above the git root is ignored. `--config` and `DOTNET_REPACK_CONFIG` select an explicit file. `--no-config` ignores both files.
 - [ ] AC-5 An invalid config value returns exit 2 with an `RPK0xxx` diagnostic including the file path and JSON pointer. An unknown key warns, and fails under `--strict`.
 - [ ] AC-6 A credential-like key is rejected. No config value marked sensitive appears in logs or artefacts.
 - [ ] AC-7 `mode: strict` in config makes warnings exit 3. `--permissive` on the CLI overrides it. `--strict --permissive` together exit 2.
@@ -75,7 +75,7 @@ Add a tool configuration file at repo and user level. Merge all configuration so
 
 - xUnit v3 on MTP. Use temp directories for config discovery and an injected environment/user-profile abstraction. Do not mutate process environment variables in parallel tests.
 - CLI-level tests via the in-process command invocation from WU-105.
-- Run: `dotnet test --project tests/DotNetRepack.Cli.Tests --filter-trait "WU=1000"`.
+- Run: `dotnet test --project tests/Tailor.Cli.Tests --filter-trait "WU=1000"`.
 - Record Test Evidence: commands and TRX.
 
 ## Definition of Done
@@ -90,6 +90,6 @@ Add a tool configuration file at repo and user level. Merge all configuration so
 
 ## Open Questions
 
-- **Resolved** — file name: `dotnet-repack.json` (architecture §14; may change with the final product name, see plan open questions).
+- **Resolved** — file name: `dotnet-tailor.json` (architecture §14; may change with the final product name, see plan open questions).
 - **Resolved** — repo discovery stops at the git root.
 - Is `defaults.toolPackages` needed in v1, or should tool packages always follow the resolved target runtime version (`matchTarget`)?
