@@ -23,7 +23,7 @@ Create the git repository and an empty, compiling, testable solution that matche
 | [Architecture](../../Architecture/DotNetRepack.architecture.md#1-summary) | §1 Summary | `net10.0`, xUnit v3 on MTP, golden-file helper project, working names |
 | [Architecture](../../Architecture/DotNetRepack.architecture.md#3-solution-layout) | §3 Solution Layout | Folder layout, build props, `.slnx`, CPM |
 | [Architecture](../../Architecture/DotNetRepack.architecture.md#31-project-responsibilities-and-allowed-dependencies) | §3.1 | Allowed project references |
-| [Architecture](../../Architecture/DotNetRepack.architecture.md#15-determinism) | §15 Determinism | `Deterministic=true`, CRLF working tree for sources, LF for `*.sh` and golden files |
+| [Architecture](../../Architecture/DotNetRepack.architecture.md#15-determinism) | §15 Determinism | `Deterministic=true`, CRLF working tree for sources, LF for `*.sh`, golden files and committed generated files |
 | [RQ](../../Requirements/Repackage_tool_Requirements_v1.1.md) | §10 CLI and Distribution, §11 Platform and Runtime | .NET tool packaging, runtime independence |
 | [Plan](../../Plans/DotNetRepack.plan.md#m0-foundation--repo-bootstrap) | M0, WU-000 bullet; M0 criterion 1 | Scope and milestone gate |
 
@@ -47,7 +47,7 @@ Create the git repository and an empty, compiling, testable solution that matche
 |---|---|
 | `.gitignore` | `dotnet new gitignore` (VisualStudio template) plus `artifacts/`, `.repack/`, `*.staging-*/`, `TestResults/`, `*.received.*` |
 | `.gitattributes` | `* text=auto eol=crlf`; explicit `text eol=crlf` for `*.cs`, `*.csproj`, `*.props`, `*.targets`, `*.slnx`, `*.sln`, `*.json`, `*.md`, `*.yml`, `*.yaml`, `*.xml`, `*.resx`, `*.ps1`, `*.cmd`, `*.bat`, `.editorconfig`, `.gitattributes`; then the LF exceptions `*.sh text eol=lf`, `tests/**/Golden/** text eol=lf`, `schemas/** text eol=lf` and `Docs/Guides/diagnostics.md text eol=lf` (after the CRLF lines so they win); `binary` for `*.dll`, `*.exe`, `*.pdb`, `*.nupkg`, `*.zip`, `*.ico`, `*.png`, `*.snk` |
-| `.editorconfig` | `dotnet new editorconfig` baseline, `root = true`, `[*]` `end_of_line = crlf`, `[*.sh]` and `[tests/**/Golden/**]` `end_of_line = lf`, UTF-8, 4-space C#, 2-space JSON/YAML/XML/props, `csharp_style_namespace_declarations = file_scoped:warning`, `dotnet_style_qualification_for_* = false`, `var` preferences, `_camelCase` private fields, `IDE0005` (unused usings) as warning |
+| `.editorconfig` | `dotnet new editorconfig` baseline, `root = true`, `[*]` `end_of_line = crlf`, `[*.sh]`, `[tests/**/Golden/**]`, `[schemas/**]` and `[Docs/Guides/diagnostics.md]` `end_of_line = lf`, UTF-8, 4-space C#, 2-space JSON/YAML/XML/props, `csharp_style_namespace_declarations = file_scoped:warning`, `dotnet_style_qualification_for_* = false`, `var` preferences, `_camelCase` private fields, `IDE0005` (unused usings) as warning |
 | `global.json` | `sdk.version` = current 10.0.1xx band, `rollForward: latestFeature`, `"test": { "runner": "Microsoft.Testing.Platform" }` |
 | `Directory.Build.props` | `TargetFramework=net10.0`, `Nullable=enable`, `ImplicitUsings=enable`, `LangVersion=latest`, `TreatWarningsAsErrors=true`, `Deterministic=true`, `AnalysisLevel=latest-recommended`, `EnforceCodeStyleInBuild=true`, `GenerateDocumentationFile=true` (needed for IDE0005 on build), `IsPackable=false`, `ContinuousIntegrationBuild=true` when `$(CI)`/`$(GITHUB_ACTIONS)` is `true`, `RootNamespace`/`AssemblyName` = project name |
 | `Directory.Packages.props` | `ManagePackageVersionsCentrally=true`, `CentralPackageTransitivePinningEnabled=true`; versions for xUnit v3 (MTP-capable flavour) only |
@@ -150,7 +150,7 @@ Post-review deltas (see [Post-review changes](#post-review-changes)):
 - Exact SDK feature band to pin (`10.0.100` vs latest installed `10.0.1xx`/`10.0.2xx`).
 - Whether xUnit v3 needs the `mtp-v2` package flavour with the pinned SDK (resolve during implementation, record in PR).
 - **Resolved** — D4 includes LF exceptions for committed generated files: `schemas/** text eol=lf` and `Docs/Guides/diagnostics.md text eol=lf` in `.gitattributes`, mirrored in `.editorconfig` (architecture [§20](../../Architecture/DotNetRepack.architecture.md#20-open-questions)).
-- **Drift (docs, Verifier 2026-09-30)** — architecture [§15](../../Architecture/DotNetRepack.architecture.md#15-determinism) and the plan's WU-000 bullet still list only `*.sh` and `tests/**/Golden/**` as LF exceptions; they omit `schemas/**` and `Docs/Guides/diagnostics.md` (implemented, and resolved in §20). The Deliverables `.editorconfig` row likewise names only `[*.sh]`/`[tests/**/Golden/**]`. Doc-only; update §15/plan text when next touched.
+- **Resolved** — architecture §15, the plan's WU-000 bullet and the Deliverables `.editorconfig` row now list all four LF exceptions.
 - **Note (Verifier 2026-09-30)** — Test Evidence is recorded in this spec rather than a PR description: no remote/PR exists (commits go straight to `main`). Commit `889adc1` changed many `Docs/Specs/**` files beyond the plan status row; it is a docs-only planning commit, not part of the implemented deltas (`ceef2b6` touched only Deliverables files).
 
 ## Test Evidence

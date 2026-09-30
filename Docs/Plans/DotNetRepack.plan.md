@@ -104,7 +104,7 @@ Dashed nodes are dependencies from other milestones.
 
 ### M0 Foundation & Repo Bootstrap
 
-- **WU-000** scaffold: git init, `.gitignore`, `.gitattributes` (CRLF working tree for source files; LF for `*.sh` and `tests/**/Golden/**`), `.editorconfig`, `global.json` (net10 SDK + MTP runner), `Directory.Build.props`, `Directory.Packages.props`, `.slnx` with the empty project layout from the architecture document (incl. the `tests/DotNetRepack.Testing` support library), README, CONTRIBUTING, LICENSE placeholder.
+- **WU-000** scaffold: git init, `.gitignore`, `.gitattributes` (CRLF working tree for source files; LF for `*.sh`, `tests/**/Golden/**`, `schemas/**` and `Docs/Guides/diagnostics.md`), `.editorconfig`, `global.json` (net10 SDK + MTP runner), `Directory.Build.props`, `Directory.Packages.props`, `.slnx` with the empty project layout from the architecture document (incl. the `tests/DotNetRepack.Testing` support library), README, CONTRIBUTING, LICENSE placeholder.
 - **WU-001** AI enablement: `AGENTS.md`, `.github/copilot-instructions.md`, instructions (C#, tests, specs/docs), prompts (`implement-work-unit`, `verify-work-unit`, `new-work-unit-spec`), skills (`work-unit-workflow`, `schema-change`, `test-apps`), agents (implementer, reviewer).
 - **WU-002** CI: GitHub Actions on `windows-latest` running build, test (MTP, TRX upload) and `dotnet format --verify-no-changes`. Dependabot for NuGet and Actions.
 - **WU-003** Test apps: sources under `tests/TestApps/` + `build/Build-TestApps.ps1` publishing the matrix `{net8.0, net10.0} × {FD, SC} × {R2R off, on}` into `artifacts/testapps/` with `manifest.json`. CI cache.
