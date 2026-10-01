@@ -45,7 +45,7 @@ Create and rebind Windows apphosts without the SDK: patch the app-DLL placeholde
 - Contracts in `Platform.Abstractions`: `IApphostService`, `ApphostCreateOptions {AppDllRelativePath, Subsystem, ResourceSource?}`, `PeSubsystem`. No `ApphostBinding` type here (Platform.Abstractions references Core only; the binding type lives in Inspection, WU-202).
 - `WindowsApphostService` (`[SupportedOSPlatform("windows")]`), `ApphostPlaceholderPatcher`, `PeSubsystemWriter`, `Win32ResourceCopier` (`LibraryImport` of `BeginUpdateResource`/`UpdateResource`/`EndUpdateResource` or managed writer per spike).
 - `ApphostTemplateResolver` in Transforms.
-- Diagnostics (proposed `RPK80xx`): placeholder not found, path too long, bundle refused, signature invalidated (warning), resource copy failed, template not found in host pack.
+- Diagnostics (proposed `TLR80xx`): placeholder not found, path too long, bundle refused, signature invalidated (warning), resource copy failed, template not found in host pack.
 
 ## Design Notes
 
@@ -64,7 +64,7 @@ Create and rebind Windows apphosts without the SDK: patch the app-DLL placeholde
 - [ ] AC-3 Icon, group icon, version and manifest resources in the output are byte-equal to those of the original WinForms/WPF matrix apphost.
 - [ ] AC-4 `Rebind` of a matrix apphost to a different DLL name changes only the placeholder region (byte diff limited to that region, plus checksum if the spike requires it).
 - [ ] AC-5 A non-apphost executable yields "placeholder not found"; a path longer than the limit yields "path too long"; both without writing output.
-- [ ] AC-6 A single-file bundle fixture is refused with an `RPK80xx` error.
+- [ ] AC-6 A single-file bundle fixture is refused with an `TLR80xx` error.
 - [ ] AC-7 A fixture with a populated security directory (signed original) produces the Authenticode warning; the output has no certificate table.
 - [ ] AC-8 Two `Create` calls with identical inputs produce byte-identical outputs.
 - [ ] AC-9 A net10 host created from the template for a matrix FD console app launches it (smoke, harness only).
@@ -81,7 +81,7 @@ Create and rebind Windows apphosts without the SDK: patch the app-DLL placeholde
 ## Definition of Done
 
 - All AC ticked by the Verifier; CI green.
-- `RPK80xx` codes listed for WU-1001; architecture §9.2/§19 item 12 updated with the WU-005 outcome if changed.
+- `TLR80xx` codes listed for WU-1001; architecture §9.2/§19 item 12 updated with the WU-005 outcome if changed.
 
 ## Agent Notes
 

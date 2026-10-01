@@ -42,8 +42,8 @@ Implement the `Retarget` handler. It changes the TFM (e.g. `net8.0` → `net10.0
   - Report "known removed/throwing APIs" from a versioned data file (e.g. `BinaryFormatter` serialisation, which exists in net9+ but always throws).
   - Report app library assemblies whose `TargetFramework` is newer than the target TFM.
 - Compatibility policy (TransformSpec): default `error`. `warning` or `skip` must be set explicitly. The `--strict` mapping applies (warning → exit 3).
-- R2R: images compiled against the source runtime major are recompiled with the target-major crossgen2 when R2R is selected (via WU-702). Otherwise they are preserved with an `RPK9xxx` warning (stale R2R code).
-- Diagnostics in `RPK9xxx` (proposed sub-range `RPK91xx`), each with assembly, referencing member and reason.
+- R2R: images compiled against the source runtime major are recompiled with the target-major crossgen2 when R2R is selected (via WU-702). Otherwise they are preserved with an `TLR9xxx` warning (stale R2R code).
+- Diagnostics in `TLR9xxx` (proposed sub-range `TLR91xx`), each with assembly, referencing member and reason.
 
 **Out**
 - Partial retarget (selected plugins/components, [TS §11.3](../../Requirements/Transformation_Specification.md)). Rejected with an explicit "not supported in v1" error.
@@ -71,10 +71,10 @@ Implement the `Retarget` handler. It changes the TFM (e.g. `net8.0` → `net10.0
 - [ ] AC-1 net8.0 FD console → `net10.0`: runtimeconfig `tfm` and framework version and deps.json `runtimeTarget` are normalised-equal to the matrix net10 FD counterpart. App library entries are unchanged.
 - [ ] AC-2 net8.0-windows FD WPF and WinForms → `net10.0-windows`: the `Microsoft.WindowsDesktop.App` reference and version are updated. The outputs launch (harness).
 - [ ] AC-3 net8.0 SC console and WPF → net10.0 SC: the removed/added framework files equal the source/target RuntimeList sets (with `Profile` filtering). App-owned files keep their hashes. The apphost is from the target host pack with preserved subsystem, icon and version resources. The outputs launch.
-- [ ] AC-4 The BinaryFormatter fixture retargeted to net10 fails planning with exit code 1 and an `RPK9xxx` error naming the assembly and the API. With compatibility policy `warning`, the plan succeeds with the warning. With `--strict`, the exit code is 3.
+- [ ] AC-4 The BinaryFormatter fixture retargeted to net10 fails planning with exit code 1 and an `TLR9xxx` error naming the assembly and the API. With compatibility policy `warning`, the plan succeeds with the warning. With `--strict`, the exit code is 3.
 - [ ] AC-5 The missing-member fixture yields a "missing member" finding with the declaring type and signature.
 - [ ] AC-6 An assembly whose `TargetFramework` is newer than the target TFM yields an error.
-- [ ] AC-7 An R2R input (matrix `R2R on`) with R2R selected gets `Optimise` actions using crossgen2 of the target major (recorded in the plan). Without R2R selected, each image is preserved with an `RPK9xxx` warning.
+- [ ] AC-7 An R2R input (matrix `R2R on`) with R2R selected gets `Optimise` actions using crossgen2 of the target major (recorded in the plan). Without R2R selected, each image is preserved with an `TLR9xxx` warning.
 - [ ] AC-8 Partial-scope retarget and TFM downgrade are rejected with distinct errors before planning.
 - [ ] AC-9 The runtime version is pinned in the plan. Two plan runs are byte-identical. Compatibility findings are sorted deterministically.
 - [ ] AC-10 No library other than framework/runtimepack entries changes version (test-enforced).

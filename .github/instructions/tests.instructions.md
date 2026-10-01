@@ -12,7 +12,7 @@ See [the architecture](../../Docs/Architecture/Tailor.architecture.md#16-testing
 - Name test classes `<TypeUnderTest>Tests` and methods `<Subject><Condition><ExpectedResult>` in PascalCase, with no underscores. Never suppress CA1707.
 - Use `Golden.AssertMatches` from `tests/Tailor.Testing`; store committed golden files under `Golden/<TestClass>/` with LF endings.
 - Scrub only intentionally variable values such as temporary paths or repository roots. Mismatch `.received.*` files are ignored and must not be committed.
-- Set `DOTNET_REPACK_UPDATE_GOLDEN=1` only for intentional local golden updates; never set it in CI.
+- Set `DOTNET_TAILOR_UPDATE_GOLDEN=1` only for intentional local golden updates; never set it in CI.
 - Use published test apps under `artifacts/testapps/` through their manifest when a test needs the matrix. Matrix tests explain local skips and do not silently skip in CI.
 - Unit tests do not access the network. Network tests require the explicit opt-in documented by the plan.
 - Run one WU with `dotnet test --project <project> --filter-trait "WU=<id>"`; use MTP mode without a `--` separator.

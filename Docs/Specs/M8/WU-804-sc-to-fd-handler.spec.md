@@ -45,7 +45,7 @@ Plan self-contained → framework-dependent conversion: remove only files owned 
 ## Deliverables
 
 - `SelfContainedToFrameworkDependent`, `FrameworkOwnershipEvaluator`; DI registration.
-- Diagnostics (proposed `RPK84xx`): catalogue unavailable, app-local override kept, dependency-unsafe removal, composite framework image, `includedFrameworks` missing.
+- Diagnostics (proposed `TLR84xx`): catalogue unavailable, app-local override kept, dependency-unsafe removal, composite framework image, `includedFrameworks` missing.
 
 ## Design Notes
 
@@ -60,10 +60,10 @@ Plan self-contained → framework-dependent conversion: remove only files owned 
 - [ ] AC-1 For matrix SC console, WinForms and WPF (net8, net10), every `Remove` action targets a catalogue-owned path (test enumerates all `Remove` actions).
 - [ ] AC-2 The retained file set equals the matrix FD counterpart's file set (documented allowlist only).
 - [ ] AC-3 An app-owned native DLL fixture (name not in the catalogue) is preserved.
-- [ ] AC-4 An app-local override fixture (catalogue name, different version, package-attributed in deps.json) is preserved with an `RPK84xx` diagnostic.
+- [ ] AC-4 An app-local override fixture (catalogue name, different version, package-attributed in deps.json) is preserved with an `TLR84xx` diagnostic.
 - [ ] AC-5 The apphost is not modified (no action touches it).
 - [ ] AC-6 A retained assembly referencing a framework not in the target set (e.g. WindowsDesktop removed while the target lists only NETCore) fails planning with a dependency-safety error.
-- [ ] AC-7 A composite R2R SC input fails planning with an `RPK84xx` error.
+- [ ] AC-7 A composite R2R SC input fails planning with an `TLR84xx` error.
 - [ ] AC-8 `--offline` without the matching runtime pack in cache fails with an acquisition error and plans no removals.
 - [ ] AC-9 The projected AppSpec validates against `deploymentModel: frameworkDependent`.
 - [ ] AC-10 Two plans are byte-identical.
@@ -78,7 +78,7 @@ Plan self-contained → framework-dependent conversion: remove only files owned 
 
 ## Definition of Done
 
-- All AC ticked by the Verifier; CI green; `RPK84xx` codes listed for WU-1001.
+- All AC ticked by the Verifier; CI green; `TLR84xx` codes listed for WU-1001.
 
 ## Agent Notes
 

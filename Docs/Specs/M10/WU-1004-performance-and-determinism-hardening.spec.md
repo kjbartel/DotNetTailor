@@ -33,14 +33,14 @@ Set and enforce a performance budget on a large synthetic app (thousands of file
 
 | Verb (synthetic tree, warm cache, no R2R) | Wall time | Peak working set |
 |---|---|---|
-| `analyze` | ≤ 60 s | ≤ 1.5 GB |
+| `analyse` | ≤ 60 s | ≤ 1.5 GB |
 | `validate` | ≤ 30 s | ≤ 1.0 GB |
 | `plan` (filtering + symbols + resources) | ≤ 30 s | ≤ 1.0 GB |
 | `apply` (same TransformSpec) | ≤ 90 s | ≤ 1.0 GB |
 
 - Parallelism: parallel file hashing and PE inspection with a bounded degree (default `Environment.ProcessorCount`, overridable by a hidden/advanced option or config key), merged into sorted results. Results for parallelism 1 and N are byte-identical.
 - Memory: streaming SHA-256, `PEReader` over file streams (no whole-file buffers for large files), no retained file contents in the EAM.
-- Cross-machine determinism workflow (`determinism.yml`, nightly + manual): two jobs on separate runners with different working-directory roots, `TEMP`, user culture (`en-US` vs `de-DE`) and time zone. Each runs the full matrix scenarios (analyze, validate, plan, apply for the M5–M9 scenarios) and uploads SHA-256 manifests of canonical artefacts and output trees. A third job compares the manifests and fails on any difference outside the documented exclusion list.
+- Cross-machine determinism workflow (`determinism.yml`, nightly + manual): two jobs on separate runners with different working-directory roots, `TEMP`, user culture (`en-US` vs `de-DE`) and time zone. Each runs the full matrix scenarios (analyse, validate, plan, apply for the M5–M9 scenarios) and uploads SHA-256 manifests of canonical artefacts and output trees. A third job compares the manifests and fails on any difference outside the documented exclusion list.
 - Fuzz/robustness (seeded mutational fuzzing in xUnit; fixed-seed short run on PR, longer run nightly):
   - PE: bit flips, truncation, corrupted headers/directories/metadata tables and R2R header over a corpus of matrix binaries.
   - JSON: AppSpec, TransformSpec, plan, tool config, runtimeconfig, deps.json. Covers truncation, deep nesting (beyond `MaxDepth`), huge strings/numbers, duplicate properties, invalid UTF-8.
@@ -68,7 +68,7 @@ Set and enforce a performance budget on a large synthetic app (thousands of file
 
 - [ ] AC-1 The generator produces the same tree (same file-hash manifest) for the same seed, with ≥ 10,000 files and the listed composition.
 - [ ] AC-2 The budget ADR records the measured baseline and final budget. Perf tests assert wall time and peak working set against it on `windows-latest` (performance project, runs nightly and on demand).
-- [ ] AC-3 `analyze`, `validate`, `plan` and `apply` on the synthetic tree meet the budget in three consecutive CI runs.
+- [ ] AC-3 `analyse`, `validate`, `plan` and `apply` on the synthetic tree meet the budget in three consecutive CI runs.
 - [ ] AC-4 Artefacts and outputs for degree of parallelism 1 and N are byte-identical (test).
 - [ ] AC-5 `determinism.yml` runs two jobs on separate runners with different path roots, culture and time zone. Manifest comparison passes for the full matrix. The exclusion list is committed and every entry has a reason.
 - [ ] AC-6 An injected nondeterminism (e.g. unsorted enumeration behind a test switch) makes the determinism comparison fail (negative test of the checker).

@@ -51,7 +51,7 @@ Namespace `Tailor.Planning.Precedence`.
 | `IntentAspect` | Open string key: `disposition`, `destination`, `targetVersion` (extensible) |
 | `Intent` | `Artefact` (`RelativePath`), `Aspect`, `Value` (string-comparable: `preserve`, `exclude`, `separateSymbols`, a destination path, a version), `Level`, `Source` |
 | `IntentResolver.Resolve(IEnumerable<Intent>)` → `IntentResolution` | `Winners` (artefact × aspect → `Intent`), `Diagnostics`. Deterministic, independent of input order |
-| `PrecedenceDiagnostics` | `RPK5101`–`RPK5199`, all structural (`IsStructural = true`) |
+| `PrecedenceDiagnostics` | `TLR5101`–`TLR5199`, all structural (`IsStructural = true`) |
 
 **Level mapping** (the level of a selector is the maximum over every predicate in its tree, including inside `not`)
 
@@ -68,11 +68,11 @@ Namespace `Tailor.Planning.Precedence`.
 
 | Code | Condition (same artefact, same aspect, same highest level, different values) |
 |---|---|
-| `RPK5101` | Include (`preserve`) vs exclude |
-| `RPK5102` | Two different destinations |
-| `RPK5103` | Two different target versions for the same component |
-| `RPK5104` | Preserve vs remove of the same associated group (raised when the conflict arises through group expansion; carries the primary path) |
-| `RPK5105` | Other incompatible dispositions (e.g. `separateSymbols` vs `exclude`) |
+| `TLR5101` | Include (`preserve`) vs exclude |
+| `TLR5102` | Two different destinations |
+| `TLR5103` | Two different target versions for the same component |
+| `TLR5104` | Preserve vs remove of the same associated group (raised when the conflict arises through group expansion; carries the primary path) |
+| `TLR5105` | Other incompatible dispositions (e.g. `separateSymbols` vs `exclude`) |
 
 ## Design Notes
 
@@ -87,12 +87,12 @@ Namespace `Tailor.Planning.Precedence`.
 - [ ] AC-1 `PrecedenceCalculator` returns the table's level for each predicate alone, and the maximum for composite selectors, including a predicate under `not` (theory test).
 - [ ] AC-2 Absent selector → level 1. `exception: true` → level 5 regardless of predicates.
 - [ ] AC-3 A higher-level intent overrides a lower-level one for the same artefact and aspect (level 2 exclude vs level 4 include → include wins).
-- [ ] AC-4 Include vs exclude at equal level → `RPK5101`, `Error`, structural, naming both rule ids and JSON pointers.
-- [ ] AC-5 Two destinations at equal level → `RPK5102`. Two target versions at equal level → `RPK5103`.
-- [ ] AC-6 Preserve vs remove of the same associated group at equal level → `RPK5104` with the primary path as related location.
+- [ ] AC-4 Include vs exclude at equal level → `TLR5101`, `Error`, structural, naming both rule ids and JSON pointers.
+- [ ] AC-5 Two destinations at equal level → `TLR5102`. Two target versions at equal level → `TLR5103`.
+- [ ] AC-6 Preserve vs remove of the same associated group at equal level → `TLR5104` with the primary path as related location.
 - [ ] AC-7 Reversing the document order of two conflicting rules yields byte-identical diagnostics. Reversing two agreeing rules yields the same winner (permutation test).
 - [ ] AC-8 Artefacts with no intents resolve to `preserve` at `Baseline`. `defaults.include: exclude` is overridden by any level ≥ 1 include.
-- [ ] AC-9 `PolicyEvaluator` (WU-100) cannot downgrade any `RPK51xx` code under `Permissive` or with any condition policy (test).
+- [ ] AC-9 `PolicyEvaluator` (WU-100) cannot downgrade any `TLR51xx` code under `Permissive` or with any condition policy (test).
 - [ ] AC-10 Golden file of `IntentResolution` for a synthetic spec with 3 levels and 2 conflicts is byte-stable across two runs.
 
 ## Test Requirements
@@ -103,7 +103,7 @@ Namespace `Tailor.Planning.Precedence`.
 
 ## Definition of Done
 
-- Zero warnings, tests green, format clean. All ACs ticked by the Verifier. Plan status `Done`. `RPK51xx` codes listed for WU-1001.
+- Zero warnings, tests green, format clean. All ACs ticked by the Verifier. Plan status `Done`. `TLR51xx` codes listed for WU-1001.
 
 ## Agent Notes
 

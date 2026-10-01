@@ -12,7 +12,7 @@ The contracts live in the specs: [WU-002 CI](../../../Docs/Specs/M0/WU-002-ci-pi
 - Workflows live in `.github/workflows/`. Use `windows-latest`, `actions/setup-dotnet` with `global-json-file: global.json`, and the solution `DotNetTailor.slnx`.
 - Pin every `uses:` to a 40-character SHA followed by `# vX.Y.Z`. Set top-level `permissions: contents: read` and widen only per job. Do not use `pull_request_target`.
 - Store no secrets. Publishing uses NuGet trusted publishing (OIDC) and never falls back to an API key.
-- Gates match `AGENTS.md`: build with `-warnaserror`, run `dotnet test --solution` in MTP mode with TRX upload (`if: always()`), and run `dotnet format --verify-no-changes`. Fail when `DOTNET_REPACK_UPDATE_GOLDEN` is set.
+- Gates match `AGENTS.md`: build with `-warnaserror`, run `dotnet test --solution` in MTP mode with TRX upload (`if: always()`), and run `dotnet format --verify-no-changes`. Fail when `DOTNET_TAILOR_UPDATE_GOLDEN` is set.
 - Network and Launch tests run only in the nightly workflow. PR CI makes no network calls from tests.
 - Cache keys hash `global.json`, `Directory.Packages.props`, `**/*.csproj` and `**/Directory.Build.props`. The test-app key comes from `build/Build-TestApps.ps1 -PrintCacheKey`.
 

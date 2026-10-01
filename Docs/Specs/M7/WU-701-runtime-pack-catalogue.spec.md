@@ -50,7 +50,7 @@ Parse `data/RuntimeList.xml` of runtime packs into a deterministic catalogue: pe
 - `RuntimePackCatalogue {Framework, Version, Rid, PackProvenance, Files}`; `RuntimePackFile {Type, PackPath, Destination (RelativePath), AssemblyName?, AssemblyVersion?, FileVersion?, PublicKeyToken?, Culture?, Profiles}`.
 - `RuntimeListParser` (pure, stream-based, XML DTD processing disabled).
 - `Subset(profiles, cultures?)`, `TryGetOwner(RelativePath)`, `ReferenceAssemblies`, `RuntimePackDiff Diff(RuntimePackCatalogue other)`.
-- Diagnostics (proposed `RPK71xx`): missing/malformed `RuntimeList.xml`, listed file missing in pack, unknown `Type`, duplicate destination, framework/RID mismatch.
+- Diagnostics (proposed `TLR71xx`): missing/malformed `RuntimeList.xml`, listed file missing in pack, unknown `Type`, duplicate destination, framework/RID mismatch.
 
 ## Design Notes
 
@@ -63,7 +63,7 @@ Parse `data/RuntimeList.xml` of runtime packs into a deterministic catalogue: pe
 ## Acceptance Criteria
 
 - [ ] AC-1 Parsing the `RuntimeList.xml` of NETCore, WindowsDesktop and AspNetCore packs for one net8 and one net10 version matches committed golden files (counts per `Type`, profiles, cultures, sample entries).
-- [ ] AC-2 Every listed file resolves to an existing pack file; a fixture with a missing file yields an `RPK71xx` diagnostic.
+- [ ] AC-2 Every listed file resolves to an existing pack file; a fixture with a missing file yields an `TLR71xx` diagnostic.
 - [ ] AC-3 Malformed, truncated and DTD-bearing XML fixtures produce diagnostics without exceptions; no external entity is resolved.
 - [ ] AC-4 `System.Private.CoreLib.dll`, `hostfxr.dll` and `hostpolicy.dll` are present in the NETCore catalogue with app-root destinations; CoreLib is in `ReferenceAssemblies`.
 - [ ] AC-5 The NETCore destination set equals the runtime-owned files of the matrix net8 and net10 SC console app (differences only as allowlisted in the WU-006 report).
@@ -86,7 +86,7 @@ Parse `data/RuntimeList.xml` of runtime packs into a deterministic catalogue: pe
 ## Definition of Done
 
 - All AC ticked by the Verifier; CI green.
-- `RPK71xx` codes listed for WU-1001; any allowlist differences documented in the test with a link to the WU-006 report.
+- `TLR71xx` codes listed for WU-1001; any allowlist differences documented in the test with a link to the WU-006 report.
 
 ## Agent Notes
 

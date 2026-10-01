@@ -24,6 +24,21 @@ Make `dotnet-tailor` a releasable `dotnet tool`: SemVer from git tags, a tag-tri
 | [RQ §12](../../Requirements/Repackage_tool_Requirements_v1.1.md) | Auditability, determinism |
 | [Architecture §1, §3, §17](../../Architecture/Tailor.architecture.md) | Package id/command, `PackAsTool`, deterministic build, secrets |
 | [Plan: Release Points, risk R11, M4 + M10 criteria](../../Plans/Tailor.plan.md) | Preview releases, `dotnet pack`/install, v1.0.0 via release workflow |
+| [Naming plan](../../Plans/Tailor-naming.plan.md) | Package id, tool command, repository URL, licence expression |
+
+## Identity
+
+All values are settled by [the naming plan](../../Plans/Tailor-naming.plan.md); do not restate or vary them here.
+
+| Surface | Value |
+|---|---|
+| `PackageId` / `ToolCommandName` | `dotnet-tailor` |
+| `PackageLicenseExpression` | `Apache-2.0` |
+| Repository and project URL | `https://github.com/kjbartel/DotNetTailor` |
+| Copyright | `Copyright 2026 Kuan Bartel` |
+| Workflow artefact, cache-key and release-asset stem | `dotnet-tailor` |
+
+The id was confirmed available on nuget.org on 2026-10-01 but is **not reserved**. Re-check it and reserve or publish before the first preview; if it has been taken, the naming plan owns the fallback decision.
 
 ## Scope
 
@@ -86,7 +101,7 @@ Make `dotnet-tailor` a releasable `dotnet tool`: SemVer from git tags, a tag-tri
 
 ## Open Questions
 
-- The licence is undecided. Publishing to nuget.org is blocked until the licence expression is set.
-- The final package id/command name is undecided. Reserve the id on nuget.org before the first preview.
 - SBOM format (SPDX via Microsoft `sbom-tool` vs CycloneDX).
+- **Resolved** — licence: `Apache-2.0`, declared in [LICENSE](../../../LICENSE) and `PackageLicenseExpression`.
+- **Resolved** — package id and tool command: both `dotnet-tailor` ([naming plan](../../Plans/Tailor-naming.plan.md)). Reserving the id on nuget.org before the first preview remains an action, not a decision.
 - **Resolved** — milestone placement: the WU keeps its M10 ID and file; the plan marks it "Scheduled: immediately after WU-404 (enables v0.1.0-preview)".

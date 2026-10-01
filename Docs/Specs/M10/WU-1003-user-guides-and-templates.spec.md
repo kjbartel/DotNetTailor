@@ -30,7 +30,7 @@ Ship user guides and reusable TransformSpec templates, including `enterprise-win
 
 **In**
 - Guides in `Docs/Guides/`:
-  - `getting-started.md`: install, `analyze` → `validate` → `plan` → `apply`, artefacts, exit codes.
+  - `getting-started.md`: install, `analyse` → `validate` → `plan` → `apply`, artefacts, exit codes.
   - `appspec-authoring.md`: folders, masks, `idRef`, classification, associations, references, includes, validation workflow.
   - `transformspec-authoring.md`: operations, selectors, precedence, policies, variables, output assertions, dry-run. Includes retarget compatibility limits (plan risk R6).
   - `recipes.md`: filtering-only, symbols separate, English-only, R2R app+plugins, FD→SC, SC runtime patch, retarget net8→net10, library patch, the TS §33 combination.
@@ -56,7 +56,7 @@ Ship user guides and reusable TransformSpec templates, including `enterprise-win
 
 - [Architecture §19 item 4](../../Architecture/Tailor.architecture.md): English-only and other-RID removal are **not** defaults; they live in this template.
 - Reuse the WU-903 TS §33 fixture for the combination recipe. Do not maintain two copies: the recipe links to or includes the same file, verified by test.
-- Use Australian spelling for canonical CLI terms (`analyse`); retain `analyze` only as a compatibility alias ([Architecture §14](../../Architecture/Tailor.architecture.md)).
+- Use Australian spelling for canonical CLI terms (`analyse`, `--artefacts`); mention `analyze` and `--artifacts` only as permanent aliases ([Architecture §14](../../Architecture/Tailor.architecture.md), [naming plan](../../Plans/Tailor-naming.plan.md)).
 - Keep the schemas normative. Guides show examples and explain, but do not redefine members.
 
 ## Acceptance Criteria

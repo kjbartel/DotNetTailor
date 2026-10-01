@@ -45,7 +45,7 @@ Create the git repository and an empty, compiling, testable solution that matche
 
 | Path | Content |
 |---|---|
-| `.gitignore` | `dotnet new gitignore` (VisualStudio template) plus `artifacts/`, `.repack/`, `*.staging-*/`, `TestResults/`, `*.received.*` |
+| `.gitignore` | `dotnet new gitignore` (VisualStudio template) plus `artifacts/`, `.tailor/`, `*.staging-*/`, `TestResults/`, `*.received.*` |
 | `.gitattributes` | `* text=auto eol=crlf`; explicit `text eol=crlf` for `*.cs`, `*.csproj`, `*.props`, `*.targets`, `*.slnx`, `*.sln`, `*.json`, `*.md`, `*.yml`, `*.yaml`, `*.xml`, `*.resx`, `*.ps1`, `*.cmd`, `*.bat`, `.editorconfig`, `.gitattributes`; then the LF exceptions `*.sh text eol=lf`, `tests/**/Golden/** text eol=lf`, `schemas/** text eol=lf` and `Docs/Guides/diagnostics.md text eol=lf` (after the CRLF lines so they win); `binary` for `*.dll`, `*.exe`, `*.pdb`, `*.nupkg`, `*.zip`, `*.ico`, `*.png`, `*.snk` |
 | `.editorconfig` | `dotnet new editorconfig` baseline, `root = true`, `[*]` `end_of_line = crlf`, `[*.sh]`, `[tests/**/Golden/**]`, `[schemas/**]` and `[Docs/Guides/diagnostics.md]` `end_of_line = lf`, UTF-8, 4-space C#, 2-space JSON/YAML/XML/props, `csharp_style_namespace_declarations = file_scoped:warning`, `dotnet_style_qualification_for_* = false`, `var` preferences, `_camelCase` private fields, `IDE0005` (unused usings) as warning |
 | `global.json` | `sdk.version` = current 10.0.1xx band, `rollForward: latestFeature`, `"test": { "runner": "Microsoft.Testing.Platform" }` |
@@ -113,7 +113,7 @@ AC-10's `lf` expectation for `*.csproj`/`*.md` is superseded by AC-14; AC-6's pr
 - [x] AC-8 No `PackageReference` has a `Version` attribute (`Select-String -Path **/*.csproj -Pattern 'PackageReference[^>]+Version='` returns nothing).
 - [x] AC-9 `dotnet pack src/Tailor.Cli -c Release -o artifacts/pkg` produces `dotnet-tailor.*.nupkg` containing `tools/net10.0/any/DotnetToolSettings.xml` with command `dotnet-tailor`.
 - [x] AC-10 ~~`git check-attr eol -- src/Tailor.Core/Tailor.Core.csproj Docs/Plans/Tailor.plan.md` reports `lf`~~ (superseded by AC-14; both now report `crlf`); `git check-attr binary -- x.dll` reports `set` (re-checked after D4: still `set`).
-- [x] AC-11 `git status --ignored` after build shows `bin/`, `obj/` ignored; `.gitignore` contains `artifacts/` and `.repack/`.
+- [x] AC-11 `git status --ignored` after build shows `bin/`, `obj/` ignored; `.gitignore` contains `artifacts/` and `.tailor/`.
 - [x] AC-12 README.md, CONTRIBUTING.md and LICENSE exist; README links resolve to existing files.
 
 Post-review deltas (see [Post-review changes](#post-review-changes)):

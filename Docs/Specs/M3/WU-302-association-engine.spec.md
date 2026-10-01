@@ -40,12 +40,12 @@ Link associated files (symbols, XML docs, `.config`, runtimeconfig, deps.json, s
 | `Association` | `PrimaryPath`, `AssociatedPath`, `Type` (`symbols`, `xmlDoc`, `config`, `runtimeConfig`, `depsJson`, `satelliteResource`, extensible string), `RuleId`, `Required` |
 | `AbsentOptionalAssociation` | `PrimaryPath`, `RuleId` — recorded in the model, not emitted as diagnostic |
 | `AssociationPattern` | Parser for `{name}.pdb`, `{name}.xml`, `{file}.config`, `{name}.runtimeconfig.json`, `{name}.deps.json`, `<culture>/{name}.resources.dll`; patterns are relative to the primary's folder and confined to it and its direct children |
-| Diagnostic codes (proposed, `RPK32xx`) | `RPK3201` missing required association, `RPK3202` ambiguous owner (equal-priority primaries), `RPK3203` invalid pattern (escapes folder, unknown token), `RPK3204` satellite name matched but file is not a satellite of the primary (warning) |
+| Diagnostic codes (proposed, `TLR32xx`) | `TLR3201` missing required association, `TLR3202` ambiguous owner (equal-priority primaries), `TLR3203` invalid pattern (escapes folder, unknown token), `TLR3204` satellite name matched but file is not a satellite of the primary (warning) |
 
 ## Design Notes
 
 - `{name}` = file name without the last extension; `{file}` = full file name. `appliesTo` (group ids) restricts primaries; default: `managed`, `platformManaged`, `native`, `platformNative`.
-- An associated file linked to more than one primary: prefer the primary whose group has the higher classification priority (so `App.pdb` binds to managed `App.dll` over native apphost `App.exe`); equal priority → `RPK3202`.
+- An associated file linked to more than one primary: prefer the primary whose group has the higher classification priority (so `App.pdb` binds to managed `App.dll` over native apphost `App.exe`); equal priority → `TLR3202`.
 - Satellite rule: `<culture>` resolved via WU-203; verify satellite facts (culture + `*.resources` name) from WU-201 when available, else name only.
 - A file may be associated to one primary and be primary for other rules (e.g. satellite with its own PDB).
 - Missing optional → `AbsentOptional` entry (architecture "informational"), keeping diagnostics readable.
@@ -56,9 +56,9 @@ Link associated files (symbols, XML docs, `.config`, runtimeconfig, deps.json, s
 - [ ] AC-2 With apphost `App.exe` (native) and `App.dll` (managed) present, `App.pdb` associates with `App.dll` only.
 - [ ] AC-3 Every associated file has exactly one primary (property test over synthetic trees).
 - [ ] AC-4 A missing optional associated file produces an `AbsentOptional` entry and no diagnostic.
-- [ ] AC-5 A missing required associated file produces `RPK3201` naming primary, rule and expected path.
-- [ ] AC-6 Equal-priority competing primaries produce `RPK3202`.
-- [ ] AC-7 Patterns containing `..` or absolute segments produce `RPK3203`.
+- [ ] AC-5 A missing required associated file produces `TLR3201` naming primary, rule and expected path.
+- [ ] AC-6 Equal-priority competing primaries produce `TLR3202`.
+- [ ] AC-7 Patterns containing `..` or absolute segments produce `TLR3203`.
 - [ ] AC-8 Associated files retain their WU-301 classification (e.g. `App.pdb` → `symbols`).
 - [ ] AC-9 Output ordering is deterministic (golden file of a synthetic plugin-style tree).
 

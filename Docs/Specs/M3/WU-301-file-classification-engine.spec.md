@@ -46,16 +46,16 @@ Assign exactly one primary classification to every in-scope file, using per-fold
 | `BuiltInClassificationGroups` | Default definitions for `managed`, `platformManaged`, `native`, `platformNative`, `config`, `resource`, `symbols`, `xmlDoc`, `content`. A spec group with the same id replaces the built-in |
 | `ClassificationEngine.Classify(AppSpec, FolderMatchResult, IFileFactsProvider)` → `ClassificationResult` | `Files` (sorted by path), `Diagnostics` |
 | `ClassifiedFile` | `Path`, `FolderPath`, `FolderDefinitionId`, `GroupId`, `IsCatchAll`, `Status` (`Classified`, `Ambiguous`, `Unclassified`), `MatchedGroupIds` (for diagnostics) |
-| Diagnostic codes (proposed, `RPK31xx`) | `RPK3101` classification tie, `RPK3102` no effective catch-all, `RPK3103` unknown group id, `RPK3104` inspection failed for predicate (warning, predicate evaluates false), `RPK3105` invalid matcher |
+| Diagnostic codes (proposed, `TLR31xx`) | `TLR3101` classification tie, `TLR3102` no effective catch-all, `TLR3103` unknown group id, `TLR3104` inspection failed for predicate (warning, predicate evaluates false), `TLR3105` invalid matcher |
 
 ## Design Notes
 
 - Applicable groups for a folder: the folder definition's group list if present, else all global groups ([AS §10.2](../../Requirements/Application_Specification.md#102-folder-definitions); cf. FS `file_types`).
-- Effective catch-all: folder-level → global `classifications.catchAll` → built-in `content` **only when the property is absent**. An explicit `null`/empty value or an id that does not resolve → `RPK3102` (enables the WU-405 "missing catch-all" scenario).
-- Evaluation per file: candidates = applicable groups whose glob matches and whose `exclude` does not; evaluate predicates only for glob-matched candidates (lazy inspection). Highest `priority` wins. Two or more matching groups at the top priority → `RPK3101` naming file and group ids; file `Status = Ambiguous`.
-- No group matches and catch-all missing → `Status = Unclassified`, file stays in the result (never dropped) with `RPK3102`.
-- Malformed PE: surface the WU-200 diagnostic, emit `RPK3104`, treat predicate as false.
-- Sidecars are already excluded by WU-300; files in folders with `RPK3002`/`RPK3006` are not classified and are listed via those diagnostics.
+- Effective catch-all: folder-level → global `classifications.catchAll` → built-in `content` **only when the property is absent**. An explicit `null`/empty value or an id that does not resolve → `TLR3102` (enables the WU-405 "missing catch-all" scenario).
+- Evaluation per file: candidates = applicable groups whose glob matches and whose `exclude` does not; evaluate predicates only for glob-matched candidates (lazy inspection). Highest `priority` wins. Two or more matching groups at the top priority → `TLR3101` naming file and group ids; file `Status = Ambiguous`.
+- No group matches and catch-all missing → `Status = Unclassified`, file stays in the result (never dropped) with `TLR3102`.
+- Malformed PE: surface the WU-200 diagnostic, emit `TLR3104`, treat predicate as false.
+- Sidecars are already excluded by WU-300; files in folders with `TLR3002`/`TLR3006` are not classified and are listed via those diagnostics.
 
 ## Acceptance Criteria
 
@@ -63,10 +63,10 @@ Assign exactly one primary classification to every in-scope file, using per-fold
 - [ ] AC-2 A native `foo.dll` and a managed `bar.dll` in the same folder classify as `native` and `managed` respectively, via predicate, not extension.
 - [ ] AC-3 Higher `priority` wins deterministically regardless of document order (test permutes group order).
 - [ ] AC-4 A folder-level group list restricts applicable groups (e.g. `runtimes` folder yields `platformManaged`/`platformNative`).
-- [ ] AC-5 Two matching groups with equal priority produce `RPK3101`; the file is retained with `Status = Ambiguous`.
+- [ ] AC-5 Two matching groups with equal priority produce `TLR3101`; the file is retained with `Status = Ambiguous`.
 - [ ] AC-6 Files matching no group fall to the effective catch-all with `IsCatchAll = true`.
-- [ ] AC-7 Explicit `catchAll: null` or an unresolvable catch-all id yields `RPK3102`; unmatched files remain with `Status = Unclassified`.
-- [ ] AC-8 A truncated PE fixture yields `RPK3104` (warning) and classification continues without exceptions.
+- [ ] AC-7 Explicit `catchAll: null` or an unresolvable catch-all id yields `TLR3102`; unmatched files remain with `Status = Unclassified`.
+- [ ] AC-8 A truncated PE fixture yields `TLR3104` (warning) and classification continues without exceptions.
 - [ ] AC-9 Integration coverage test: for every matrix app with a minimal root-recurse AppSpec, every file has exactly one primary classification and `Unclassified`/`Ambiguous` count is 0.
 - [ ] AC-10 Inspection is invoked only for files whose glob matched a predicate-bearing group (test with counting fake provider).
 

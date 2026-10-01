@@ -23,7 +23,7 @@ A milestone is a release grouping, not a start gate. A WU may start as soon as i
 ## Test Conventions
 
 - Every test carries `[Trait("WU", "<id>")]`. Run one WU with `dotnet test --project <test project path> --filter-trait "WU=<id>"` (MTP mode, no `--` separator). Full suite: `dotnet test --solution Tailor.slnx -c Release`.
-- `Category` traits (combinable): `Integration` (cross-project in-process pipeline/CLI tests), `Matrix` (needs `artifacts/testapps`; skips with an explicit reason locally when absent, never skips in CI), `Network` (external feeds; skipped unless `DOTNET_REPACK_TEST_NETWORK=1`, run nightly), `Launch` (starts produced apps in the harness).
+- `Category` traits (combinable): `Integration` (cross-project in-process pipeline/CLI tests), `Matrix` (needs `artifacts/testapps`; skips with an explicit reason locally when absent, never skips in CI), `Network` (external feeds; skipped unless `DOTNET_TAILOR_TEST_NETWORK=1`, run nightly), `Launch` (starts produced apps in the harness).
 - The default run (local and PR CI) makes no network calls.
 - Naming: test classes `<TypeUnderTest>Tests`; methods PascalCase `<Subject><Condition><ExpectedResult>` with no underscores (e.g. `ParseRejectsAbsolutePath`); CA1707 is not suppressed.
 - Expected outputs are golden files (`Golden/<TestClass>/<name>.golden.json`, LF) compared through the in-repo `Golden` helper in `tests/Tailor.Testing` ([architecture §16](../Architecture/Tailor.architecture.md#16-testing-strategy)).
@@ -61,7 +61,7 @@ A milestone is a release grouping, not a start gate. A WU may start as soon as i
 | WU-401 | folder-role-heuristics-and-rule-compaction | M4 | WU-400 | WU-402, WU-403, WU-500, WU-501 | [spec](../Specs/M4/WU-401-folder-role-heuristics-and-rule-compaction.spec.md) | Not started |
 | WU-402 | capability-assessment | M4 | WU-400 | WU-401, WU-403, WU-500, WU-501 | [spec](../Specs/M4/WU-402-capability-assessment.spec.md) | Not started |
 | WU-403 | appspec-validation-engine | M4 | WU-305, WU-202 | WU-400–WU-402, WU-500, WU-501 | [spec](../Specs/M4/WU-403-appspec-validation-engine.spec.md) | Not started |
-| WU-404 | cli-analyze-validate | M4 | WU-401, WU-402, WU-403, WU-105, WU-103 | WU-502, WU-503 | [spec](../Specs/M4/WU-404-cli-analyze-validate.spec.md) | Not started |
+| WU-404 | cli-analyse-validate | M4 | WU-401, WU-402, WU-403, WU-105, WU-103 | WU-502, WU-503 | [spec](../Specs/M4/WU-404-cli-analyse-validate.spec.md) | Not started |
 | WU-405 | regression-harness | M4 | WU-404, WU-003, WU-002 | WU-406, M5, WU-1002 | [spec](../Specs/M4/WU-405-regression-harness.spec.md) | Not started |
 | WU-406 | cli-inspect | M4 | WU-404, WU-305 | WU-405, M5, WU-1002 | [spec](../Specs/M4/WU-406-cli-inspect.spec.md) | Not started |
 | WU-500 | selector-engine | M5 | WU-305, WU-102 | WU-400–WU-403 | [spec](../Specs/M5/WU-500-selector-engine.spec.md) | Not started |
@@ -145,7 +145,7 @@ flowchart LR
 
 **M1 acceptance criteria**
 - [ ] AppSpec and TransformSpec round-trip (read → canonical write → read) is lossless over a golden-file corpus. Canonical output is byte-stable.
-- [ ] Committed schemas equal the generated ones (CI test). Invalid documents yield `RPK1xxx` with a JSON pointer.
+- [ ] Committed schemas equal the generated ones (CI test). Invalid documents yield `TLR1xxx` with a JSON pointer.
 - [ ] Include cycles and unresolved variables are reported as errors naming the chain or variable. Include paths resolve relative to the including file.
 - [ ] `dotnet-tailor --help`, `schema export` and `@file` response files work. Exit code 2 is returned on invalid arguments; stub verbs return 70; cancellation returns 130.
 
@@ -182,18 +182,18 @@ flowchart LR
 **M3 acceptance criteria**
 - [ ] Hand-authored AppSpecs for every test app produce effective models and derived artefacts that match committed golden files.
 - [ ] Two consecutive runs produce byte-identical derived artefacts.
-- [ ] Ambiguous equal-rank folder matches, `idRef` alias cycles, root-escaping paths or reparse points, and classification ties are each reported with a distinct `RPK3xxx` code.
+- [ ] Ambiguous equal-rank folder matches, `idRef` alias cycles, root-escaping paths or reparse points, and classification ties are each reported with a distinct `TLR3xxx` code.
 - [ ] The cyclic-plugin test app yields an error that lists the full cycle path. The one-way plugin chain passes.
 - [ ] Every file in every test app has exactly one primary classification (coverage test).
 
-### M4 Analysis & Validation → **v0.1.0-preview** (`analyze`, `validate`, `inspect`)
+### M4 Analysis & Validation → **v0.1.0-preview** (`analyse`, `validate`, `inspect`)
 
 ```mermaid
 flowchart LR
   WU202[WU-202]:::ext & WU305[WU-305]:::ext --> WU400[WU-400 execution-model]
   WU400 --> WU401[WU-401 heuristics+compaction] & WU402[WU-402 capabilities]
   WU305 & WU202 --> WU403[WU-403 validation-engine]
-  WU401 & WU402 & WU403 & WU105[WU-105]:::ext & WU103[WU-103]:::ext --> WU404[WU-404 cli analyze/validate]
+  WU401 & WU402 & WU403 & WU105[WU-105]:::ext & WU103[WU-103]:::ext --> WU404[WU-404 cli analyse/validate]
   WU404 & WU003[WU-003]:::ext & WU002[WU-002]:::ext --> WU405[WU-405 regression-harness]
   WU404 & WU305 --> WU406[WU-406 cli inspect]
   WU404 & WU002 --> WU1002[WU-1002 packaging + release]:::ext
@@ -201,10 +201,10 @@ flowchart LR
 ```
 
 **M4 acceptance criteria**
-- [ ] `analyze` → `validate` completes with zero errors across the entire test matrix, excluding fixtures flagged `expectedInvalid` in the test-app manifest (e.g. the cyclic plugin app), which produce exactly their expected diagnostics.
+- [ ] `analyse` → `validate` completes with zero errors across the entire test matrix, excluding fixtures flagged `expectedInvalid` in the test-app manifest (e.g. the cyclic plugin app), which produce exactly their expected diagnostics.
 - [ ] The draft AppSpec uses `idRef`, recursion and a catch-all (no per-file enumeration for regular layouts) and carries confidence annotations ([AS §9.4](../Requirements/Application_Specification.md)).
 - [ ] Edited-spec scenarios (wrong role, missing required association, wrong reference root, removed file, added file) are each detected by `validate` with the expected code and exit code 1.
-- [ ] `analyze` leaves the input tree unchanged apart from sidecars (test-enforced). A read-only input requires `--spec-out`.
+- [ ] `analyse` leaves the input tree unchanged apart from sidecars (test-enforced). A read-only input requires `--spec-out`.
 - [ ] The validation report contains the spec hash, tree fingerprint and state.
 - [ ] `inspect` shows every derived artefact and graph (text and JSON), including `--plugin` scoping (WU-406).
 - [ ] `dotnet pack` produces `dotnet-tailor`, which installs with `dotnet tool install --add-source` and runs (WU-404 local smoke). The tag-triggered release workflow publishes v0.1.0-preview (WU-1002).
@@ -224,7 +224,7 @@ flowchart LR
 ```
 
 **M5 acceptance criteria**
-- [ ] `plan` and `apply --dry-run` make zero filesystem mutations outside `--artifacts` and the NuGet package cache (the cache only when not `--offline`) (test-enforced with before and after tree snapshots).
+- [ ] `plan` and `apply --dry-run` make zero filesystem mutations outside `--artefacts` and the NuGet package cache (the cache only when not `--offline`) (test-enforced with before and after tree snapshots).
 - [ ] Equal-precedence conflicts, output collisions, unsafe removals and failed input assertions are detected as errors ([TS §22](../Requirements/Transformation_Specification.md), [TS §20.3](../Requirements/Transformation_Specification.md), [TS §6.4](../Requirements/Transformation_Specification.md)).
 - [ ] The plan records every action with phase, provenance and order. Two runs produce byte-identical plans.
 - [ ] The projected AppSpec validates against the output assertions for the filtering, symbols, docs and resources scenarios.
@@ -318,7 +318,7 @@ WU-1002 keeps its M10 ID and file but is **scheduled immediately after WU-404**;
 
 **M10 acceptance criteria**
 - [ ] `dotnet-tailor.json` (repo and user), environment variables, response files and CLI merge with the documented precedence: CLI (response files inline) > environment > repo config (discovery stops at the git root) > user config > defaults (tested).
-- [ ] Every emitted `RPK` code is documented in `Docs/Guides`. A test fails on any undocumented code.
+- [ ] Every emitted `TLR` code is documented in `Docs/Guides`. A test fails on any undocumented code.
 - [ ] v1.0.0 is published through the tag-triggered release workflow. The package installs from the feed.
 - [ ] User guides and the `enterprise-win-x64.transform.json` template are shipped. The template works against the matrix.
 - [ ] Performance budget (defined in WU-1004) is met on a large synthetic tree. The full matrix passes the determinism check.
@@ -327,7 +327,7 @@ WU-1002 keeps its M10 ID and file but is **scheduled immediately after WU-404**;
 
 | Version | Milestone | Capability |
 |---|---|---|
-| v0.1.0-preview | M4 | `analyze`, `validate`, `inspect`, `schema export` |
+| v0.1.0-preview | M4 | `analyse`, `validate`, `inspect`, `schema export` |
 | v0.2.0-preview | M6 | `plan`, `apply` (filtering, layout, symbols, docs, resources) |
 | v0.3.0-preview | M7 | ReadyToRun |
 | v0.4.0-preview | M8 | FD⇄SC |
@@ -383,7 +383,7 @@ Recorded in [architecture §19](../Architecture/Tailor.architecture.md#19-resolv
 - Folder matching: `**` = one or more levels; least-specific-segment ranking then segment count; no implicit child re-application below recursed folders (provisional).
 - Exit codes: 130 cancelled; 5 output-assertion failure after execution; 1 path violations; 70 stub verbs.
 - `--permissive` / `--strict` semantics ([architecture §13](../Architecture/Tailor.architecture.md#13-diagnostics-failure-policy-and-exit-codes)).
-- Dry-run may write only `--artifacts` and the package cache (not with `--offline`).
+- Dry-run may write only `--artefacts` and the package cache (not with `--offline`).
 - NuGet credentials via the standard `nuget.config` hierarchy only.
 - Test command and category convention ([Test Conventions](#test-conventions)).
 - Tool config `dotnet-tailor.json` and precedence.

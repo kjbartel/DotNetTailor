@@ -37,7 +37,7 @@ public sealed class ScaffoldTests
         var exitCode = await CliApplication.RunAsync(["analyze", "app"], output, error, ct: TestContext.Current.CancellationToken);
 
         Assert.Equal(70, exitCode);
-        Assert.Contains("RPK0100", error.ToString());
+        Assert.Contains("TLR0100", error.ToString());
     }
 
     [Theory]
@@ -52,7 +52,7 @@ public sealed class ScaffoldTests
         var exitCode = await CliApplication.RunAsync(["validate", "app", "--spec", "s.json", "--var", value], output, error, ct: TestContext.Current.CancellationToken);
 
         Assert.Equal(2, exitCode);
-        Assert.Contains("RPK0101", error.ToString());
+        Assert.Contains("TLR0101", error.ToString());
     }
 
     [Fact]
@@ -65,7 +65,7 @@ public sealed class ScaffoldTests
         var exitCode = await CliApplication.RunAsync(["validate", "app", "--spec", "s.json", "--strict", "--permissive"], output, error, ct: TestContext.Current.CancellationToken);
 
         Assert.Equal(2, exitCode);
-        Assert.Contains("RPK0103", error.ToString());
+        Assert.Contains("TLR0103", error.ToString());
     }
 
     [Fact]
@@ -78,7 +78,7 @@ public sealed class ScaffoldTests
         var exitCode = await CliApplication.RunAsync(["validate", "app", "--spec", "s.json", "--var", "a=1", "--var", "a=2"], output, error, ct: TestContext.Current.CancellationToken);
 
         Assert.Equal(2, exitCode);
-        Assert.Contains("RPK0102", error.ToString());
+        Assert.Contains("TLR0102", error.ToString());
     }
 
     [Fact]
@@ -91,7 +91,7 @@ public sealed class ScaffoldTests
         var exitCode = await CliApplication.RunAsync(["validate", "app", "--spec", "s.json", "--var", "a=b=c"], output, error, ct: TestContext.Current.CancellationToken);
 
         Assert.Equal(70, exitCode);
-        Assert.Contains("RPK0100", error.ToString());
+        Assert.Contains("TLR0100", error.ToString());
     }
 
     [Fact]
@@ -104,7 +104,7 @@ public sealed class ScaffoldTests
         var exitCode = await CliApplication.RunAsync(["validate", "app", "--unknown"], output, error, ct: TestContext.Current.CancellationToken);
 
         Assert.Equal(2, exitCode);
-        Assert.Contains("RPK0105", error.ToString());
+        Assert.Contains("TLR0105", error.ToString());
     }
 
     [Theory]
@@ -123,7 +123,7 @@ public sealed class ScaffoldTests
         var exitCode = await CliApplication.RunAsync(args, output, error, ct: TestContext.Current.CancellationToken);
 
         Assert.Equal(70, exitCode);
-        Assert.Contains("RPK0100", error.ToString());
+        Assert.Contains("TLR0100", error.ToString());
     }
 
     [Fact]
@@ -136,7 +136,7 @@ public sealed class ScaffoldTests
         var exitCode = await CliApplication.RunAsync(["schema", "export", "plan"], output, error, ct: TestContext.Current.CancellationToken);
 
         Assert.Equal(2, exitCode);
-        Assert.Contains("RPK0104", error.ToString());
+        Assert.Contains("TLR0104", error.ToString());
     }
 
     [Fact]
@@ -149,7 +149,7 @@ public sealed class ScaffoldTests
         var exitCode = await CliApplication.RunAsync(["schema", "export", "unknown"], output, error, ct: TestContext.Current.CancellationToken);
 
         Assert.Equal(2, exitCode);
-        Assert.Contains("RPK0104", error.ToString());
+        Assert.Contains("TLR0104", error.ToString());
     }
 
     [Fact]
@@ -175,6 +175,6 @@ public sealed class ScaffoldTests
         var exitCode = await CliApplication.RunAsync(["validate", "app", "--spec", "s.json", "--verbosity", "verbose"], output, error, ct: TestContext.Current.CancellationToken);
 
         Assert.Equal(2, exitCode);
-        Assert.Contains("RPK0105", error.ToString());
+        Assert.Contains("TLR0105", error.ToString());
     }
 }

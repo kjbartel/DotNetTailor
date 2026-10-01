@@ -89,7 +89,7 @@ Publish command per variant: `dotnet publish <proj> -c Release -f <fullTfm> -r w
 }
 ```
 
-`expectedInvalid` is `null` for valid fixtures, or `{ "codes": ["RPK3401"], "reason": "<why>" }` for deliberately invalid ones. Every `PluginHostCyclic` variant sets it. Matrix-wide "zero errors" checks skip these variants and assert exactly the listed codes instead ([architecture §16](../../Architecture/Tailor.architecture.md#16-testing-strategy)).
+`expectedInvalid` is `null` for valid fixtures, or `{ "codes": ["TLR3401"], "reason": "<why>" }` for deliberately invalid ones. Every `PluginHostCyclic` variant sets it. Matrix-wide "zero errors" checks skip these variants and assert exactly the listed codes instead ([architecture §16](../../Architecture/Tailor.architecture.md#16-testing-strategy)).
 
 ## Design Notes
 
@@ -113,7 +113,7 @@ Publish command per variant: `dotnet publish <proj> -c Release -f <fullTfm> -r w
 - [ ] AC-5 `-PrintCacheKey` prints one line matching `^testapps-win-10\.0\.\d+-[0-9a-f]{64}$`; the value changes when any file under `tests/TestApps/` changes and not when `src/` changes.
 - [ ] AC-6 `-SmokeTest` exits 0: every console/WinForms/WPF/PluginHost variant exits 0 with `--smoke`; PluginHost smoke output lists PluginA, PluginB, PluginC.
 - [ ] AC-7 Layout checks: `ConsoleApp/*/de/ConsoleApp.resources.dll`, `fr/…`, `en/…` exist; `ConsoleApp/*-fdportable-il/runtimes/` contains ≥ 2 RID folders; `PluginHost/*/Plugins/PluginA/Plugins/PluginC/PluginC.dll` exists; `PluginA` folder does not contain `PluginB.dll`.
-- [ ] AC-8 `PluginHostCyclic/*/Plugins/PluginX/PluginX.dll` references `PluginY` and vice versa (verified with a short `System.Reflection.Metadata` or `ildasm`-free PowerShell check recorded in the PR). Every `PluginHostCyclic` variant has `expectedInvalid.codes = ["RPK3401"]` in `manifest.json`; every other variant has `expectedInvalid: null`.
+- [ ] AC-8 `PluginHostCyclic/*/Plugins/PluginX/PluginX.dll` references `PluginY` and vice versa (verified with a short `System.Reflection.Metadata` or `ildasm`-free PowerShell check recorded in the PR). Every `PluginHostCyclic` variant has `expectedInvalid.codes = ["TLR3401"]` in `manifest.json`; every other variant has `expectedInvalid: null`.
 - [ ] AC-9 SC variants contain `hostfxr.dll` and `coreclr.dll`; FD variants do not; `*.runtimeconfig.json` of SC variants contains `includedFrameworks`.
 - [ ] AC-10 Every R2R variant has `artifacts/testapps/_r2r-rsp/<App>/<tfm>-<mode>/` with ≥ 1 `*.rsp`.
 - [ ] AC-11 `dotnet build Tailor.slnx -c Release -warnaserror` and `dotnet format Tailor.slnx --verify-no-changes` still pass (TestApps are isolated).

@@ -40,11 +40,11 @@ Build the assembly dependency graph and the plugin graph from resolved reference
 | `PluginGraph` | Nodes: plugin units + `application` node; edge `A→B` when an assembly in `A` references an assembly resolved in `B` (`B ≠ A`), with contributing `(fromPath, toPath)` pairs |
 | `StronglyConnectedComponents` | Generic iterative Tarjan (no recursion-depth risk), deterministic node order |
 | `GraphBuilder.Build(...)` → `GraphResult` | `AssemblyGraph`, `PluginGraph`, `Diagnostics` |
-| Diagnostic codes (proposed, `RPK34xx`) | `RPK3401` plugin dependency cycle (error), `RPK3402` assembly dependency cycle outside plugin boundaries (info) |
+| Diagnostic codes (proposed, `TLR34xx`) | `TLR3401` plugin dependency cycle (error), `TLR3402` assembly dependency cycle outside plugin boundaries (info) |
 
 ## Design Notes
 
-- For each plugin SCC with >1 node, emit one `RPK3401`: message lists an elementary cycle starting at the ordinal-smallest plugin id (shortest path back via BFS, deterministic), e.g. `Plugins/A → Plugins/B → Plugins/A`; related locations list every contributing assembly reference `fromPath → toPath` and the SCC member set.
+- For each plugin SCC with >1 node, emit one `TLR3401`: message lists an elementary cycle starting at the ordinal-smallest plugin id (shortest path back via BFS, deterministic), e.g. `Plugins/A → Plugins/B → Plugins/A`; related locations list every contributing assembly reference `fromPath → toPath` and the SCC member set.
 - Edges to the `application` node are legal and never form reportable plugin cycles unless the application references a plugin that references the application (still reported: application is a node).
 - Deterministic ordering: nodes by path, edges by `(from, to)`.
 
@@ -53,9 +53,9 @@ Build the assembly dependency graph and the plugin graph from resolved reference
 - [ ] AC-1 Assembly graph contains one node per in-tree managed assembly and one edge per resolved/framework reference outcome (synthetic test).
 - [ ] AC-2 Plugin units: `Plugins/*` explicit matches become units; recursed subfolders belong to their unit; nested plugins are distinct units with `ParentPluginId`.
 - [ ] AC-3 One-way chain `A → B → C` yields a DAG with no diagnostics.
-- [ ] AC-4 Mutual `A ↔ B` and 3-cycle `A → B → C → A` each yield exactly one `RPK3401` with the cycle path and the contributing assembly paths.
-- [ ] AC-5 Integration: the cyclic-plugin test app (WU-003) yields `RPK3401` listing the full cycle path; golden file of the diagnostic committed.
-- [ ] AC-6 Integration: the one-way plugin chain test app yields no `RPK3401`.
+- [ ] AC-4 Mutual `A ↔ B` and 3-cycle `A → B → C → A` each yield exactly one `TLR3401` with the cycle path and the contributing assembly paths.
+- [ ] AC-5 Integration: the cyclic-plugin test app (WU-003) yields `TLR3401` listing the full cycle path; golden file of the diagnostic committed.
+- [ ] AC-6 Integration: the one-way plugin chain test app yields no `TLR3401`.
 - [ ] AC-7 SCC implementation is iterative and handles a 10 000-node chain without stack overflow (unit test).
 - [ ] AC-8 Graph output is identical across two builds (equality test) and independent of input enumeration order (test shuffles inputs).
 
@@ -76,4 +76,4 @@ Build the assembly dependency graph and the plugin graph from resolved reference
 
 ## Open Questions
 
-- Should the application node participating in a cycle use the same code `RPK3401` (provisional) or a distinct code?
+- Should the application node participating in a cycle use the same code `TLR3401` (provisional) or a distinct code?

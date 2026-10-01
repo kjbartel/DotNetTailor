@@ -66,7 +66,7 @@ Prove M7 end to end through the CLI: `plan` and `apply` with an R2R TransformSpe
 - [ ] AC-9 `apply --offline` with an empty isolated cache exits with code 4 and leaves no output or staging directory.
 - [ ] AC-10 `apply --offline` with a warm cache succeeds and makes no network requests.
 - [ ] AC-11 R2R-on inputs report app assemblies as `Skipped(AlreadyReadyToRun)` and produce no `Optimise` actions for them.
-- [ ] AC-12 With the Acquisition services wired, FD `validate` on a warm cache reports framework references as verified (no `RPK3302`).
+- [ ] AC-12 With the Acquisition services wired, FD `validate` on a warm cache reports framework references as verified (no `TLR3302`).
 
 ## Test Requirements
 

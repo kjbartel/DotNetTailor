@@ -34,11 +34,11 @@ Add a tool configuration file at repo and user level. Merge all configuration so
   - User config: `%APPDATA%\dotnet-tailor\dotnet-tailor.json` via `IPlatformKnowledge` (no hard-coded Windows path outside Platform).
   - `--config <file>` replaces repo discovery. `--no-config` disables repo and user config.
 - Settings (v1): `verbosity`, `mode` (`strict|permissive|default`), `artifacts`, `offline`, `vars` (map, merged per key), `defaults.toolPackages` (version for crossgen2/host packs; allowed values `matchTarget` — the tool-internal rule "follow the resolved target runtime version", architecture §10 — or an exact version). This is not a TransformSpec runtime version policy.
-- Environment variables: `DOTNET_REPACK_VERBOSITY`, `DOTNET_REPACK_MODE`, `DOTNET_REPACK_ARTIFACTS`, `DOTNET_REPACK_OFFLINE`, `DOTNET_REPACK_CONFIG`, `DOTNET_REPACK_VAR_<name>`.
+- Environment variables: `DOTNET_TAILOR_VERBOSITY`, `DOTNET_TAILOR_MODE`, `DOTNET_TAILOR_ARTIFACTS`, `DOTNET_TAILOR_OFFLINE`, `DOTNET_TAILOR_CONFIG`, `DOTNET_TAILOR_VAR_<name>`.
 - Precedence per setting: CLI tokens (with `@file` response files expanded inline; one layer, later tokens win for scalars, as System.CommandLine parses them) > environment > repo config > user config > built-in defaults. Scalars: the highest source wins. `vars`: merged per key with the same order.
 - Response files are part of the CLI layer; no custom origin tagging.
 - Mode conflicts: `--strict` and `--permissive` at the same level → exit 2. A higher level overrides a lower one.
-- Validation: unknown keys → warning (`--strict` → error); invalid values → `RPK0xxx` error with file + JSON pointer, exit 2. Keys that look like credentials (`password`, `apiKey`, `token`, …) → error.
+- Validation: unknown keys → warning (`--strict` → error); invalid values → `TLR0xxx` error with file + JSON pointer, exit 2. Keys that look like credentials (`password`, `apiKey`, `token`, …) → error.
 - Effective-settings log at `--verbosity diagnostic`: each setting with its source (never secrets).
 - Generated JSON Schema under `schemas/config/v1/`, covered by the schema drift test.
 - User guide `Docs/Guides/configuration.md`: file format, locations, precedence table, env vars, examples.
@@ -63,8 +63,8 @@ Add a tool configuration file at repo and user level. Merge all configuration so
 - [ ] AC-1 A table-driven test covers each setting from every one of the five sources (CLI incl. response files, environment, repo, user, defaults), and the highest-precedence source wins in every combination.
 - [ ] AC-2 `vars` from env, repo and user config merge per key. A CLI `--var` overrides the same key from all other sources.
 - [ ] AC-3 Options from an `@file` response file behave exactly like the same tokens typed inline at that position (same layer; later token wins for scalars).
-- [ ] AC-4 Repo config is found from a nested working directory; a `dotnet-tailor.json` above the git root is ignored. `--config` and `DOTNET_REPACK_CONFIG` select an explicit file. `--no-config` ignores both files.
-- [ ] AC-5 An invalid config value returns exit 2 with an `RPK0xxx` diagnostic including the file path and JSON pointer. An unknown key warns, and fails under `--strict`.
+- [ ] AC-4 Repo config is found from a nested working directory; a `dotnet-tailor.json` above the git root is ignored. `--config` and `DOTNET_TAILOR_CONFIG` select an explicit file. `--no-config` ignores both files.
+- [ ] AC-5 An invalid config value returns exit 2 with an `TLR0xxx` diagnostic including the file path and JSON pointer. An unknown key warns, and fails under `--strict`.
 - [ ] AC-6 A credential-like key is rejected. No config value marked sensitive appears in logs or artefacts.
 - [ ] AC-7 `mode: strict` in config makes warnings exit 3. `--permissive` on the CLI overrides it. `--strict --permissive` together exit 2.
 - [ ] AC-8 The committed `schemas/config/v1` schema equals the generated one (drift test).

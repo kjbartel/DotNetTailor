@@ -41,7 +41,7 @@ Validate an AppSpec against a physical tree covering every check in AS §20.3, c
 | `ValidationMode` | `Default`, `Strict`, `Permissive` |
 | `IAppSpecCheck` | One class per check group (table below); run in fixed order |
 | `ValidationReportWriter` | `validation-report.json`: `kind: ValidationReport`, `schemaVersion`, `specHash`, `treeFingerprint`, `state`, `mode`, `counts {errors, warnings, info}`, `diagnostics[]` (code, severity, message, path, JSON pointer, related) sorted |
-| Diagnostic codes (proposed, `RPK43xx`) | `RPK4301` deployment model mismatch, `RPK4302` framework name/version mismatch, `RPK4303` TFM mismatch, `RPK4304` declared entry point missing, `RPK4305` apphost binding ≠ declared assembly, `RPK4306` declared RID incompatible with binaries/RID folders, `RPK4307` folder-role inconsistency (e.g. non-satellite managed assembly in `resources`, `plugin` folder without managed assembly) |
+| Diagnostic codes (proposed, `TLR43xx`) | `TLR4301` deployment model mismatch, `TLR4302` framework name/version mismatch, `TLR4303` TFM mismatch, `TLR4304` declared entry point missing, `TLR4305` apphost binding ≠ declared assembly, `TLR4306` declared RID incompatible with binaries/RID folders, `TLR4307` folder-role inconsistency (e.g. non-satellite managed assembly in `resources`, `plugin` folder without managed assembly) |
 
 | AS §20.3 check | Source |
 |---|---|
@@ -50,33 +50,33 @@ Validate an AppSpec against a physical tree covering every check in AS §20.3, c
 | File associations | WU-302 |
 | Managed dependencies, reference paths | WU-303 |
 | Plugin relationships | WU-304 |
-| Runtime/framework identification | `RPK4301`–`RPK4305` via Model `RuntimeFactsDetector` (WU-305) over WU-202 readers |
-| Platform assumptions | `RPK4306` via WU-200/WU-203 |
-| Folder-role consistency | `RPK4307` |
+| Runtime/framework identification | `TLR4301`–`TLR4305` via Model `RuntimeFactsDetector` (WU-305) over WU-202 readers |
+| Platform assumptions | `TLR4306` via WU-200/WU-203 |
+| Folder-role consistency | `TLR4307` |
 
 ## Design Notes
 
 - **State**: any error → `Invalid`; warnings only → `ValidatedWithWarnings`; none → `Validated`. `Unvalidated` is reported when validation could not run (document failed to load or tree unreadable); the result then carries the blocking diagnostics.
 - **Strict**: warnings are treated as errors → `Invalid`, `WarningsAsErrors = true` (WU-404 maps to exit 3).
-- **Permissive** (architecture §13): warnings never make the state fail; `Error` diagnostics whose descriptor is `IsPolicyConfigurable` (WU-100) are downgraded to warnings. Structural codes (`IsStructural`, e.g. `RPK3001`–`RPK3006`, `RPK3101`, `RPK3102`, `RPK3401`) are never downgraded ([TS §24.4](../../Requirements/Transformation_Specification.md#244-structural-errors)). Proposed policy-configurable codes: `RPK3301`, `RPK3304`, `RPK4302`, `RPK4306`, `RPK4307` (flagged on their descriptors, not listed in the validator).
+- **Permissive** (architecture §13): warnings never make the state fail; `Error` diagnostics whose descriptor is `IsPolicyConfigurable` (WU-100) are downgraded to warnings. Structural codes (`IsStructural`, e.g. `TLR3001`–`TLR3006`, `TLR3101`, `TLR3102`, `TLR3401`) are never downgraded ([TS §24.4](../../Requirements/Transformation_Specification.md#244-structural-errors)). Proposed policy-configurable codes: `TLR3301`, `TLR3304`, `TLR4302`, `TLR4306`, `TLR4307` (flagged on their descriptors, not listed in the validator).
 - Validation never writes to the tree; the report writer writes only to the supplied artefacts directory.
 - The report does not embed the AppSpec; `apply` always re-validates (architecture item 1).
 
 ## Acceptance Criteria
 
 - [ ] AC-1 Every AS §20.3 check group is implemented and covered by at least one failing synthetic scenario test.
-- [ ] AC-2 Wrong folder role (non-satellite assembly in a `resources` folder) yields `RPK4307` and `Invalid`.
-- [ ] AC-3 Missing required association yields `RPK3201` and `Invalid`.
-- [ ] AC-4 Wrong reference root yields `RPK3301` or `RPK3305` and `Invalid`.
-- [ ] AC-5 A removed referenced file yields `RPK3301` and `Invalid`.
-- [ ] AC-6 Declared `selfContained` on an FD tree yields `RPK4301`; declared framework version mismatch yields `RPK4302`.
-- [ ] AC-7 Declared entry point missing / apphost bound to another dll yields `RPK4304` / `RPK4305`.
+- [ ] AC-2 Wrong folder role (non-satellite assembly in a `resources` folder) yields `TLR4307` and `Invalid`.
+- [ ] AC-3 Missing required association yields `TLR3201` and `Invalid`.
+- [ ] AC-4 Wrong reference root yields `TLR3301` or `TLR3305` and `Invalid`.
+- [ ] AC-5 A removed referenced file yields `TLR3301` and `Invalid`.
+- [ ] AC-6 Declared `selfContained` on an FD tree yields `TLR4301`; declared framework version mismatch yields `TLR4302`.
+- [ ] AC-7 Declared entry point missing / apphost bound to another dll yields `TLR4304` / `TLR4305`.
 - [ ] AC-8 Warnings-only input → `ValidatedWithWarnings` (default), `Invalid` + `WarningsAsErrors` (strict).
 - [ ] AC-9 Permissive downgrades exactly the descriptors flagged `IsPolicyConfigurable`; a structural code stays an error (theory test).
 - [ ] AC-10 Unloadable spec → `Unvalidated` with the loader diagnostics.
 - [ ] AC-11 `validation-report.json` contains `specHash`, `treeFingerprint`, `state`, `mode`; byte-identical across two runs; golden file committed.
 - [ ] AC-12 Editing a sidecar does not change `treeFingerprint`; editing an in-scope file does.
-- [ ] AC-13 Hand-authored matrix AppSpecs (WU-305) validate as `Validated` or `ValidatedWithWarnings` for every matrix entry except variants flagged `expectedInvalid` in the WU-003 manifest (the cyclic plugin variant: `Invalid`, exactly `RPK3401`).
+- [ ] AC-13 Hand-authored matrix AppSpecs (WU-305) validate as `Validated` or `ValidatedWithWarnings` for every matrix entry except variants flagged `expectedInvalid` in the WU-003 manifest (the cyclic plugin variant: `Invalid`, exactly `TLR3401`).
 
 ## Test Requirements
 

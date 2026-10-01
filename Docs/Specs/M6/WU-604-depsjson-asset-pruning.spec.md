@@ -36,12 +36,12 @@ Keep `*.deps.json` consistent with filtering so that v0.2.0 outputs launch: when
 
 **Out**
 - FD⇄SC changes, `runtimepack.*` libraries, `runtimeTarget` changes (WU-802). Library version changes (WU-902). runtimeconfig (WU-801).
-- A dependency-safety error when removing a library that others depend on: that is WU-503 `RPK5302`; this WU keeps the entry and reports an info diagnostic.
+- A dependency-safety error when removing a library that others depend on: that is WU-503 `TLR5302`; this WU keeps the entry and reports an info diagnostic.
 
 ## Deliverables
 
 - `DepsJsonAssetPruner`, `DepsJsonPruningHandler`, `DepsJsonPruneModifier`, `DepsJsonWriter`; DI registration (handler by category, modifier by name).
-- Diagnostics (proposed `RPK82xx` sub-range `RPK8290`–`RPK8299`, shared Transforms deps.json range with WU-802): `RPK8290` deps.json unreadable (error), `RPK8291` library kept because a retained library depends on it (info), `RPK8292` removed file not listed in deps.json (info, no change).
+- Diagnostics (proposed `TLR82xx` sub-range `TLR8290`–`TLR8299`, shared Transforms deps.json range with WU-802): `TLR8290` deps.json unreadable (error), `TLR8291` library kept because a retained library depends on it (info), `TLR8292` removed file not listed in deps.json (info, no change).
 
 ## Design Notes
 
@@ -55,12 +55,12 @@ Keep `*.deps.json` consistent with filtering so that v0.2.0 outputs launch: when
 
 - [ ] AC-1 Removing the `de/` and `fr/` satellites of ConsoleApp removes exactly those `resources` entries; all other deps.json content is semantically unchanged (library-by-library comparison).
 - [ ] AC-2 Removing non-`win-x64` `runtimes/<rid>/…` assets from `ConsoleApp/<tfm>-fdportable-il` removes exactly those `runtimeTargets` entries.
-- [ ] AC-3 Removing every asset of a package library that no retained library depends on removes the library from `targets` and `libraries`; if another library depends on it, it is kept with `RPK8291`.
+- [ ] AC-3 Removing every asset of a package library that no retained library depends on removes the library from `targets` and `libraries`; if another library depends on it, it is kept with `TLR8291`.
 - [ ] AC-4 A plan without removals touching deps.json emits no `ModifyConfig` action.
 - [ ] AC-5 Projected deps.json bytes (WU-505) equal the executed bytes (WU-601) for the same plan.
 - [ ] AC-6 `apply` of the `resources-en` and `other-rid` scenarios on ConsoleApp (net8/net10, FD) produces outputs that launch via the smoke contract (harness).
 - [ ] AC-7 No library version, sha512 or dependency range changes (test compares all remaining entries).
-- [ ] AC-8 Identical inputs produce byte-identical deps.json output; malformed input yields `RPK8290` without exceptions.
+- [ ] AC-8 Identical inputs produce byte-identical deps.json output; malformed input yields `TLR8290` without exceptions.
 
 ## Test Requirements
 
@@ -71,7 +71,7 @@ Keep `*.deps.json` consistent with filtering so that v0.2.0 outputs launch: when
 
 ## Definition of Done
 
-- All ACs ticked by the Verifier; CI green; `RPK829x` codes listed for WU-1001; changes limited to target paths (plus the plan status row).
+- All ACs ticked by the Verifier; CI green; `TLR829x` codes listed for WU-1001; changes limited to target paths (plus the plan status row).
 
 ## Agent Notes
 

@@ -47,17 +47,17 @@ Namespace `Tailor.Specifications.Variables`.
 | `sealed class VariableResolver` | `Result<ResolvedTransformSpec> Resolve(LoadedSpecification<TransformSpecDocument>, IReadOnlyDictionary<string, string> commandLineValues)` |
 | `sealed record ResolvedTransformSpec` | `Document` (no remaining `${`), `Variables` (sorted by name, ordinal) |
 | `static VariableSyntax` | `IsValidName`, tokenizer for `${name}` and escape `$${` |
-| `static VariableDiagnostics` | `RPK1400`–`RPK1499` |
+| `static VariableDiagnostics` | `TLR1400`–`TLR1499` |
 
 Diagnostics:
 
 | Code | Condition |
 |---|---|
-| `RPK1401` | Reference to an undeclared variable (location = member pointer via `ProvenanceMap`) |
-| `RPK1402` | Declared variable with no default and no CLI value (unresolved) |
-| `RPK1403` | CLI value for an undeclared variable |
-| `RPK1404` | Malformed reference (`${`, `${}`, `${1x}`, `${a.b}`) |
-| `RPK1405` | `${…}` in a member not marked `[VariableSubstitution]` |
+| `TLR1401` | Reference to an undeclared variable (location = member pointer via `ProvenanceMap`) |
+| `TLR1402` | Declared variable with no default and no CLI value (unresolved) |
+| `TLR1403` | CLI value for an undeclared variable |
+| `TLR1404` | Malformed reference (`${`, `${}`, `${1x}`, `${a.b}`) |
+| `TLR1405` | `${…}` in a member not marked `[VariableSubstitution]` |
 
 ## Design Notes
 
@@ -72,11 +72,11 @@ Diagnostics:
 
 - [ ] AC-1 `${targetTfm}` with default `net10.0-windows` and no CLI value resolves to `net10.0-windows`, source `DocumentDefault`.
 - [ ] AC-2 CLI value `targetTfm=net9.0-windows` overrides the default; source `CommandLine`.
-- [ ] AC-3 Declared variable with no default and no CLI value → `RPK1402` naming the variable and the member pointer where it is used.
-- [ ] AC-4 Use of undeclared `${foo}` → `RPK1401` naming `foo`; CLI value for undeclared `bar` → `RPK1403`.
-- [ ] AC-5 Malformed references (`${`, `${}`, `${1x}`, `${a.b}`) → `RPK1404` each.
+- [ ] AC-3 Declared variable with no default and no CLI value → `TLR1402` naming the variable and the member pointer where it is used.
+- [ ] AC-4 Use of undeclared `${foo}` → `TLR1401` naming `foo`; CLI value for undeclared `bar` → `TLR1403`.
+- [ ] AC-5 Malformed references (`${`, `${}`, `${1x}`, `${a.b}`) → `TLR1404` each.
 - [ ] AC-6 `net${major}.0` with `major=8` → `net8.0`; `$${literal}` → `${literal}`; a value containing `${x}` is inserted literally and not re-expanded.
-- [ ] AC-7 `${x}` in a non-annotated member (e.g. rule `id`) → `RPK1405`.
+- [ ] AC-7 `${x}` in a non-annotated member (e.g. rule `id`) → `TLR1405`.
 - [ ] AC-8 After successful resolution no annotated member contains an unescaped `${` (property test over fixtures).
 - [ ] AC-9 A variable default declared in an included document is overridden by the root document's default (multi-document fixture via WU-103).
 - [ ] AC-10 `ResolvedTransformSpec.Variables` is sorted ordinally and identical across two runs.
@@ -102,7 +102,7 @@ Diagnostics:
 
 - Should an unused CLI `--var` (declared but unreferenced) warn? Proposed: no diagnostic.
 - Should enum-typed members accept variables (see WU-102 Open Questions)? This spec assumes no.
-- Should `RPK1403` (CLI value for undeclared variable) be an error or a warning? Proposed: error, to catch typos.
+- Should `TLR1403` (CLI value for undeclared variable) be an error or a warning? Proposed: error, to catch typos.
 
 ## Test Evidence
 

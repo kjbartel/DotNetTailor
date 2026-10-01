@@ -46,32 +46,32 @@ After execution and before commit, re-derive the Effective Application Model fro
 | `PostValidation.ProjectionComparer` | Compares actual vs projected: file set per root, sha256 where the projection knows it, primary classification, associations, and assembly facts that the projection overrides (e.g. R2R) |
 | `Pipeline.ExecutionPipeline.RunAsync(ExecutionRequest, CancellationToken)` → `ExecutionOutcome` | `ExecutionRequest {InputRoot, OutputRoot, SymbolsOutput?, SpecOut?, ArtifactsDirectory, PlanResult, ValidatedTransformSpec}`. `ExecutionOutcome {Succeeded, Stage (Preflight\|Execute\|PostValidate\|Commit\|Reports), Diagnostics}` |
 | `Reports.ArtefactLocationResolver` | Rule table below |
-| Output AppSpec | Canonical projected AppSpec (WU-505) written as `<staging>/repack.appspec.json` (sidecar, excluded from the model) or to `--spec-out` |
+| Output AppSpec | Canonical projected AppSpec (WU-505) written as `<staging>/tailor.appspec.json` (sidecar, excluded from the model) or to `--spec-out` |
 | Reports | `validation-report.json` (output tree), `execution-report.json` (WU-601), `post-execution-report.json` (differences and assertion outcomes) |
-| `PostExecutionDiagnostics` | `RPK6201`–`RPK6299` |
+| `PostExecutionDiagnostics` | `TLR6201`–`TLR6299` |
 
 **Artefacts location for `apply`**
 
 | Condition | Location |
 |---|---|
-| `--artifacts <dir>` given | `<dir>` (checked by WU-600: not inside output, input or symbols output) |
-| Input AppSpec directory is writable and outside the input tree, or the input tree is writable | `.repack/` next to the input AppSpec (architecture §5; sidecar per item 2) |
-| Otherwise (read-only input) | `<output>.repack/` sibling of the output (architecture §20, provisional) |
+| `--artefacts <dir>` given | `<dir>` (checked by WU-600: not inside output, input or symbols output) |
+| Input AppSpec directory is writable and outside the input tree, or the input tree is writable | `.tailor/` next to the input AppSpec (architecture §5; sidecar per item 2) |
+| Otherwise (read-only input) | `<output>.tailor/` sibling of the output (architecture §20, provisional) |
 
 **Diagnostics**
 
 | Code | Condition |
 |---|---|
-| `RPK6201` | Staged tree fails AppSpec validation against the projected AppSpec (wraps WU-403 diagnostics) |
-| `RPK6202` | Actual state differs from the projection (file set, hash, classification, association or fact), one per difference |
-| `RPK6203` | Output assertion failed on the actual output (structural) |
-| `RPK6204` | Output AppSpec could not be written (`--spec-out` not writable) — checked in pre-flight |
-| `RPK6205` | Reports could not be written after a successful commit (warning; output kept, exit 0 with a warning, or 3 under `--strict`) |
+| `TLR6201` | Staged tree fails AppSpec validation against the projected AppSpec (wraps WU-403 diagnostics) |
+| `TLR6202` | Actual state differs from the projection (file set, hash, classification, association or fact), one per difference |
+| `TLR6203` | Output assertion failed on the actual output (structural) |
+| `TLR6204` | Output AppSpec could not be written (`--spec-out` not writable) — checked in pre-flight |
+| `TLR6205` | Reports could not be written after a successful commit (warning; output kept, exit 0 with a warning, or 3 under `--strict`) |
 
 ## Design Notes
 
 - Architecture item 1: validation state is a separate report. The output AppSpec never embeds it.
-- Sidecar handling: `repack.appspec.json` is written into staging **after** validation, and is added to the `SidecarSet` so that it does not affect the tree fingerprint.
+- Sidecar handling: `tailor.appspec.json` is written into staging **after** validation, and is added to the `SidecarSet` so that it does not affect the tree fingerprint.
 - `--spec-out` is validated in pre-flight (writable parent, not inside input) before any execution, so a late failure cannot leave a committed output without its AppSpec.
 - Any `Error` (after policy and `--strict`) from post-validation → `StagingSession.RollbackAsync()` → `ExecutionOutcome.Succeeded = false`, `Stage = PostValidate`. WU-603 maps this to exit 5 (plan M6 criterion 3). Reports already produced are still written to the artefacts location for diagnosis.
 - Post-validation reuses WU-403 checks unchanged (WU-403 agent note), so input and output validation behave identically.
@@ -79,15 +79,15 @@ After execution and before commit, re-derive the Effective Application Model fro
 
 ## Acceptance Criteria
 
-- [ ] AC-1 For the WU-504 filtering scenario, the staged output validates `Validated`, has no `RPK6202`, and all output assertions pass. `repack.appspec.json` in the committed output is byte-identical to the projected AppSpec from `plan`.
-- [ ] AC-2 `--spec-out <file>` writes the output AppSpec there and not into the output. An unwritable `--spec-out` fails pre-flight with `RPK6204` and no staging is created.
-- [ ] AC-3 A fake executor that silently skips one file yields `RPK6202` (missing file), rollback, and no output or staging directory.
-- [ ] AC-4 A fake executor that writes different bytes for a preserved file yields `RPK6202` (hash).
-- [ ] AC-5 An output assertion that passes on the projection but fails on the actual output (injected via a fake executor that adds a `de/` satellite) yields `RPK6203`, rollback, and no output (M6 criterion 3).
-- [ ] AC-6 Artefacts location follows the rule table: `--artifacts`; `.repack/` next to a writable AppSpec; `<output>.repack/` for a read-only input copy (real ACL-deny test), with the input fingerprint including sidecars unchanged.
+- [ ] AC-1 For the WU-504 filtering scenario, the staged output validates `Validated`, has no `TLR6202`, and all output assertions pass. `tailor.appspec.json` in the committed output is byte-identical to the projected AppSpec from `plan`.
+- [ ] AC-2 `--spec-out <file>` writes the output AppSpec there and not into the output. An unwritable `--spec-out` fails pre-flight with `TLR6204` and no staging is created.
+- [ ] AC-3 A fake executor that silently skips one file yields `TLR6202` (missing file), rollback, and no output or staging directory.
+- [ ] AC-4 A fake executor that writes different bytes for a preserved file yields `TLR6202` (hash).
+- [ ] AC-5 An output assertion that passes on the projection but fails on the actual output (injected via a fake executor that adds a `de/` satellite) yields `TLR6203`, rollback, and no output (M6 criterion 3).
+- [ ] AC-6 Artefacts location follows the rule table: `--artefacts`; `.tailor/` next to a writable AppSpec; `<output>.tailor/` for a read-only input copy (real ACL-deny test), with the input fingerprint including sidecars unchanged.
 - [ ] AC-7 After a successful run, `execution-report.json`, `validation-report.json` and `post-execution-report.json` exist in the artefacts location. The validation report's `treeFingerprint` equals the fingerprint of the committed output excluding sidecars.
 - [ ] AC-8 After any post-validation failure, no `<output>`, `<output>.staging-*` or symbols output remains. The reports still exist in the artefacts location.
-- [ ] AC-9 Cancellation during post-validation leaves no output or staging (WU-600 `RPK6010`).
+- [ ] AC-9 Cancellation during post-validation leaves no output or staging (WU-600 `TLR6010`).
 - [ ] AC-10 Two successful runs produce byte-identical output AppSpecs, validation reports and post-execution reports.
 
 ## Test Requirements
@@ -99,7 +99,7 @@ After execution and before commit, re-derive the Effective Application Model fro
 
 ## Definition of Done
 
-- Zero warnings, tests green, format clean. All ACs ticked by the Verifier. Plan status `Done`. `RPK62xx` codes listed for WU-1001.
+- Zero warnings, tests green, format clean. All ACs ticked by the Verifier. Plan status `Done`. `TLR62xx` codes listed for WU-1001.
 
 ## Agent Notes
 
@@ -108,9 +108,9 @@ After execution and before commit, re-derive the Effective Application Model fro
 
 ## Open Questions
 
-- Artefacts location for `apply` when the AppSpec lives in a read-only input is provisional (architecture §20). Also: should `apply` ever write sidecars into the input (the `.repack/` default), or always use `<output>.repack/`? Proposed: follow architecture §5 for consistency with `plan`.
+- Artefacts location for `apply` when the AppSpec lives in a read-only input is provisional (architecture §20). Also: should `apply` ever write sidecars into the input (the `.tailor/` default), or always use `<output>.tailor/`? Proposed: follow architecture §5 for consistency with `plan`.
 - **Resolved** — failed output assertion after execution: exit 5 (output rolled back), architecture §13.
-- `RPK6205` (reports unwritable after commit): the output is already committed and cannot be rolled back atomically. Confirm warning semantics.
+- `TLR6205` (reports unwritable after commit): the output is already committed and cannot be rolled back atomically. Confirm warning semantics.
 
 ## Test Evidence
 

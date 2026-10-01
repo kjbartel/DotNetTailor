@@ -13,7 +13,7 @@
 
 ## Goal
 
-Every `RPK` code has one registry descriptor and a user-facing entry in `Docs/Guides/diagnostics.md`. Tests keep the registry, the source code and the docs in sync. Every CLI command and option has complete help text.
+Every `TLR` code has one registry descriptor and a user-facing entry in `Docs/Guides/diagnostics.md`. Tests keep the registry, the source code and the docs in sync. Every CLI command and option has complete help text.
 
 ## Requirement Traceability
 
@@ -32,7 +32,7 @@ Every `RPK` code has one registry descriptor and a user-facing entry in `Docs/Gu
 - Generator: renders `Docs/Guides/diagnostics.md` from the registry (grouped by range, sorted by code, plus an exit-code table). Output is canonical (LF, no timestamps).
 - Parity tests:
   - Registry ↔ committed markdown: regenerated content equals the committed file.
-  - Source ↔ registry: no `RPK\d{4}` literal outside the registry. Every registered code is referenced by at least one emission site or marked `reserved`.
+  - Source ↔ registry: no `TLR\d{4}` literal outside the registry. Every registered code is referenced by at least one emission site or marked `reserved`.
   - Range check: each code is inside its project's range ([Architecture §13](../../Architecture/Tailor.architecture.md)). Codes are unique.
 - Help text completeness: every command, subcommand, option and argument has a non-empty description. `--help` output per verb is compared against golden files. Help mentions exit codes (root help) and `analyse` as an alias.
 
@@ -45,13 +45,13 @@ Every `RPK` code has one registry descriptor and a user-facing entry in `Docs/Gu
 
 ## Design Notes
 
-- Choose one generation path and document it in the guide header ("generated, do not edit; run `<command>`"). Preferred: a golden-file-style drift test (same conventions as `Tailor.Testing.Golden`) that fails on drift, writes a `.received` file for acceptance and rewrites the guide under `DOTNET_REPACK_UPDATE_GOLDEN=1`.
+- Choose one generation path and document it in the guide header ("generated, do not edit; run `<command>`"). Preferred: a golden-file-style drift test (same conventions as `Tailor.Testing.Golden`) that fails on drift, writes a `.received` file for acceptance and rewrites the guide under `DOTNET_TAILOR_UPDATE_GOLDEN=1`.
 - Keep descriptors in the owning projects if the architecture's dependency rules require it (e.g. `Transforms` codes). A Core-level registry discovers them through an assembly-scan-free, explicit registration list so that ordering stays deterministic.
 - WUs that finish after this one must add descriptors + docs. The parity test enforces it.
 
 ## Acceptance Criteria
 
-- [ ] AC-1 Every code emitted anywhere in `src/` is a registered descriptor. A test fails on an unregistered `RPK` literal.
+- [ ] AC-1 Every code emitted anywhere in `src/` is a registered descriptor. A test fails on an unregistered `TLR` literal.
 - [ ] AC-2 `Docs/Guides/diagnostics.md` equals the generator output. Changing any descriptor without regenerating fails a test.
 - [ ] AC-3 Each entry shows code, title, default severity, whether policy can change it, description and remedy. Entries are grouped by range and sorted.
 - [ ] AC-4 Codes are unique and each falls in the range for its category. The test fails on violations.
@@ -72,7 +72,7 @@ Every `RPK` code has one registry descriptor and a user-facing entry in `Docs/Gu
 
 ## Agent Notes
 
-- Search for `"RPK` in `src/` first to inventory codes. Expect ad-hoc codes from earlier WUs.
+- Search for `"TLR` in `src/` first to inventory codes. Expect ad-hoc codes from earlier WUs.
 - Do not renumber released codes (v0.x previews). Mark retired codes `obsolete` instead.
 
 ## Open Questions

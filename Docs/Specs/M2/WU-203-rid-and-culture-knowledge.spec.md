@@ -46,9 +46,9 @@ Provide deterministic, host-independent knowledge of RIDs (parsing, portable gra
 | `…Inspection.Cultures` | `interface ICultureCatalogue` / `EmbeddedCultureCatalogue` | `bool IsKnown(string name)`, `string? Normalise(string name)` (canonical casing, e.g. `zh-hant` → `zh-Hant`), `bool IsNeutral(string)`, `string? Parent(string)` |
 | | `CultureInfoCrossCheck` | `CultureCheckResult Check(string name)` → `Known`, `Unknown`, `Unavailable` (invariant globalisation / predefined-only mode) |
 | | `readonly record struct CulturePattern` | `static bool TryParse(string, out CulturePattern)`, `bool Matches(string cultureName)` |
-| | `static CultureDiagnostics` | shared `RPK2300`–`RPK2399` with RIDs |
+| | `static CultureDiagnostics` | shared `TLR2300`–`TLR2399` with RIDs |
 
-Diagnostics (minimum): `RPK2301` invalid RID syntax; `RPK2302` unknown RID (warning); `RPK2310` invalid culture pattern; `RPK2311` unknown culture name (warning).
+Diagnostics (minimum): `TLR2301` invalid RID syntax; `TLR2302` unknown RID (warning); `TLR2310` invalid culture pattern; `TLR2311` unknown culture name (warning).
 
 Embedded data (`EmbeddedResource`, canonical JSON, committed):
 - `Data/rid-graph.json`: portable RID graph for .NET 8+ (`any`, `base`, `win`, `win-x86`, `win-x64`, `win-arm64`, `unix`, `linux`, `linux-{x64,arm64,arm,musl-*}`, `osx`, `osx-{x64,arm64}`, …) plus legacy aliases (`win7-*`, `win8-*`, `win81-*`, `win10-*`, `alpine*`, …) mapped to portable parents. Source and licence attribution recorded in a header member (`source`, `license`).
@@ -58,7 +58,7 @@ Embedded data (`EmbeddedResource`, canonical JSON, committed):
 
 - **Determinism first** ([§15](../../Architecture/Tailor.architecture.md#15-determinism)): recognition decisions use only the embedded catalogues. ICU/NLS differences between hosts and `InvariantGlobalization=true` must not change results. `CultureInfoCrossCheck` is diagnostic-only (e.g. an `inspect` hint), never a matching input; under invariant mode it returns `Unavailable` without throwing (`CultureNotFoundException` caught).
 - Culture comparison is ordinal-ignore-case; output uses canonical casing from the catalogue.
-- `CulturePattern`: `en` matches only `en`; `en-*` matches any culture whose name starts with `en-` and has at least one further subtag (`en-US`, `en-GB`, `en-Latn-US`), not `en` itself; `*` matches any known culture; explicit names match exactly. Patterns must be syntactically valid BCP-47 prefixes; `e*`, `en*`, `*-US` are invalid (`RPK2310`).
+- `CulturePattern`: `en` matches only `en`; `en-*` matches any culture whose name starts with `en-` and has at least one further subtag (`en-US`, `en-GB`, `en-Latn-US`), not `en` itself; `*` matches any known culture; explicit names match exactly. Patterns must be syntactically valid BCP-47 prefixes; `e*`, `en*`, `*-US` are invalid (`TLR2310`).
 - `<culture>` token matching for folders (WU-300) = `IsKnown(name)`; unknown culture-looking folders are content, not resources ([AS §10.7](../../Requirements/Application_Specification.md)).
 - RID parsing: `os[.version][-qualifier]-arch` per the .NET RID catalogue; lower-case normalisation; `any`, `base`, `win`, `unix`, `linux` are valid architecture-less RIDs.
 - Compatibility: `win-x64` target accepts assets for `win-x64`, `win`, `any`; rejects `win-x86`, `win-arm64`, `linux-x64`. Legacy asset RIDs (`win10-x64`) are compatible with `win-x64` via `ToPortable` (NuGet packages still ship them).
@@ -71,7 +71,7 @@ Embedded data (`EmbeddedResource`, canonical JSON, committed):
 - [ ] AC-3 `IsCompatible(win-x64, …)` is true for `win-x64`, `win`, `any`, `win10-x64`, `win7-x64`; false for `win-x86`, `win-arm64`, `linux-x64`, `osx-arm64`, `unix`.
 - [ ] AC-4 `RuntimeAssetPath.TryParse` parses `runtimes/win-x64/native/e_sqlite3.dll` (Native, no TFM), `runtimes/linux-x64/lib/net8.0/Foo.dll` (Lib, `net8.0`), `Plugins/A/runtimes/win/lib/netstandard2.0/Bar.dll` (nested); rejects `runtimes/win-x64/other/x.dll` and `runtimes/notarid!/native/x.dll`.
 - [ ] AC-5 `CultureCatalogue.IsKnown` is true for `en`, `en-US`, `de`, `zh-Hans`, `zh-Hant`, `pt-BR`, `qps-ploc` (case-insensitive) and false for `xx-YY`, `runtimes`, `Plugins`, `x64`, `lib`.
-- [ ] AC-6 `CulturePattern`: `en` matches `en` only; `en-*` matches `en-US`, `EN-gb`, `en-Latn-US`, not `en`, `eng`, `fr-EN`; `*` matches `de`; invalid patterns `e*`, `en*`, `*-US`, `en--US` → `RPK2310`.
+- [ ] AC-6 `CulturePattern`: `en` matches `en` only; `en-*` matches `en-US`, `EN-gb`, `en-Latn-US`, not `en`, `eng`, `fr-EN`; `*` matches `de`; invalid patterns `e*`, `en*`, `*-US`, `en--US` → `TLR2310`.
 - [ ] AC-7 Recognition results are identical when the test process runs with `DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1` (child test run or `AppContext` switch in an isolated test) — the catalogue test set yields the same answers; `CultureInfoCrossCheck` returns `Unavailable` there without throwing.
 - [ ] AC-8 Embedded `rid-graph.json` and `cultures.json` are canonical JSON (re-serialising yields identical bytes) and contain `source`/`license` attribution.
 - [ ] AC-9 Matrix (`Category=Matrix`): every culture folder in `ConsoleApp` variants (`en`, `de`, `fr`) is `IsKnown`; every `runtimes/<rid>/…` path in the `ConsoleApp/*-fdportable-il` variants parses via `RuntimeAssetPath`.

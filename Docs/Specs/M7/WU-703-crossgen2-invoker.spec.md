@@ -46,7 +46,7 @@ Execute `Optimise` actions: locate crossgen2 in the pinned package, verify it, g
 - `Crossgen2Locator`, `Crossgen2ResponseFileWriter`, `Crossgen2Invoker`, `OptimiseActionExecutor`.
 - `IProcessRunner` abstraction (testable; default implementation uses `ArgumentList`).
 - Consumes `Core.Packages.IPackageLocator` (WU-100 contract; implemented by Acquisition in WU-700, wired by the Cli in WU-704).
-- Diagnostics (proposed `RPK73xx`): crossgen2 not found, ambiguous layout, version mismatch, package hash mismatch, non-zero exit, timeout, output not R2R.
+- Diagnostics (proposed `TLR73xx`): crossgen2 not found, ambiguous layout, version mismatch, package hash mismatch, non-zero exit, timeout, output not R2R.
 
 ## Design Notes
 
@@ -54,13 +54,13 @@ Execute `Optimise` actions: locate crossgen2 in the pinned package, verify it, g
 - `.rsp` content: one argument per line, references sorted ordinal-ignore-case, paths quoted; identical units produce identical `.rsp` modulo the staging root. `.rsp` files are written under `<artifacts>/r2r/` (non-canonical, diagnostic aid).
 - Input is the staged IL file; output is written to a temp path in staging, verified, then moved to the destination. On `warning`/`skip` policy the IL file is kept at the destination.
 - `fail` policy → executor failure → rollback via WU-601/600, exit code 5.
-- If only `crossgen2.dll` exists and the spike does not define a launch strategy, fail with `RPK73xx` (no implicit `dotnet` from PATH).
+- If only `crossgen2.dll` exists and the spike does not define a launch strategy, fail with `TLR73xx` (no implicit `dotnet` from PATH).
 - Determinism: `--parallelism` must not change output bytes (verify); if WU-004 found non-determinism, follow the ADR fallback (semantic comparison).
 - No shell, no string-concatenated command lines, no credentials in the environment passed to crossgen2.
 
 ## Acceptance Criteria
 
-- [ ] AC-1 Locator finds `crossgen2.exe` in a synthetic .NET 8+ layout and `crossgen2.dll` in a dll-only layout; both-or-neither layouts yield the documented result or an `RPK73xx` diagnostic.
+- [ ] AC-1 Locator finds `crossgen2.exe` in a synthetic .NET 8+ layout and `crossgen2.dll` in a dll-only layout; both-or-neither layouts yield the documented result or an `TLR73xx` diagnostic.
 - [ ] AC-2 A crossgen2 package whose major differs from the unit's target runtime major is rejected before any process starts.
 - [ ] AC-3 A package whose `.nupkg` SHA-512 differs from the plan provenance is rejected before any process starts.
 - [ ] AC-4 `.rsp` files for an FD unit and an SC composite unit match committed golden files (staging root normalised).
@@ -82,7 +82,7 @@ Execute `Optimise` actions: locate crossgen2 in the pinned package, verify it, g
 ## Definition of Done
 
 - All AC ticked by the Verifier; CI green.
-- `RPK73xx` codes listed for WU-1001; architecture §9.1 updated if the spike changed the argument set.
+- `TLR73xx` codes listed for WU-1001; architecture §9.1 updated if the spike changed the argument set.
 
 ## Agent Notes
 
@@ -92,4 +92,4 @@ Execute `Optimise` actions: locate crossgen2 in the pinned package, verify it, g
 ## Open Questions
 
 - **Resolved** — `IPackageLocator` seam: defined in Core (WU-100), implemented in Acquisition (WU-700), wired by the Cli (architecture §3.2).
-- Should `.rsp` files be kept in `--artifacts` after success, or only on failure?
+- Should `.rsp` files be kept in `--artefacts` after success, or only on failure?

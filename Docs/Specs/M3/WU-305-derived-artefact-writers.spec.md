@@ -53,7 +53,7 @@ Compose the M3 stages into one `EffectiveApplicationModel` build and write the s
 
 - No timestamps, absolute paths, machine names or GUIDs in artefacts ([§15](../../Architecture/Tailor.architecture.md#15-determinism)). Paths are `RelativePath` with `/`.
 - Collections sorted ordinal-ignore-case by path/id; property order fixed by record declaration.
-- Writers never write into the app tree unless the target directory is the sidecar `.repack/` supplied by the caller.
+- Writers never write into the app tree unless the target directory is the sidecar `.tailor/` supplied by the caller.
 - Artefacts are regenerable views; they carry no authority and are not read back by the engine.
 
 ## Acceptance Criteria
@@ -63,7 +63,7 @@ Compose the M3 stages into one `EffectiveApplicationModel` build and write the s
 - [ ] AC-3 All six artefacts are written with the common header; each is canonical JSON (UTF-8 no BOM, LF, 2-space) — verified by a canonical-form test.
 - [ ] AC-4 No artefact contains the absolute root path, machine name or a timestamp (test greps outputs against the temp root path and `Environment.MachineName`).
 - [ ] AC-5 Golden files of all six artefacts for a synthetic tree are committed.
-- [ ] AC-6 Hand-authored AppSpecs exist for every WU-003 app × {FD, SC}; building the EAM over every matrix entry yields zero errors, except variants flagged `expectedInvalid` in the WU-003 manifest (the cyclic plugin variant), which yield exactly their listed codes (`RPK3401`), and artefacts match committed golden files (known non-deterministic files from the WU-003 manifest are scrubbed).
+- [ ] AC-6 Hand-authored AppSpecs exist for every WU-003 app × {FD, SC}; building the EAM over every matrix entry yields zero errors, except variants flagged `expectedInvalid` in the WU-003 manifest (the cyclic plugin variant), which yield exactly their listed codes (`TLR3401`), and artefacts match committed golden files (known non-deterministic files from the WU-003 manifest are scrubbed).
 - [ ] AC-7 Two consecutive runs over every matrix entry produce byte-identical artefacts.
 - [ ] AC-8 Coverage: for every matrix entry, `classification-map.json` lists every in-scope file exactly once.
 - [ ] AC-9 `RuntimeFactsDetector` reports the correct deployment model, frameworks and TFM for every matrix entry (FD/SC per the manifest) and is referenced by `runtime-inventory.json`; Model has no reference to Analysis or Validation.

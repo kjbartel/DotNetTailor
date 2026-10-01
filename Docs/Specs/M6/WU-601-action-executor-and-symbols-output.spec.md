@@ -52,19 +52,19 @@ Namespace `Tailor.Execution`.
 | `IConfigModifier` (consumed, not defined here) | Lives in `Tailor.Planning.Actions` (architecture §3.2) so Transforms can implement it without referencing Execution: `string Name`, `ValueTask<byte[]> ModifyAsync(ReadOnlyMemory<byte> original, JsonObject parameters, CancellationToken)`. Selected by `PlanAction.Parameters.modifier`. If WU-503 has not added it, add it to Planning in this WU |
 | `Symbols.SymbolsDirectoryWriter` / `Symbols.DeterministicZipWriter` | Write `ExtractSymbols` outputs into `StagingSession.SymbolsRoot` (directory) or `<SymbolsRoot>.zip` (zip) |
 | `Reports.ExecutionReportWriter` | `execution-report.json`: `kind: ExecutionReport`, `schemaVersion`, `planHash`, `actions[] {id, kind, status (succeeded\|failed\|skipped), destination, sha256, size, diagnostics[]}` sorted by `order`, `tools[]`, `timings {…}` (the only non-canonical section, separable) |
-| `ExecutionDiagnostics` | `RPK6101`–`RPK6199` |
+| `ExecutionDiagnostics` | `TLR6101`–`TLR6199` |
 
 **Diagnostics**
 
 | Code | Condition |
 |---|---|
-| `RPK6101` | Source hash differs from the plan's `ExpectedHash`/`InputFile.Hash` (input changed since planning) |
-| `RPK6102` | No executor registered for the action kind (e.g. `Optimise` before WU-703) |
-| `RPK6103` | No `IConfigModifier` registered for the named modifier |
-| `RPK6104` | Package source not locatable, or package hash differs from provenance |
-| `RPK6105` | Destination already exists in staging (plan/collision invariant violated) |
-| `RPK6106` | Zip entry name invalid after `RelativePath` validation (defensive) |
-| `RPK6107` | An action failed (wraps the inner diagnostic). Execution stops and the result is `Succeeded = false` |
+| `TLR6101` | Source hash differs from the plan's `ExpectedHash`/`InputFile.Hash` (input changed since planning) |
+| `TLR6102` | No executor registered for the action kind (e.g. `Optimise` before WU-703) |
+| `TLR6103` | No `IConfigModifier` registered for the named modifier |
+| `TLR6104` | Package source not locatable, or package hash differs from provenance |
+| `TLR6105` | Destination already exists in staging (plan/collision invariant violated) |
+| `TLR6106` | Zip entry name invalid after `RelativePath` validation (defensive) |
+| `TLR6107` | An action failed (wraps the inner diagnostic). Execution stops and the result is `Succeeded = false` |
 
 ## Design Notes
 
@@ -79,13 +79,13 @@ Namespace `Tailor.Execution`.
 
 - [ ] AC-1 Each of `Preserve`, `Copy`, `Move`, `Remove`, `Add` (input/user/generated/package via fake locator), `Replace`, `ExtractSymbols`, `ModifyConfig` has a unit test asserting staged content and the report entry.
 - [ ] AC-2 `StreamingCopier` computes the same SHA-256 as `ContentHasher` for 0 B, 1 B, 1 MiB and 100 MiB (sparse temp) files, and reads each source exactly once (counting stream).
-- [ ] AC-3 A source file modified after planning yields `RPK6101`, the destination is deleted and execution stops.
-- [ ] AC-4 An `Optimise` action without a registered executor yields `RPK6102`. A fake `IActionExecutor` for `Optimise` registered through DI is invoked (extension-point test).
-- [ ] AC-5 A `ModifyConfig` action with a fake `IConfigModifier` writes the modifier's output. An unknown modifier name yields `RPK6103`.
+- [ ] AC-3 A source file modified after planning yields `TLR6101`, the destination is deleted and execution stops.
+- [ ] AC-4 An `Optimise` action without a registered executor yields `TLR6102`. A fake `IActionExecutor` for `Optimise` registered through DI is invoked (extension-point test).
+- [ ] AC-5 A `ModifyConfig` action with a fake `IConfigModifier` writes the modifier's output. An unknown modifier name yields `TLR6103`.
 - [ ] AC-6 Symbols `directory` output mirrors the PDBs' relative paths under the symbols root. The primary root contains no extracted PDB.
 - [ ] AC-7 The symbols zip is byte-identical across two executions into fresh staging sessions (M6 criterion 4). Entry order, timestamps and attributes match the Design Notes (inspected with `ZipArchive`).
 - [ ] AC-8 Running with `MaxParallelism` 1 and 8 yields byte-identical staged trees and `execution-report.json` (excluding the `timings` section).
-- [ ] AC-9 A fault injected in the Nth action stops execution, reports `RPK6107`, and returns `Succeeded = false`. Staging is left for the caller to roll back (asserted via WU-600 session state).
+- [ ] AC-9 A fault injected in the Nth action stops execution, reports `TLR6107`, and returns `Succeeded = false`. Staging is left for the caller to roll back (asserted via WU-600 session state).
 - [ ] AC-10 Executing the WU-504 filtering, symbols and resources plans for a matrix ConsoleApp copy produces a staged tree whose file list and hashes equal `PlanResult.ProjectedState` (primary and symbols roots).
 - [ ] AC-11 No executor opens any input file with write access (a fake input tree that throws on write-open runs the suite green).
 
@@ -98,7 +98,7 @@ Namespace `Tailor.Execution`.
 
 ## Definition of Done
 
-- Zero warnings, tests green, format clean. All ACs ticked by the Verifier. Plan status `Done`. `RPK61xx` codes listed for WU-1001.
+- Zero warnings, tests green, format clean. All ACs ticked by the Verifier. Plan status `Done`. `TLR61xx` codes listed for WU-1001.
 
 ## Agent Notes
 

@@ -50,20 +50,20 @@ Turn a loaded TransformSpec plus a validated input AppSpec into a `ValidatedTran
 | `Validation.TransformSpec.PolicySetBuilder.Build(Defaults?, FailureMode)` → `PolicySet` | `PolicySet.For(conditionKey)` → `ConditionPolicy`; built-in defaults table below |
 | `Planning.Validation.TransformSpecValidationPipeline.Validate(LoadedSpecification<TransformSpecDocument>, IReadOnlyDictionary<string,string> vars, AppSpecValidationResult, FailureMode)` → `Result<ValidatedTransformSpec>` | Order: loader diagnostics → WU-104 resolver → input AppSpec state gate → semantic checks → input assertions → selector compilation + match report → policy application |
 | `ValidatedTransformSpec` | `Document` (resolved), `Variables`, `PolicySet`, `CompiledSelectors` (by JSON pointer), `SelectorMatchReport`, `RuleLevels`, `AssertionOutcomes`, `Diagnostics` |
-| `TransformSpecDiagnostics` | `RPK4401`–`RPK4499` (Validation category) |
+| `TransformSpecDiagnostics` | `TLR4401`–`TLR4499` (Validation category) |
 
 **Semantic checks**
 
 | Code | Condition | Structural |
 |---|---|---|
-| `RPK4401` | Input AppSpec state is `Invalid` or `Unvalidated` ([RQ §4.3](../../Requirements/Repackage_tool_Requirements_v1.1.md)) | Yes |
-| `RPK4402` | No material operation: `operations` has no category, **and** `rules`, `layout`, `additions` are empty, **and** `symbols`/`documentation` are absent or `preserve`, **and** `defaults` changes nothing (architecture item 16) | Yes |
-| `RPK4403` | Selector references an unknown `folderId`, classification group or association type of the input AppSpec | Yes |
-| `RPK4404` | `defaults.policies` assigns a policy to a structural condition, or `skip`/`preserve` to a condition that does not support it | Yes |
-| `RPK4405` | Input assertion failed (one diagnostic per failed member, with expected and actual values) | Yes (see Open Questions) |
-| `RPK4406` | Unsupported target platform for v1 (a RID other than `win-x64` in `deploymentModel.rid` or in assertions) | Yes |
-| `RPK4407` | `symbols.output.path` / `layout.destination` / `additions.destination` escapes its root after variable resolution | Yes |
-| `RPK4408` | Requested selector matches nothing (severity from `PolicySet.For("selectorMatchesNothing")`) | No |
+| `TLR4401` | Input AppSpec state is `Invalid` or `Unvalidated` ([RQ §4.3](../../Requirements/Repackage_tool_Requirements_v1.1.md)) | Yes |
+| `TLR4402` | No material operation: `operations` has no category, **and** `rules`, `layout`, `additions` are empty, **and** `symbols`/`documentation` are absent or `preserve`, **and** `defaults` changes nothing (architecture item 16) | Yes |
+| `TLR4403` | Selector references an unknown `folderId`, classification group or association type of the input AppSpec | Yes |
+| `TLR4404` | `defaults.policies` assigns a policy to a structural condition, or `skip`/`preserve` to a condition that does not support it | Yes |
+| `TLR4405` | Input assertion failed (one diagnostic per failed member, with expected and actual values) | Yes (see Open Questions) |
+| `TLR4406` | Unsupported target platform for v1 (a RID other than `win-x64` in `deploymentModel.rid` or in assertions) | Yes |
+| `TLR4407` | `symbols.output.path` / `layout.destination` / `additions.destination` escapes its root after variable resolution | Yes |
+| `TLR4408` | Requested selector matches nothing (severity from `PolicySet.For("selectorMatchesNothing")`) | No |
 
 **Built-in condition policy defaults** (overridable in `defaults.policies`, see [TS §24.2](../../Requirements/Transformation_Specification.md#24-validation-and-failure-policies))
 
@@ -87,14 +87,14 @@ Turn a loaded TransformSpec plus a validated input AppSpec into a `ValidatedTran
 
 ## Acceptance Criteria
 
-- [ ] AC-1 A spec with a declared variable and no value yields `RPK1402` (from WU-104). The pipeline stops before semantic checks and reports only resolution errors.
-- [ ] AC-2 An input AppSpec whose validation state is `Invalid` yields `RPK4401` and no `ValidatedTransformSpec`.
-- [ ] AC-3 A spec with only a header, or only `symbols: {policy: preserve}`, yields `RPK4402`. A spec with only one exclude rule, or only `symbols: {policy: separate}`, passes.
-- [ ] AC-4 Selectors referencing an unknown `folderId`, classification or association type each yield `RPK4403` with a JSON pointer.
-- [ ] AC-5 Each TS §6.2 assertion member in WU-102 `StateAssertions` has a passing and a failing test against a matrix AppSpec (e.g. `deploymentModel: selfContained` on an FD app → `RPK4405` with expected `selfContained` and actual `frameworkDependent`).
-- [ ] AC-6 `RPK4405` stays `Error` under `--permissive` and with any `defaults.policies` entry (test).
-- [ ] AC-7 `defaults.policies` that set a structural condition, or an unsupported mode, yield `RPK4404`.
-- [ ] AC-8 A rule selector that matches nothing yields `RPK4408` as a warning by default, as an error with `selectorMatchesNothing: error`, is suppressed with `skip`, and is escalated to failure under `--strict`.
+- [ ] AC-1 A spec with a declared variable and no value yields `TLR1402` (from WU-104). The pipeline stops before semantic checks and reports only resolution errors.
+- [ ] AC-2 An input AppSpec whose validation state is `Invalid` yields `TLR4401` and no `ValidatedTransformSpec`.
+- [ ] AC-3 A spec with only a header, or only `symbols: {policy: preserve}`, yields `TLR4402`. A spec with only one exclude rule, or only `symbols: {policy: separate}`, passes.
+- [ ] AC-4 Selectors referencing an unknown `folderId`, classification or association type each yield `TLR4403` with a JSON pointer.
+- [ ] AC-5 Each TS §6.2 assertion member in WU-102 `StateAssertions` has a passing and a failing test against a matrix AppSpec (e.g. `deploymentModel: selfContained` on an FD app → `TLR4405` with expected `selfContained` and actual `frameworkDependent`).
+- [ ] AC-6 `TLR4405` stays `Error` under `--permissive` and with any `defaults.policies` entry (test).
+- [ ] AC-7 `defaults.policies` that set a structural condition, or an unsupported mode, yield `TLR4404`.
+- [ ] AC-8 A rule selector that matches nothing yields `TLR4408` as a warning by default, as an error with `selectorMatchesNothing: error`, is suppressed with `skip`, and is escalated to failure under `--strict`.
 - [ ] AC-9 `ValidatedTransformSpec` contains a compiled selector and a precedence level for every selector-bearing member. Its golden file for the TS §33 fixture over the matrix PluginHost net8 FD entry is byte-stable across two runs.
 - [ ] AC-10 `Tailor.Validation` has no reference to `Tailor.Planning` (assembly-reference test).
 
@@ -107,7 +107,7 @@ Turn a loaded TransformSpec plus a validated input AppSpec into a `ValidatedTran
 
 ## Definition of Done
 
-- Zero warnings, tests green, format clean. All ACs ticked by the Verifier. Plan status `Done`. `RPK44xx` codes listed for WU-1001.
+- Zero warnings, tests green, format clean. All ACs ticked by the Verifier. Plan status `Done`. `TLR44xx` codes listed for WU-1001.
 
 ## Agent Notes
 
@@ -116,8 +116,8 @@ Turn a loaded TransformSpec plus a validated input AppSpec into a `ValidatedTran
 
 ## Open Questions
 
-- TS §6.4 allows an "explicit and safe override mechanism" for failed input assertions. None is defined for v1, so `RPK4405` is proposed as structural.
-- The exact "material operation" rule (`RPK4402`), in particular whether a `defaults`-only spec (e.g. `defaults.documentation: exclude`) counts. Proposed: yes, it counts.
+- TS §6.4 allows an "explicit and safe override mechanism" for failed input assertions. None is defined for v1, so `TLR4405` is proposed as structural.
+- The exact "material operation" rule (`TLR4402`), in particular whether a `defaults`-only spec (e.g. `defaults.documentation: exclude`) counts. Proposed: yes, it counts.
 - Default condition policies above are proposals. WU-102 marks the condition key list as provisional.
 - The plan dependency on WU-501 is weak: conflicts are only detectable once WU-504 contributes intents, so this WU uses WU-501 only for `RuleLevels`. Consider moving conflict detection wording in M5 criterion 2 to WU-503/WU-504.
 

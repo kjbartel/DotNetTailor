@@ -40,7 +40,7 @@ Discover the application's execution model from an unknown tree — entry points
 | `Tailor.Analysis.Execution.ExecutionModelAnalyzer.Analyze(IAppTree, EffectiveApplicationModel bootstrap)` → `ExecutionModelResult` | `EntryPoints`, `DeploymentModel`, `FrameworkContexts`, `Platform`, `Diagnostics` |
 | `Confident<T>` | `Value`, `Confidence` (`Explicit`, `Derived`, `Inferred`, `Unknown`), `Source` (relative path + member) |
 | `EntryPoint` | `Host?` (apphost exe), `Assembly`, `Subsystem` (`console`/`gui`), `RuntimeConfig?`, `DepsJson?` |
-| Diagnostic codes (proposed, `RPK40xx`) | `RPK4001` no entry point found (warning), `RPK4002` conflicting deployment-model evidence (warning), `RPK4003` inconsistent framework contexts (warning); bundle refusal reuses the WU-200 bundle code at severity Error |
+| Diagnostic codes (proposed, `TLR40xx`) | `TLR4001` no entry point found (warning), `TLR4002` conflicting deployment-model evidence (warning), `TLR4003` inconsistent framework contexts (warning); bundle refusal reuses the WU-200 bundle code at severity Error |
 
 ## Design Notes
 
@@ -58,7 +58,7 @@ Discover the application's execution model from an unknown tree — entry points
 
 - Deterministic facts (FD/SC, frameworks, TFM, RID source values) come from the Model `RuntimeFactsDetector` (WU-305, architecture §3.2). This WU adds confidence, conflict handling, entry-point discovery and heuristics on top; it does not re-implement detection.
 - Entry points sharing an identical framework set form one framework context (`AS §9.3`); distinct sets → separate contexts.
-- Conflicting evidence → pick the Explicit source, downgrade to `Inferred`, emit `RPK4002`.
+- Conflicting evidence → pick the Explicit source, downgrade to `Inferred`, emit `TLR4002`.
 - Bundle marker on any apphost → return early with the Error diagnostic; no further analysis.
 - Analysis is read-only; the bootstrap EAM is in-memory only.
 
@@ -71,7 +71,7 @@ Discover the application's execution model from an unknown tree — entry points
 - [ ] AC-5 TFM equals `net8.0*`/`net10.0*` per matrix entry.
 - [ ] AC-6 RID is `win-x64` (`Explicit`) for SC entries and `win-x64` (`Inferred`) for FD entries with a x64 apphost.
 - [ ] AC-7 Every fact in `ExecutionModelResult` carries a confidence and a source (golden file).
-- [ ] AC-8 Conflicting runtimeconfig vs host files yields `RPK4002` and `Inferred` confidence (synthetic).
+- [ ] AC-8 Conflicting runtimeconfig vs host files yields `TLR4002` and `Inferred` confidence (synthetic).
 - [ ] AC-9 A single-file bundle fixture yields the bundle Error diagnostic and no entry points.
 - [ ] AC-10 Tree fingerprint before and after analysis is unchanged (physical test).
 

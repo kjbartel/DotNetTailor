@@ -46,31 +46,31 @@ Namespace `Tailor.Inspection.Metadata`.
 |---|---|
 | `sealed record AssemblyIdentity` | `Name`, `Version`, `Culture` (`""` = neutral), `PublicKeyToken` (8 bytes or empty, hex lowercase in `ToString`), `IsRetargetable`, `ContentType`; `ToDisplayName()` (`Name, Version=…, Culture=neutral, PublicKeyToken=…`); equality: name ordinal-ignore-case, culture ordinal-ignore-case, version, token bytes; `IComparable` total order |
 | `sealed record AssemblyFacts` | `Identity`, `References` (`IReadOnlyList<AssemblyIdentity>`, sorted), `TargetFramework?` (`TargetFrameworkInfo(string FrameworkName, string? DisplayName)` + `Tfm?` short form, e.g. `net8.0`, via mapping `.NETCoreApp,Version=v8.0` → `net8.0`), `IsSatellite`, `Mvid` |
-| `interface IAssemblyMetadataReader` / `AssemblyMetadataReader` | `Result<AssemblyFacts> Read(Stream, RelativePath location)`; `ReadFile(string fullPath, RelativePath location)`; returns `RPK2101` for non-assemblies (no manifest) |
+| `interface IAssemblyMetadataReader` / `AssemblyMetadataReader` | `Result<AssemblyFacts> Read(Stream, RelativePath location)`; `ReadFile(string fullPath, RelativePath location)`; returns `TLR2101` for non-assemblies (no manifest) |
 | `static PublicKeyTokens` | `Compute(ReadOnlySpan<byte> publicKey)` (SHA-1, last 8 bytes reversed) |
 | `ExternalReferenceScanner` | `Result<ExternalReferences> Scan(Stream, RelativePath)` → per referenced assembly: sorted `TypeReference(Namespace, Name, Enclosing?)` and `MemberReference(TypeReference Parent, string Name, MemberKind Kind, string SignatureDisplay)` |
-| `static MetadataDiagnostics` | `RPK2100`–`RPK2199` |
+| `static MetadataDiagnostics` | `TLR2100`–`TLR2199` |
 
-Diagnostics (minimum): `RPK2101` PE has no assembly manifest (netmodule/native); `RPK2102` malformed metadata table/heap; `RPK2103` undecodable `TargetFrameworkAttribute` blob (warning, TFM unknown); `RPK2104` unsupported/unknown TFM identifier (warning, keep raw `FrameworkName`).
+Diagnostics (minimum): `TLR2101` PE has no assembly manifest (netmodule/native); `TLR2102` malformed metadata table/heap; `TLR2103` undecodable `TargetFrameworkAttribute` blob (warning, TFM unknown); `TLR2104` unsupported/unknown TFM identifier (warning, keep raw `FrameworkName`).
 
 ## Design Notes
 
 - Use `PEReader.GetMetadataReader()`; decode attributes with `CustomAttribute.DecodeValue` and a minimal `ICustomAttributeTypeProvider<T>` (strings/primitives only).
 - Public key token: if `AssemblyDefinition.PublicKey` is a full key, compute token; `AssemblyReference.PublicKeyOrToken` may already be a token (`AssemblyFlags.PublicKey` distinguishes).
 - Satellite rule ([§7.4](../../Architecture/Tailor.architecture.md#74-identities-and-inspection)): non-empty culture **and** name ends with `.resources` (ordinal-ignore-case). Culture validity is not checked here (WU-203 does that at model level).
-- TFM short-form mapping: `.NETCoreApp,Version=vX.Y` → `netX.Y`; `.NETStandard,Version=vX.Y` → `netstandardX.Y`; `.NETFramework,Version=vX.Y[.Z]` → `netXY[Z]`; platform suffix is not derivable from the attribute (`TargetPlatformAttribute` optional read → `-windows`). Unknown identifiers keep the raw value (`RPK2104`).
+- TFM short-form mapping: `.NETCoreApp,Version=vX.Y` → `netX.Y`; `.NETStandard,Version=vX.Y` → `netstandardX.Y`; `.NETFramework,Version=vX.Y[.Z]` → `netXY[Z]`; platform suffix is not derivable from the attribute (`TargetPlatformAttribute` optional read → `-windows`). Unknown identifiers keep the raw value (`TLR2104`).
 - Reference lists and scans are sorted deterministically (identity order; then namespace, name, member name, signature).
 - Signature display for MemberRefs uses a `ISignatureTypeProvider<string, …>` producing a stable, culture-invariant string.
-- Exceptions from malformed metadata are caught and converted to `RPK2102`; never thrown ([§17](../../Architecture/Tailor.architecture.md#17-security)).
+- Exceptions from malformed metadata are caught and converted to `TLR2102`; never thrown ([§17](../../Architecture/Tailor.architecture.md#17-security)).
 
 ## Acceptance Criteria
 
 - [ ] AC-1 Synthetic assembly `Contoso.Lib, Version=1.2.3.4, Culture=neutral` with a known public key → identity fields and computed token match expected values; display name matches exactly.
 - [ ] AC-2 Synthetic assembly referencing `System.Runtime 8.0.0.0` (token `b03f5f7f11d50a3a`) and `Contoso.Other` → both references with correct version, culture, token; order deterministic.
 - [ ] AC-3 `[assembly: TargetFramework(".NETCoreApp,Version=v8.0", FrameworkDisplayName = ".NET 8.0")]` → `FrameworkName`, `DisplayName`, `Tfm = net8.0`; with `TargetPlatform("Windows7.0")` → `net8.0-windows`; `.NETStandard,Version=v2.0` → `netstandard2.0`; `.NETFramework,Version=v4.7.2` → `net472`.
-- [ ] AC-4 Malformed TFM attribute blob → `RPK2103` warning, `TargetFramework = null`, identity still returned.
+- [ ] AC-4 Malformed TFM attribute blob → `TLR2103` warning, `TargetFramework = null`, identity still returned.
 - [ ] AC-5 Synthetic `Contoso.Lib.resources` with culture `de` → `IsSatellite = true`; neutral `Contoso.Lib.resources` → `false`; `Contoso.Lib` with culture `de` → `false`.
-- [ ] AC-6 Native PE / non-PE input → `RPK2101`/`RPK2102`, no exception; truncation/bit-flip fuzz loop (1,000 iterations) over a valid assembly throws nothing.
+- [ ] AC-6 Native PE / non-PE input → `TLR2101`/`TLR2102`, no exception; truncation/bit-flip fuzz loop (1,000 iterations) over a valid assembly throws nothing.
 - [ ] AC-7 `ExternalReferenceScanner` on a synthetic assembly calling `System.Console.WriteLine(string)` and referencing type `System.Runtime.Serialization.Formatters.Binary.BinaryFormatter` lists both under their resolution-scope assembly with stable signature strings (golden file).
 - [ ] AC-8 `AssemblyIdentity` equality treats `contoso.lib`/`Contoso.Lib` as equal and differs on token/version/culture; ordering is total and stable (property test).
 - [ ] AC-9 Matrix (`Category=Matrix`): identity, references and TFM of every managed file in every matrix app match a committed golden file; satellite assemblies in the satellite test app are flagged; net8 and net10 app assemblies report `net8.0*`/`net10.0*` TFMs.

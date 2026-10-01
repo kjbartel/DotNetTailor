@@ -46,11 +46,11 @@ Namespace `Tailor.Planning.Selectors`.
 | `ISelectableArtefact` | `Path` (`RelativePath`), `FolderChain` (effective folder nodes from the file's folder up to root: id, role), `Classification`, `AssociationType?` + `PrimaryPath?`, `AssemblyRole?`, `PluginId?`, `FrameworkRole`, `RidContext?`, `Culture?`, `Tfm?`, `IsManagedAssembly` |
 | `ISelectableArtefactSet` | `Artefacts` (sorted by `PathPolicy` comparer), `TryGet(RelativePath)` |
 | `EffectiveModelArtefactSet` | Adapter over `EffectiveApplicationModel`; sidecars excluded |
-| `SelectorCompiler.Compile(Selector?, SelectorCompileContext)` → `Result<CompiledSelector>` | `null` → `CompiledSelector.WholeApplication`; invalid glob or culture/RID syntax → `RPK50xx` with JSON pointer |
+| `SelectorCompiler.Compile(Selector?, SelectorCompileContext)` → `Result<CompiledSelector>` | `null` → `CompiledSelector.WholeApplication`; invalid glob or culture/RID syntax → `TLR50xx` with JSON pointer |
 | `CompiledSelector.Evaluate(ISelectableArtefact)` → `TriState` | `True`, `False`, `Unknown` |
 | `SelectorEngine.Select(CompiledSelector, ISelectableArtefactSet)` → `SelectionResult` | `Matches` (sorted), `MatchesNothing` |
 | `SelectorMatchReport` | Per selector location (document + JSON pointer): match count, `MatchesNothing` |
-| `SelectorDiagnostics` | `RPK5001`–`RPK5099` |
+| `SelectorDiagnostics` | `TLR5001`–`TLR5099` |
 
 **Predicates** (each value is a `StringList`. Values in one list are OR-ed. Predicates in one object are AND-ed.)
 
@@ -87,7 +87,7 @@ Namespace `Tailor.Planning.Selectors`.
 - [ ] AC-5 `not: {rid: "win-x64"}` on the `ConsoleApp/<tfm>-fdportable-il` matrix variant selects only `runtimes/<rid>/…` files whose RID is not in the `win-x64` compatibility closure.
 - [ ] AC-6 An absent selector selects every in-scope artefact and no sidecar.
 - [ ] AC-7 A selector that matches nothing sets `MatchesNothing = true` and appears in `SelectorMatchReport` with its document and JSON pointer. The engine emits no diagnostic itself.
-- [ ] AC-8 Invalid glob, invalid culture pattern and invalid RID value each produce a distinct `RPK50xx` error with a JSON pointer and no exception.
+- [ ] AC-8 Invalid glob, invalid culture pattern and invalid RID value each produce a distinct `TLR50xx` error with a JSON pointer and no exception.
 - [ ] AC-9 Results are identical for shuffled artefact input order (permutation test) and across two runs (golden file of `SelectorMatchReport` for the TS §33 fixture over a matrix PluginHost entry).
 - [ ] AC-10 The engine performs no filesystem access: a fake `IAppTree` that throws on `OpenRead` runs the full suite green.
 
@@ -101,7 +101,7 @@ Namespace `Tailor.Planning.Selectors`.
 ## Definition of Done
 
 - Zero warnings, tests green, `dotnet format --verify-no-changes` clean.
-- All ACs ticked by the Verifier. Plan status `Done`. `RPK50xx` codes listed for WU-1001.
+- All ACs ticked by the Verifier. Plan status `Done`. `TLR50xx` codes listed for WU-1001.
 - Changes are limited to the target paths, plus the plan status row.
 
 ## Agent Notes

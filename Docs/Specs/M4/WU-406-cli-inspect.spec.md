@@ -30,28 +30,28 @@ Ship the `inspect` verb: show the derived artefacts and graphs of an application
 
 **In**: `inspect <appDir> --spec <file> [inventory|classification|assemblies|graph|plugins|runtime] [--plugin <id>] [--format text|json]`, reuse of the WU-404 load → EAM pipeline (no validation report written), text renderers, `--plugin` filtering.
 
-**Out**: Writing artefacts to disk (use `analyze`/`validate`), heuristics (WU-400–WU-402), new artefact content (WU-305 owns the DTOs).
+**Out**: Writing artefacts to disk (use `analyse`/`validate`), heuristics (WU-400–WU-402), new artefact content (WU-305 owns the DTOs).
 
 ## Deliverables
 
 | Item | Detail |
 |---|---|
 | `Cli.Commands.Inspect.InspectCommand` | Replaces the WU-105 stub. Loads the AppSpec (with includes, WU-103), builds the EAM (WU-305 `EffectiveModelBuilder`), renders the selected view to stdout. Default view: `inventory` |
-| `--format json` | Writes the same DTO as the WU-305 artefact of that view, via the canonical JSON writer. Byte-identical to the corresponding `.repack/*.json` artefact for the same inputs |
+| `--format json` | Writes the same DTO as the WU-305 artefact of that view, via the canonical JSON writer. Byte-identical to the corresponding `.tailor/*.json` artefact for the same inputs |
 | `--format text` (default) | Deterministic, sorted, tabular text per view; graphs as indented trees (`plugins`) and edge lists (`graph`) |
 | `--plugin <id>` | Restricts every view to the plugin unit `<id>` (plugin graph node id from WU-304) plus its upstream closure for `graph`/`plugins` |
-| Diagnostic codes (proposed, `RPK042x`, CLI range) | `RPK0420` unknown view, `RPK0421` unknown plugin id |
+| Diagnostic codes (proposed, `TLR042x`, CLI range) | `TLR0420` unknown view, `TLR0421` unknown plugin id |
 
 | Exit | Condition |
 |---|---|
 | 0 | View rendered (model diagnostics with severity ≤ warning are printed to stderr) |
 | 1 | Model build errors (EAM diagnostics with severity Error); partial views are still rendered |
-| 2 | Usage errors, `RPK0420`, `RPK0421`, missing `--spec` |
+| 2 | Usage errors, `TLR0420`, `TLR0421`, missing `--spec` |
 | 3 | `--strict` with warnings |
 
 ## Design Notes
 
-- `inspect` is read-only: it writes nothing to the app tree or `--artifacts`.
+- `inspect` is read-only: it writes nothing to the app tree or `--artefacts`.
 - Reuse the WU-404 composition root and in-process CLI helpers. Do not duplicate the load/EAM pipeline.
 - JSON output reuses the WU-305 DTOs, so artefact schemas and `inspect --format json` cannot drift.
 - `--plugin` scoping follows architecture §19 item 8: plugins are selected by identity, not by a separate command namespace.
@@ -60,11 +60,11 @@ Ship the `inspect` verb: show the derived artefacts and graphs of an application
 
 - [ ] AC-1 `inspect --help` matches the architecture §14 synopsis plus `--format` (golden file).
 - [ ] AC-2 Each view (`inventory`, `classification`, `assemblies`, `graph`, `plugins`, `runtime`) renders text for a matrix ConsoleApp and PluginHost copy (golden files).
-- [ ] AC-3 `--format json` output for each view is byte-identical to the corresponding artefact written by `analyze` for the same AppSpec and tree.
-- [ ] AC-4 `inspect … plugins --plugin PluginA` on PluginHost lists only PluginA and its upstream closure; an unknown id exits 2 with `RPK0421`.
-- [ ] AC-5 An unknown view name exits 2 with `RPK0420`.
-- [ ] AC-6 The input tree fingerprint including sidecars, and the `--artifacts` directory, are unchanged after `inspect`.
-- [ ] AC-7 On the cyclic plugin fixture (`expectedInvalid`), `plugins` renders the cycle and exits 1 with `RPK3401`.
+- [ ] AC-3 `--format json` output for each view is byte-identical to the corresponding artefact written by `analyse` for the same AppSpec and tree.
+- [ ] AC-4 `inspect … plugins --plugin PluginA` on PluginHost lists only PluginA and its upstream closure; an unknown id exits 2 with `TLR0421`.
+- [ ] AC-5 An unknown view name exits 2 with `TLR0420`.
+- [ ] AC-6 The input tree fingerprint including sidecars, and the `--artefacts` directory, are unchanged after `inspect`.
+- [ ] AC-7 On the cyclic plugin fixture (`expectedInvalid`), `plugins` renders the cycle and exits 1 with `TLR3401`.
 - [ ] AC-8 Two runs produce byte-identical stdout for every view and format.
 
 ## Test Requirements
@@ -76,7 +76,7 @@ Ship the `inspect` verb: show the derived artefacts and graphs of an application
 
 ## Definition of Done
 
-- All ACs ticked by the Verifier; CI green; `RPK042x` codes listed for WU-1001; M4 `inspect` criterion demonstrably covered; changes limited to target paths (plus the plan status row).
+- All ACs ticked by the Verifier; CI green; `TLR042x` codes listed for WU-1001; M4 `inspect` criterion demonstrably covered; changes limited to target paths (plus the plan status row).
 
 ## Agent Notes
 

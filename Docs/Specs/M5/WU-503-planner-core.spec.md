@@ -65,7 +65,7 @@ Namespace `Tailor.Planning`.
 | `IAcquisitionPlanner` (seam) | `ValueTask<Result<IReadOnlyList<ResolvedPackageRef>>> ResolveAsync(IReadOnlyList<PackageRequestIntent>, bool offline, CancellationToken)`. The default `NoAcquisitionPlanner` returns an error if any request exists. WU-700/702 provide the real adapter |
 | `Planner.PlanAsync(PlanningInput, CancellationToken)` → `PlanResult` | `PlanningInput {ValidatedTransformSpec, AppSpecValidationResult, Options}`. `PlanResult {Actions (sorted), Acquisitions, TargetState, Variables, ProjectedState, IntentResolution, Diagnostics, PhaseLog}` |
 | `Checks.OutputCollisionCheck`, `Checks.RemovalSafetyCheck` | Run in phase 9 |
-| `PlanningDiagnostics` | `RPK5301`–`RPK5399` |
+| `PlanningDiagnostics` | `TLR5301`–`TLR5399` |
 
 **Action semantics**
 
@@ -85,12 +85,12 @@ Namespace `Tailor.Planning`.
 
 | Code | Condition | Structural |
 |---|---|---|
-| `RPK5301` | Two actions produce the same `(Root, Path)` (policy comparer) and neither is a `Remove`/`Replace` chain on that path | Yes |
-| `RPK5302` | Removal of an in-tree managed assembly referenced (resolved edge, WU-303/304) by a retained assembly, with no `Add`/`Replace` of the same simple name in a probed location | Yes |
-| `RPK5303` | Removal of a **required** associated file while its primary is retained | Yes |
-| `RPK5304` | `operations.extensions` category with no registered handler | Yes |
-| `RPK5305` | Acquisition requested but unavailable (`NoAcquisitionPlanner`, or an error from the seam) | No (exit 4 via category) |
-| `RPK5306` | Handler contributed an action outside its declared phase, or a `dependsOn` cycle | Yes (internal guard) |
+| `TLR5301` | Two actions produce the same `(Root, Path)` (policy comparer) and neither is a `Remove`/`Replace` chain on that path | Yes |
+| `TLR5302` | Removal of an in-tree managed assembly referenced (resolved edge, WU-303/304) by a retained assembly, with no `Add`/`Replace` of the same simple name in a probed location | Yes |
+| `TLR5303` | Removal of a **required** associated file while its primary is retained | Yes |
+| `TLR5304` | `operations.extensions` category with no registered handler | Yes |
+| `TLR5305` | Acquisition requested but unavailable (`NoAcquisitionPlanner`, or an error from the seam) | No (exit 4 via category) |
+| `TLR5306` | Handler contributed an action outside its declared phase, or a `dependsOn` cycle | Yes (internal guard) |
 
 ## Design Notes
 
@@ -99,23 +99,23 @@ Namespace `Tailor.Planning`.
 - Every in-scope input file ends up with exactly one of `Preserve`/`Move`/`Remove`/`ExtractSymbols`/`Replace`/`Optimise` (coverage invariant, [TS §9.5](../../Requirements/Transformation_Specification.md#9-include-and-exclude-rules)). With no handlers active, every file is `Preserve`.
 - **Removal safety** uses the input dependency graph plus projected additions. It does not attempt native-dependency analysis (none exists in the EAM). Required associations come from the AppSpec association rules.
 - **Zero side effects.** Planning reads only via `IAppTree` and the EAM. The only permitted external effect is `IAcquisitionPlanner.ResolveAsync` (writes to the NuGet package cache only, and never with `--offline`; architecture §4, §19 item 28).
-- The phase-2 acquisition list is final. A handler that needs a package it did not declare in phase 2 reports `RPK5305`.
+- The phase-2 acquisition list is final. A handler that needs a package it did not declare in phase 2 reports `TLR5305`.
 - Variables (`ResolvedTransformSpec.Variables`) and the resolved `TargetState` are part of `PlanResult` so that WU-506 can pin them ([TS §29.3](../../Requirements/Transformation_Specification.md#29-external-sources-and-credentials)).
 
 ## Acceptance Criteria
 
 - [ ] AC-1 `PlanPhase` has exactly the 9 phases of architecture §4 in that order. Handlers run strictly by phase (a test with fake handlers records the call sequence).
-- [ ] AC-2 A fake category registered via DI and referenced in `operations.extensions["test.noop"]` participates without any change to Planning code. An unregistered extension category yields `RPK5304`.
+- [ ] AC-2 A fake category registered via DI and referenced in `operations.extensions["test.noop"]` participates without any change to Planning code. An unregistered extension category yields `TLR5304`.
 - [ ] AC-3 With no active handlers, every in-scope file of a synthetic tree gets exactly one `Preserve` action (coverage test), and sidecars get none.
 - [ ] AC-4 Two fake handlers in the same phase, registered in either order, produce byte-identical `PlanResult` (golden file).
 - [ ] AC-5 Every action carries `Phase`, `Order`, `Provenance.Handler`, and, when rule-derived, `RuleId`, `Document`, `JsonPointer` and `PrecedenceLevel`.
-- [ ] AC-6 Two actions targeting `Lib/A.dll` and `lib/a.DLL` in the primary root yield `RPK5301` naming both sources (structural, not downgradable).
-- [ ] AC-7 Removing `ConsoleApp.Library.dll` while `ConsoleApp.dll` is retained yields `RPK5302`. Adding a replacement with the same simple name at the same path clears it.
-- [ ] AC-8 Removing a required associated file (e.g. `App.runtimeconfig.json`) while `App.dll` is retained yields `RPK5303`.
-- [ ] AC-9 A handler that declares an acquisition with the default `NoAcquisitionPlanner` yields `RPK5305`. A fake planner's resolved packages appear in `PlanResult.Acquisitions` sorted by id and version.
+- [ ] AC-6 Two actions targeting `Lib/A.dll` and `lib/a.DLL` in the primary root yield `TLR5301` naming both sources (structural, not downgradable).
+- [ ] AC-7 Removing `ConsoleApp.Library.dll` while `ConsoleApp.dll` is retained yields `TLR5302`. Adding a replacement with the same simple name at the same path clears it.
+- [ ] AC-8 Removing a required associated file (e.g. `App.runtimeconfig.json`) while `App.dll` is retained yields `TLR5303`.
+- [ ] AC-9 A handler that declares an acquisition with the default `NoAcquisitionPlanner` yields `TLR5305`. A fake planner's resolved packages appear in `PlanResult.Acquisitions` sorted by id and version.
 - [ ] AC-10 Planning over a physical temp copy of a matrix app leaves the temp root's full fingerprint (including sidecars and directory listing) unchanged, and creates no files anywhere under the temp root.
 - [ ] AC-11 Two `PlanAsync` runs on the same inputs produce equal `PlanResult` canonical JSON (byte comparison).
-- [ ] AC-12 A `dependsOn` cycle contributed by a fake handler yields `RPK5306`.
+- [ ] AC-12 A `dependsOn` cycle contributed by a fake handler yields `TLR5306`.
 - [ ] AC-13 A phase-7 fake handler selecting via `HandlerContext.Selectors` over `State` does not see files removed in phase 6.
 
 ## Test Requirements
@@ -127,7 +127,7 @@ Namespace `Tailor.Planning`.
 
 ## Definition of Done
 
-- Zero warnings, tests green, format clean. All ACs ticked by the Verifier. Plan status `Done`. `RPK53xx` codes listed for WU-1001.
+- Zero warnings, tests green, format clean. All ACs ticked by the Verifier. Plan status `Done`. `TLR53xx` codes listed for WU-1001.
 
 ## Agent Notes
 

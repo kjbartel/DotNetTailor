@@ -52,7 +52,7 @@ Implement the `optimisation.readyToRun` handler's planning half: determine R2R e
 | Ineligible | `CompositeComponent` | Component of a composite R2R image |
 | Ineligible | `ArchitectureMismatch` | Not usable on x64 (e.g. `Requires32Bit`, non-AMD64 machine for non-AnyCPU) |
 | Skipped | `AlreadyReadyToRun` | App/plugin assembly already has an R2R header |
-| Skipped | `FrameworkAlreadyReadyToRun` | Runtime-pack framework assembly (already R2R). Never recompiled in v1, even when a selector names it explicitly (warning `RPK72xx`, then skipped) |
+| Skipped | `FrameworkAlreadyReadyToRun` | Runtime-pack framework assembly (already R2R). Never recompiled in v1, even when a selector names it explicitly (warning `TLR72xx`, then skipped) |
 | Skipped | `NotSelected` | Excluded by selector or not matched |
 | Planned | — | Eligible and selected |
 
@@ -63,7 +63,7 @@ Every managed assembly in the projected output gets exactly one entry. Non-manag
 - `ReadyToRunHandler`, `R2REligibilityEvaluator`, `R2RCompilationUnitBuilder`.
 - Plan model additions: `R2REligibilityEntry {Path, State, Reason?, Detail?}`, `R2RCompilationUnit {Id, TargetAssembly, Output, References[], ReferenceRoots[], TargetTfm, TargetRid, Options, Crossgen2 {Id, Version}, FailurePolicy}`, `R2ROptions {Optimise, Pdb, Mibc, EmbedPgoData, Composite, InputBubble}` (schema regenerated per the `schema-change` skill).
 - DI registration of the handler by category.
-- Diagnostics (proposed `RPK72xx`): composite/inputbubble requested for FD, selector matches nothing (policy-driven), unresolved reference in unit, crossgen2 version unavailable, explicit selection of an already-R2R assembly.
+- Diagnostics (proposed `TLR72xx`): composite/inputbubble requested for FD, selector matches nothing (policy-driven), unresolved reference in unit, crossgen2 version unavailable, explicit selection of an already-R2R assembly.
 
 ## Design Notes
 
@@ -82,12 +82,12 @@ Every managed assembly in the projected output gets exactly one entry. Non-manag
 - [ ] AC-2 For every matrix app, every managed assembly in the projected output has exactly one eligibility entry (coverage test).
 - [ ] AC-3 Each planned unit's references include the implementation assemblies (incl. `System.Private.CoreLib.dll`) of the **target** runtime pack version, for FD and SC targets.
 - [ ] AC-4 For the plugin test app, a plugin unit references its upstream plugins and the host, never a downstream plugin, and contains a single input assembly.
-- [ ] AC-5 `composite` or `inputBubble` with an FD target fails validation with an `RPK72xx` error.
+- [ ] AC-5 `composite` or `inputBubble` with an FD target fails validation with an `TLR72xx` error.
 - [ ] AC-6 The crossgen2 acquisition request uses `Microsoft.NETCore.App.Crossgen2.<hostRid>` with major = target runtime major (net8 → 8.x, net10 → 10.x), pinned in the plan.
 - [ ] AC-7 An R2R selector that matches nothing applies the configured policy (error/warning/skip).
 - [ ] AC-8 Every unit records the effective failure policy.
 - [ ] AC-9 The projected AppSpec marks planned assemblies as R2R; an output assertion requiring R2R on a skipped assembly fails planning.
-- [ ] AC-10 Planning performs no filesystem writes outside the package cache/`--artifacts` (before/after snapshot test).
+- [ ] AC-10 Planning performs no filesystem writes outside the package cache/`--artefacts` (before/after snapshot test).
 - [ ] AC-11 Two plans for the same inputs are byte-identical.
 - [ ] AC-12 A selector that explicitly names a runtime-pack framework assembly yields a warning and `Skipped(FrameworkAlreadyReadyToRun)`; no `Optimise` action targets a framework assembly.
 
@@ -102,7 +102,7 @@ Every managed assembly in the projected output gets exactly one entry. Non-manag
 ## Definition of Done
 
 - All AC ticked by the Verifier; CI green; plan schema regenerated and committed with no drift.
-- `RPK72xx` codes listed for WU-1001.
+- `TLR72xx` codes listed for WU-1001.
 
 ## Agent Notes
 

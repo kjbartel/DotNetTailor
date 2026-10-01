@@ -57,23 +57,23 @@ Namespace `Tailor.Transforms`.
 | `Layout.LayoutHandler` | `layout[]`: `destination` intent = `destination/<relative path>` or, with `flatten`, `destination/<file name>`. Associated files follow their primary with the same relative offset |
 | `Common.AssociationGroupExpander` | `Expand(match, mode, types)` → artefacts. Group expansion applies only when the matched artefact is a primary. Default mode: `group` |
 | `Common.SectionIntentFactory` | Builds `IntentSource` with document and JSON pointer from WU-103 provenance |
-| `TransformsFilteringDiagnostics` | `RPK5401`–`RPK5499` |
+| `TransformsFilteringDiagnostics` | `TLR5401`–`TLR5499` |
 
 **Handler validation**
 
 | Code | Condition |
 |---|---|
-| `RPK5401` | `symbols.select` / `documentation.select` matches only artefacts that have no `symbols` / `xmlDoc` association, so the section has no effect (warning) |
-| `RPK5402` | `layout.destination` equals or is under a folder whose AppSpec role is `runtime`/`resources` while the rule moves managed assemblies (warning: probing may break) |
-| `RPK5403` | Associated file retained while its primary is removed (orphan), severity from `PolicySet` `unknownContent` → default info |
-| `RPK5404` | Exclude rule targets `rid` assets but the selector is not RID-scoped (no `rid` predicate) — informational hint to keep removal explicit |
+| `TLR5401` | `symbols.select` / `documentation.select` matches only artefacts that have no `symbols` / `xmlDoc` association, so the section has no effect (warning) |
+| `TLR5402` | `layout.destination` equals or is under a folder whose AppSpec role is `runtime`/`resources` while the rule moves managed assemblies (warning: probing may break) |
+| `TLR5403` | Associated file retained while its primary is removed (orphan), severity from `PolicySet` `unknownContent` → default info |
+| `TLR5404` | Exclude rule targets `rid` assets but the selector is not RID-scoped (no `rid` predicate) — informational hint to keep removal explicit |
 
 ## Design Notes
 
 - Handlers only contribute **intents**. WU-503 resolves them via WU-501 and materialises the actions, so no ordering exists between these five handlers.
 - **Preservation by default.** Every artefact without a winning intent is preserved ([TS §9.5](../../Requirements/Transformation_Specification.md#9-include-and-exclude-rules), [TS §21.4](../../Requirements/Transformation_Specification.md#21-transformation-defaults)). No handler removes RID-specific assets, cultures, symbols or docs unless the TransformSpec says so. The `enterprise-win-x64` removals are template content (architecture item 4).
 - **Other-RID removal** is a plain exclude rule, e.g. `{ "action": "exclude", "select": { "not": { "rid": "${targetRid}" } } }`. Three-valued selector logic (WU-500) keeps non-RID files out of scope.
-- **Associated groups.** Group expansion gives associated files the same level as the rule. A separate narrower rule on an associated file can override it at a higher level; an equal level conflicts (`RPK5104`).
+- **Associated groups.** Group expansion gives associated files the same level as the rule. A separate narrower rule on an associated file can override it at a higher level; an equal level conflicts (`TLR5104`).
 - Symbols `separate`: extracted PDBs keep their relative path inside the symbols root.
 - Handlers select over `HandlerContext.State` (projected after phases 3–5), so files added by deployment-model changes (WU-803) are filtered too.
 
@@ -81,15 +81,15 @@ Namespace `Tailor.Transforms`.
 
 - [ ] AC-1 With an empty `rules[]` and all sections absent, the handlers add no intents and every file is `Preserve` (plan golden file).
 - [ ] AC-2 `exclude` with `association: xmlDoc` removes every `.xml` doc and nothing else on the ConsoleApp net10 FD matrix entry.
-- [ ] AC-3 `exclude` of `ConsoleApp.Library.dll` with default `group` mode removes its `.pdb`, `.xml` and satellites. `primaryOnly` removes only the DLL and yields `RPK5403` for the orphans.
+- [ ] AC-3 `exclude` of `ConsoleApp.Library.dll` with default `group` mode removes its `.pdb`, `.xml` and satellites. `primaryOnly` removes only the DLL and yields `TLR5403` for the orphans.
 - [ ] AC-4 `defaults.cultures: ["en", "en-*"]` removes `de/` and `fr/` satellites and keeps neutral resources, on net8 and net10 FD/SC matrix entries.
-- [ ] AC-5 A level-3 `culture` exclude plus a level-5 exception rule that includes `de/ConsoleApp.resources.dll` keeps that file. The same include at level 3 yields `RPK5101`.
+- [ ] AC-5 A level-3 `culture` exclude plus a level-5 exception rule that includes `de/ConsoleApp.resources.dll` keeps that file. The same include at level 3 yields `TLR5101`.
 - [ ] AC-6 `symbols.policy` `preserve`, `exclude` and `separate` each produce the expected `Preserve`/`Remove`/`ExtractSymbols` actions for every PDB. PDBs of excluded primaries are `Remove`, not `ExtractSymbols`.
 - [ ] AC-7 `symbols.select: {assemblyRole: application}` with `separate` extracts only application PDBs. Framework PDBs keep the default.
 - [ ] AC-8 `documentation.policy: exclude` removes XML docs. A level-4 `path` include of one XML doc keeps it.
 - [ ] AC-9 `layout` with `destination: lib` moves the selected assemblies to `lib/…`; their PDB/XML follow. `flatten` produces `lib/<name>`.
 - [ ] AC-10 An exclude with `not: {rid: "win-x64"}` on `ConsoleApp/<tfm>-fdportable-il` removes only non-compatible `runtimes/<rid>/…` files. Without such a rule, no `runtimes/` file is removed.
-- [ ] AC-11 Two layout rules that flatten two files with the same name into one folder yield `RPK5301` (from WU-503).
+- [ ] AC-11 Two layout rules that flatten two files with the same name into one folder yield `TLR5301` (from WU-503).
 - [ ] AC-12 Plans for the filtering, symbols, docs and resources scenarios match committed golden files and are byte-identical across two runs.
 
 ## Test Requirements
@@ -101,7 +101,7 @@ Namespace `Tailor.Transforms`.
 
 ## Definition of Done
 
-- Zero warnings, tests green, format clean. All ACs ticked by the Verifier. Plan status `Done`. `RPK54xx` codes listed for WU-1001.
+- Zero warnings, tests green, format clean. All ACs ticked by the Verifier. Plan status `Done`. `TLR54xx` codes listed for WU-1001.
 
 ## Agent Notes
 

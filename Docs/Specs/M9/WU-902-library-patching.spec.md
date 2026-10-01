@@ -39,7 +39,7 @@ Implement the `Patch.Library` handler. It updates **explicitly selected** non-co
 - deps.json update (via WU-802): library `version`, `sha512`, `path`, `hashPath`, asset `assemblyVersion`/`fileVersion`, and dependency ranges of the updated library.
 - Dependency closure check: for each updated package, every nuspec dependency for the target TFM must be satisfied by the version already in deps.json, or by another selected update. Otherwise planning fails, listing the package and the required version. No transitive upgrade is ever added implicitly.
 - "Update unavailable" (nothing newer within policy) → policy-driven (`error|warning|skip`, default `warning` + unchanged).
-- Diagnostics in `RPK9xxx` (proposed sub-range `RPK92xx`).
+- Diagnostics in `TLR9xxx` (proposed sub-range `TLR92xx`).
 
 **Out**
 - Implicit or transitive upgrades. Adding brand-new packages. Framework/runtime packs. Assembly binding redirects (not used by .NET Core).

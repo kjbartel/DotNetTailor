@@ -49,7 +49,7 @@ In phase 9, derive the projected output AppSpec (state only, no history) from th
 | `ProjectedAppSpecBuilder.Build(AppSpec input, ProjectedState, TargetState, IEnumerable<IProjectedSpecContributor>)` → `AppSpec` | Rules below |
 | `ProjectionHandler` (phase 9) | Produces `ProjectionResult {AppSpec, Model, ValidationResult, AssertionOutcomes, Diagnostics}` and adds it to `PlanResult` |
 | `StateAssertionEvaluator` (extended) | `AssertionSide.Output` enables `absentCultures`, `readyToRun {select, state}`, `symbols` (`preserve`: PDBs present in primary; `exclude`: none in primary or symbols; `separate`: none in primary, all in symbols root) |
-| `ProjectionDiagnostics` | `RPK5501`–`RPK5599` |
+| `ProjectionDiagnostics` | `TLR5501`–`TLR5599` |
 
 **Projection rules**
 
@@ -66,14 +66,14 @@ In phase 9, derive the projected output AppSpec (state only, no history) from th
 
 | Code | Condition |
 |---|---|
-| `RPK5501` | Projected AppSpec fails validation against the projected tree (wraps the WU-403 diagnostics as related locations) |
-| `RPK5502` | Output assertion failed on the projection (one per member, with expected and actual values) — structural |
-| `RPK5503` | Assertion or validation cannot be evaluated because content is unknown at plan time (e.g. generated binary without facts). Severity from `PolicySet` `validationWarning` |
+| `TLR5501` | Projected AppSpec fails validation against the projected tree (wraps the WU-403 diagnostics as related locations) |
+| `TLR5502` | Output assertion failed on the projection (one per member, with expected and actual values) — structural |
+| `TLR5503` | Assertion or validation cannot be evaluated because content is unknown at plan time (e.g. generated binary without facts). Severity from `PolicySet` `validationWarning` |
 
 ## Design Notes
 
-- The projection re-uses the whole M3 model build, so a layout move that breaks reference resolution fails planning through `RPK5501` instead of at run time.
-- Facts-only entries: when an action cannot provide projected bytes, the entry carries size/hash `null` and explicit facts. The facts provider (WU-301 `IFileFactsProvider`) must accept overrides. Checks that need bytes report `RPK5503`.
+- The projection re-uses the whole M3 model build, so a layout move that breaks reference resolution fails planning through `TLR5501` instead of at run time.
+- Facts-only entries: when an action cannot provide projected bytes, the entry carries size/hash `null` and explicit facts. The facts provider (WU-301 `IFileFactsProvider`) must accept overrides. Checks that need bytes report `TLR5503`.
 - The symbols root is not part of the projected app tree. Symbols assertions use `ProjectedState` directly.
 - The canonical write of the projected AppSpec (WU-101 writer) must be byte-stable. The output AppSpec after execution (WU-602) must equal it for pure copy/filter plans.
 
@@ -81,9 +81,9 @@ In phase 9, derive the projected output AppSpec (state only, no history) from th
 
 - [ ] AC-1 For a plan with only `Preserve` actions, the projected AppSpec equals the flattened input AppSpec, except for `generator` (golden file).
 - [ ] AC-2 The projected AppSpec contains no `includes`, no validation state, and no plan, rule or provenance data (JSON walk test against a forbidden-member list).
-- [ ] AC-3 Excluding all PDBs sets `required: false` on a previously required `symbols` association. The projected AppSpec then validates with no `RPK3201`.
-- [ ] AC-4 A layout move of `ConsoleApp.Library.dll` to a folder outside the entry assembly's reference roots yields `RPK5501` wrapping `RPK3301`.
-- [ ] AC-5 Each output assertion member (all WU-102 `output.assert` members supported without M7+ handlers) has a passing and a failing test. Failures yield structural `RPK5502` with expected/actual.
+- [ ] AC-3 Excluding all PDBs sets `required: false` on a previously required `symbols` association. The projected AppSpec then validates with no `TLR3201`.
+- [ ] AC-4 A layout move of `ConsoleApp.Library.dll` to a folder outside the entry assembly's reference roots yields `TLR5501` wrapping `TLR3301`.
+- [ ] AC-5 Each output assertion member (all WU-102 `output.assert` members supported without M7+ handlers) has a passing and a failing test. Failures yield structural `TLR5502` with expected/actual.
 - [ ] AC-6 For the WU-504 filtering, symbols (dir and zip), docs and resources scenarios on ConsoleApp net10 FD, the projected AppSpec validates (`Validated`/`ValidatedWithWarnings`) and all their output assertions pass (plan M5 criterion 4).
 - [ ] AC-7 `absentCultures: ["de", "fr"]` passes after `defaults.cultures: ["en", "en-*"]` and fails without it.
 - [ ] AC-8 `ProjectedAppTree` enumeration equals the `Preserve`/`Move`/`Copy`/`Add`/`Replace` destinations in the primary root, and never includes `Remove`d or `ExtractSymbols` files (property test).
@@ -99,7 +99,7 @@ In phase 9, derive the projected output AppSpec (state only, no history) from th
 
 ## Definition of Done
 
-- Zero warnings, tests green, format clean. All ACs ticked by the Verifier. Plan status `Done`. `RPK55xx` codes listed for WU-1001.
+- Zero warnings, tests green, format clean. All ACs ticked by the Verifier. Plan status `Done`. `TLR55xx` codes listed for WU-1001.
 
 ## Agent Notes
 

@@ -42,7 +42,7 @@ Pure, deterministic transformation of `*.deps.json` between FD and SC: set the `
 
 - `DepsJsonTarget {DeploymentModel, Rid?, RuntimePacks[RuntimePackCatalogue subset], ExcludedPackFiles[]}`.
 - `DepsJsonTransformer.Transform(DependencyContext, DepsJsonTarget) → Result<DependencyContext>`, `DepsJsonWriter`.
-- Diagnostics (proposed `RPK82xx`): malformed deps.json, unknown `runtimeTarget`, existing `runtimepack` library conflicts with requested one, package library would be modified.
+- Diagnostics (proposed `TLR82xx`): malformed deps.json, unknown `runtimeTarget`, existing `runtimepack` library conflicts with requested one, package library would be modified.
 
 ## Design Notes
 
@@ -58,7 +58,7 @@ Pure, deterministic transformation of `*.deps.json` between FD and SC: set the `
 - [ ] AC-4 `runtimepack.*` library asset lists equal the WU-701 catalogue subset used (managed → `runtime`, native → `native`) with matching versions.
 - [ ] AC-5 Project, package and reference libraries are byte-semantically unchanged in both directions (test compares each library object).
 - [ ] AC-6 A file listed in `ExcludedPackFiles` does not appear in any `runtimepack` asset list.
-- [ ] AC-7 Malformed input yields `RPK82xx` diagnostics without exceptions.
+- [ ] AC-7 Malformed input yields `TLR82xx` diagnostics without exceptions.
 - [ ] AC-8 Identical inputs produce byte-identical output.
 
 ## Test Requirements
@@ -70,7 +70,7 @@ Pure, deterministic transformation of `*.deps.json` between FD and SC: set the `
 
 ## Definition of Done
 
-- All AC ticked by the Verifier; CI green; `RPK82xx` codes listed for WU-1001.
+- All AC ticked by the Verifier; CI green; `TLR82xx` codes listed for WU-1001.
 
 ## Agent Notes
 

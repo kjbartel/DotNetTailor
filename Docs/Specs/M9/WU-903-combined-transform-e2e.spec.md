@@ -48,7 +48,7 @@ Prove that the [TS §33](../../Requirements/Transformation_Specification.md) con
 | Preserve unclassified content | Default catch-all preservation |
 
 - `output.assert`: `tfm net10.0-windows`, `deploymentModel selfContained`, `rid win-x64`, runtime version = pinned, no non-`en` satellites, no `.xml` docs, R2R state for selected assemblies, symbols policy.
-- End-to-end runs via the CLI: `analyze` → `validate` → `plan` → `apply --dry-run` → `apply` (twice, different output dirs).
+- End-to-end runs via the CLI: `analyse` → `validate` → `plan` → `apply --dry-run` → `apply` (twice, different output dirs).
 - Fixing small integration defects found in M5–M9 code, each with a regression test. Larger defects become new WUs or bugs.
 
 **Out**
@@ -63,7 +63,7 @@ Prove that the [TS §33](../../Requirements/Transformation_Specification.md) con
 ## Design Notes
 
 - Input: the net8 FD WPF plugin host from `artifacts/testapps/` (plugin chain + satellites + multi-RID `runtimes/` + a library dependency). If a TS §33 facet is missing from the test app (e.g. a nameable R2R exclusion target, a patchable library, non-`en` satellites), extend the test app source and `Build-TestApps.ps1` in this WU.
-- The AppSpec comes from `analyze` and is committed as a fixture after review (not regenerated per run) so that the TransformSpec selectors bind to stable ids.
+- The AppSpec comes from `analyse` and is committed as a fixture after review (not regenerated per run) so that the TransformSpec selectors bind to stable ids.
 - Normalise machine paths and timings before comparing against golden files. Canonical artefacts must not need normalisation.
 - Spike reports/ADRs override the architecture where they differ (notably WU-004 R2R determinism fallback).
 
@@ -71,7 +71,7 @@ Prove that the [TS §33](../../Requirements/Transformation_Specification.md) con
 
 - [ ] AC-1 `ts33.transform.json` validates against the committed TransformSpec schema and contains no per-file enumeration (no `path` selector that names a single file, except the R2R exclusion by assembly `name`).
 - [ ] AC-2 `plan` succeeds (exit 0). The plan orders actions in phases Retarget → Patch → DeploymentModel → FilteringLayout → Optimisation → ConfigGeneration → ProjectedValidation, and pins every acquired package (id, version, source, sha512).
-- [ ] AC-3 `apply --dry-run` makes no filesystem changes outside `--artifacts` and the NuGet package cache (before/after tree snapshot; with `--offline` the cache is unchanged too).
+- [ ] AC-3 `apply --dry-run` makes no filesystem changes outside `--artefacts` and the NuGet package cache (before/after tree snapshot; with `--offline` the cache is unchanged too).
 - [ ] AC-4 `apply` exits 0. The output AppSpec validates against the output tree and all output assertions pass.
 - [ ] AC-5 Output facts: runtimeconfig `tfm` = `net10.0-windows` with `includedFrameworks` at the pinned version; no files under `runtimes/<rid>/` for RIDs other than `win-x64` (and its compatible parents); no satellite folders other than `en`/`en-*`; no `.xml` docs; no `.pdb` in the main output; the symbols zip contains the PDBs.
 - [ ] AC-6 Every selected app/plugin assembly is R2R per the inspector, and the excluded assembly is not. Skipped/ineligible assemblies have reasons in the plan.

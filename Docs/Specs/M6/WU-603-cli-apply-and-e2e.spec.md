@@ -55,7 +55,7 @@ Ship `dotnet-tailor apply` end to end: pre-flight safety, plan, execute, post-va
 | Exit | Stage / condition |
 |---|---|
 | 0 | Committed; warnings only (non-strict) |
-| 1 | Input AppSpec invalid, TransformSpec/assertion/conflict/collision/safety errors, projected validation failure, **output-path safety violations** (`RPK600x`, structural) |
+| 1 | Input AppSpec invalid, TransformSpec/assertion/conflict/collision/safety errors, projected validation failure, **output-path safety violations** (`TLR600x`, structural) |
 | 2 | Usage errors, missing input files |
 | 3 | `--strict` with warnings (nothing is committed; see Design Notes) |
 | 4 | Acquisition failure |
@@ -85,9 +85,9 @@ Ship `dotnet-tailor apply` end to end: pre-flight safety, plan, execute, post-va
 ## Acceptance Criteria
 
 - [ ] AC-1 `apply --help` matches the architecture §14 synopsis (golden file).
-- [ ] AC-2 `apply --dry-run` with a non-empty `--output` exits 1 with `RPK6003` and writes only artefacts. With a valid output path it creates no output (reuses the WU-506 AC-6 harness).
-- [ ] AC-3 `apply` with `filtering` on ConsoleApp net10 FD exits 0, creates `<output>/repack.appspec.json`, and leaves the input tree fingerprint (including sidecars) unchanged.
-- [ ] AC-4 For every `filtering`/`docs`/`resources-en`/`symbols-dir`/`symbols-zip` entry in the E2E matrix, `apply` exits 0 and a subsequent `validate <output> --spec <output>/repack.appspec.json` exits 0 (M6 criterion 1).
+- [ ] AC-2 `apply --dry-run` with a non-empty `--output` exits 1 with `TLR6003` and writes only artefacts. With a valid output path it creates no output (reuses the WU-506 AC-6 harness).
+- [ ] AC-3 `apply` with `filtering` on ConsoleApp net10 FD exits 0, creates `<output>/tailor.appspec.json`, and leaves the input tree fingerprint (including sidecars) unchanged.
+- [ ] AC-4 For every `filtering`/`docs`/`resources-en`/`symbols-dir`/`symbols-zip` entry in the E2E matrix, `apply` exits 0 and a subsequent `validate <output> --spec <output>/tailor.appspec.json` exits 0 (M6 criterion 1).
 - [ ] AC-5 ConsoleApp outputs of `filtering`, `resources-en`, `symbols-dir`, `symbols-zip` and `other-rid` launch with `--smoke` and exit 0 (net8 and net10, FD and SC).
 - [ ] AC-6 `symbols-zip` produces a byte-identical zip on two runs into fresh output paths (M6 criterion 4). `symbols-dir` mirrors PDB relative paths.
 - [ ] AC-7 Input = output, output nested in input, output as a junction to the input, and a non-empty output each exit 1 with the WU-600 code, and no staging or output is created (M6 criterion 2).

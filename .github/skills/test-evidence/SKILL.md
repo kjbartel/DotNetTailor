@@ -22,7 +22,7 @@ Run from the repository root before testing:
 .github/skills/test-evidence/scripts/Get-FunctionalState.ps1
 ```
 
-The script hashes tracked and untracked non-ignored files, excluding Markdown and docs/specs paths. Pass `-IncludeDocumentation` when docs affect behaviour. Use `-Exclude <glob>` only for files proven non-functional, and record why. The state is the fingerprint, the file count, docs flag and exclusions, plus the environment: OS, .NET SDK from `global.json`, and any behaviour-affecting variables such as `DOTNET_REPACK_*`. If the tests can modify their inputs, recompute the fingerprint afterwards.
+The script hashes tracked and untracked non-ignored files, excluding Markdown and docs/specs paths. Pass `-IncludeDocumentation` when docs affect behaviour. Use `-Exclude <glob>` only for files proven non-functional, and record why. The state is the fingerprint, the file count, docs flag and exclusions, plus the environment: OS, .NET SDK from `global.json`, and any behaviour-affecting variables such as `DOTNET_TAILOR_*`. If the tests can modify their inputs, recompute the fingerprint afterwards.
 
 ## 3. Reuse before running
 

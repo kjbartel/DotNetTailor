@@ -54,7 +54,7 @@ Provide a deterministic, credential-safe NuGet acquisition service that resolves
 - `AcquisitionOptions {Offline, WorkingDirectory, DefaultVersions {Crossgen2, RuntimePack, HostPack}}` bound through the options pattern.
 - `KnownPackageIds` helper; `NuGetPackageLocator`.
 - NuGet `ILogger` adapter to `Microsoft.Extensions.Logging` with secret redaction.
-- Diagnostics (proposed range `RPK70xx`): package not found, version not satisfiable, hash mismatch, offline cache miss, source unreachable, source not allowed by mapping, credential failure.
+- Diagnostics (proposed range `TLR70xx`): package not found, version not satisfiable, hash mismatch, offline cache miss, source unreachable, source not allowed by mapping, credential failure.
 - Tests + `LocalPackageFeedFixture` (reused by WU-701/703/800/803/804).
 
 ## Design Notes
@@ -70,12 +70,12 @@ Provide a deterministic, credential-safe NuGet acquisition service that resolves
 
 ## Acceptance Criteria
 
-- [ ] AC-1 Range `[v]` resolves to exactly `v`; a missing version yields an `RPK70xx` error naming id, range and searched sources.
+- [ ] AC-1 Range `[v]` resolves to exactly `v`; a missing version yields an `TLR70xx` error naming id, range and searched sources.
 - [ ] AC-2 With a local feed holding `8.0.1`, `8.0.3`, `8.0.4-preview.1`, `8.1.0`, the range `[8.0.0, 8.1.0)` (the mapping of runtime `latestPatch` for 8.0) resolves to `8.0.3`.
 - [ ] AC-3 `range` `[8.0.1, 8.1.0)` resolves to the highest stable version in range (`8.0.3` in the AC-2 feed).
 - [ ] AC-4 `AcquireAsync` for a `ResolvedPackage` does not re-resolve: adding `8.0.5` to the feed after resolution still yields `8.0.3`.
 - [ ] AC-5 Provenance contains id, version, source and sha512; sha512 equals the base64 SHA-512 of the `.nupkg` and the `.nupkg.metadata` `contentHash`.
-- [ ] AC-6 A cached package whose `.nupkg` or metadata hash was tampered with is rejected with an `RPK70xx` error and not returned.
+- [ ] AC-6 A cached package whose `.nupkg` or metadata hash was tampered with is rejected with an `TLR70xx` error and not returned.
 - [ ] AC-7 A `nuget.config` in a parent of the working directory (with `<clear/>` + local feed) is honoured; sources from the user-level config are not used.
 - [ ] AC-8 With package source mapping, a package mapped to feed B is resolved and downloaded from feed B even when feed A (listed first) contains the same id/version; provenance source = B.
 - [ ] AC-9 `--offline` with a warm cache succeeds with zero HTTP requests (asserted with an unreachable source or a counting `HttpMessageHandler`).
@@ -92,14 +92,14 @@ Provide a deterministic, credential-safe NuGet acquisition service that resolves
 
 - xUnit v3 (MTP) in `tests/Tailor.Acquisition.Tests/`; golden files for canonical provenance JSON.
 - `LocalPackageFeedFixture`: temp folder feed, temp global packages folder and temp `nuget.config`; never touches the user's cache. Synthetic packages built with `NuGet.Packaging.PackageBuilder`; optional seeding of real packs from the global packages folder populated by `build/Build-TestApps.ps1`.
-- `Category=Network` tests (nightly only; skipped unless `DOTNET_REPACK_TEST_NETWORK=1`): resolve and acquire `Microsoft.NETCore.App.Host.win-x64` `8.0.*` from nuget.org.
+- `Category=Network` tests (nightly only; skipped unless `DOTNET_TAILOR_TEST_NETWORK=1`): resolve and acquire `Microsoft.NETCore.App.Host.win-x64` `8.0.*` from nuget.org.
 - Run: `dotnet test --project tests/Tailor.Acquisition.Tests --filter-trait "WU=700"`.
 - Record Test Evidence (test-evidence skill) in the PR.
 
 ## Definition of Done
 
 - All AC ticked by the Verifier; CI green (build, test, format) with `TreatWarningsAsErrors`.
-- New `RPK70xx` codes listed in the PR description for WU-1001.
+- New `TLR70xx` codes listed in the PR description for WU-1001.
 - Deviations from this spec backed by the WU-007 ADR or a new ADR; architecture §10 updated if behaviour changed.
 
 ## Agent Notes

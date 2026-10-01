@@ -54,14 +54,14 @@ Define the v1 AppSpec object model, its tolerant read and canonical write, the g
 | `static SpecificationWriter` | `byte[] Write<TDocument>(TDocument, SpecificationFormat<TDocument>)` via `CanonicalJson` |
 | `interface ISchemaValidator` + one adapter for the WU-007 library | `IReadOnlyList<SchemaViolation> Validate(JsonNode, JsonNode schema)` with instance JSON pointer + message |
 | `static SchemaGenerator` | `JsonNode Generate(Type, JsonSerializerOptions, SchemaMetadata)`; post-processing below; `byte[] GenerateCanonical(...)` |
-| `static SpecificationDiagnostics` | `RPK1001`–`RPK1099` |
+| `static SpecificationDiagnostics` | `TLR1001`–`TLR1099` |
 
 Reader pipeline (stop at first failing stage, except that stage 3 reports all violations):
-1. Parse with `CanonicalJson.ReaderOptions` → `RPK1001` malformed JSON (line/column in message).
-2. Header: missing/invalid `kind` (`RPK1002`), kind mismatch (`RPK1003`), missing/unparseable `schemaVersion` (`RPK1004`), unsupported major (`RPK1005`, error), newer minor (`RPK1006`, warning).
-3. Schema validation against the generated schema → `RPK1010` per violation, location = document + JSON pointer.
-4. Deserialise (`UnmappedMemberHandling.Disallow`) → `RPK1011` with pointer from `JsonException.Path`.
-5. Per-document structural checks supplied by the format (`RPK11xx`/`RPK12xx`).
+1. Parse with `CanonicalJson.ReaderOptions` → `TLR1001` malformed JSON (line/column in message).
+2. Header: missing/invalid `kind` (`TLR1002`), kind mismatch (`TLR1003`), missing/unparseable `schemaVersion` (`TLR1004`), unsupported major (`TLR1005`, error), newer minor (`TLR1006`, warning).
+3. Schema validation against the generated schema → `TLR1010` per violation, location = document + JSON pointer.
+4. Deserialise (`UnmappedMemberHandling.Disallow`) → `TLR1011` with pointer from `JsonException.Path`.
+5. Per-document structural checks supplied by the format (`TLR11xx`/`TLR12xx`).
 
 ### AppSpec (`Tailor.Specifications.AppSpec`)
 
@@ -79,7 +79,7 @@ Root `sealed record AppSpecDocument : SpecificationDocument`. All top-level sect
 | `FolderNode` | `id?`, `idRef?`, `mask?`, `role?` (extensible string; built-ins `applicationRoot\|component\|plugin\|runtime\|platformAssets\|resources\|content`), `recurse?`, `classifications[]?` (applicable group ids), `references[]?` (`current\|parent\|root\|folder:<id>\|<root-relative path>`), `duplicates?` `error\|first\|highestVersion`, `folders[]?`, `confidence?` | §10, §15, §16 |
 | `confidence` | `enum Confidence { Explicit, Derived, Inferred, Unknown }` | §9.4 |
 
-Per-document structural checks (`RPK1100`–`1199`): duplicate `id` among `folders.definitions`, among siblings of any `folders` array, among `classifications.groups`, among `frameworkContexts`; a non-root `FolderNode` with neither `idRef` nor `mask`; path-form `references` entries that fail `RelativePath` parsing; `mask`/`glob` patterns that are rooted or contain a `..` segment (patterns are not parsed as `RelativePath` because `*`, `<culture>`, `<rid>` are allowed); `catchAll` not naming a defined group when `groups` is present in the same document is **not** checked here (may come from an include).
+Per-document structural checks (`TLR1100`–`1199`): duplicate `id` among `folders.definitions`, among siblings of any `folders` array, among `classifications.groups`, among `frameworkContexts`; a non-root `FolderNode` with neither `idRef` nor `mask`; path-form `references` entries that fail `RelativePath` parsing; `mask`/`glob` patterns that are rooted or contain a `..` segment (patterns are not parsed as `RelativePath` because `*`, `<culture>`, `<rid>` are allowed); `catchAll` not naming a defined group when `groups` is present in the same document is **not** checked here (may come from an include).
 
 ### Schema
 
@@ -96,7 +96,7 @@ Per-document structural checks (`RPK1100`–`1199`): duplicate `id` among `folde
 
 ## Design Notes
 
-- Header and version rules: [§6.1](../../Architecture/Tailor.architecture.md#61-common-rules). "Newer minor accepted with a warning only if every member is known" = stage 2 emits `RPK1006` warning, stage 3/4 still reject unknown members.
+- Header and version rules: [§6.1](../../Architecture/Tailor.architecture.md#61-common-rules). "Newer minor accepted with a warning only if every member is known" = stage 2 emits `TLR1006` warning, stage 3/4 still reject unknown members.
 - Comments are not preserved; round-trip is semantic (read → write → read equal) and canonical output is byte-stable ([§5](../../Architecture/Tailor.architecture.md#5-artefacts)).
 - String-or-array members (e.g. `glob`, `is`) use a `StringList` type with a custom converter; `JsonSchemaExporter` cannot describe custom converters, so `SchemaGenerator` patches those nodes via `TransformSchemaNode`. Canonical write always emits arrays.
 - Extensible vocabularies (`role`, association `type`, group ids) are strings in the schema with built-in constants in code ([AS §10.6](../../Requirements/Application_Specification.md), [AS §11.2](../../Requirements/Application_Specification.md)).
@@ -109,9 +109,9 @@ Per-document structural checks (`RPK1100`–`1199`): duplicate `id` among `folde
 - [ ] AC-2 Round-trip over every valid fixture: `Read → Write → Read` yields an equal model and `Write` output is byte-identical on the second pass (golden file per fixture).
 - [ ] AC-3 `commented.appspec.json` reads successfully and its canonical output contains no comments and no trailing commas.
 - [ ] AC-4 Canonical output: UTF-8 no BOM, LF only, 2-space indent, trailing LF, no timestamp-like members.
-- [ ] AC-5 `wrong-kind` → `RPK1003`; `bad-version` → `RPK1004`; `major-2` → `RPK1005` error; `minor-newer-known-members` → success with `RPK1006` warning; `minor-newer-unknown-member` → `RPK1006` warning plus an error.
-- [ ] AC-6 `unknown-member` yields `RPK1010` whose location has the document name and a JSON pointer to the offending member (e.g. `/folders/root/folders/1/masks`).
-- [ ] AC-7 `escaping-reference` (`references: ["../x"]`) and an absolute `mask` yield `RPK11xx` errors with pointers; `duplicate-sibling-id` yields `RPK11xx` naming the id.
+- [ ] AC-5 `wrong-kind` → `TLR1003`; `bad-version` → `TLR1004`; `major-2` → `TLR1005` error; `minor-newer-known-members` → success with `TLR1006` warning; `minor-newer-unknown-member` → `TLR1006` warning plus an error.
+- [ ] AC-6 `unknown-member` yields `TLR1010` whose location has the document name and a JSON pointer to the offending member (e.g. `/folders/root/folders/1/masks`).
+- [ ] AC-7 `escaping-reference` (`references: ["../x"]`) and an absolute `mask` yield `TLR11xx` errors with pointers; `duplicate-sibling-id` yields `TLR11xx` naming the id.
 - [ ] AC-8 `folderspec-equivalent.appspec.json` is schema-valid and its golden file shows `<culture>`, `/` separators, `duplicates: "error"` and the recursive `plugins` `idRef`.
 - [ ] AC-9 `SchemaDriftTests` regenerates the schema and fails with a diff message if it differs byte-wise from `schemas/appspec/v1/appspec.schema.json`; an env var `REPACK_UPDATE_SCHEMAS=1` rewrites the file locally instead (never set in CI).
 - [ ] AC-10 The committed schema declares `additionalProperties: false` on all object schemas, `kind` const `AppSpec`, and the `schemaVersion` pattern.

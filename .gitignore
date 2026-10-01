@@ -482,7 +482,7 @@ $RECYCLE.BIN/
 *.swp
 
 artifacts/
-.repack/
+.tailor/
 *.staging-*/
 TestResults/
 *.received.*

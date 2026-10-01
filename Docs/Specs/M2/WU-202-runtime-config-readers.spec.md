@@ -47,19 +47,19 @@ Read the runtime-facing configuration of an app: `*.runtimeconfig.json` (framewo
 | | `DepsJsonReader` | `Result<DepsJsonFacts> Read(Stream, RelativePath)` using `DependencyContextJsonReader` |
 | `…Inspection.Apphost` | `sealed record ApphostBinding` | `BoundAssemblyPath` (`RelativePath`, relative to the apphost's folder), `Subsystem` (`Console`/`Gui`/`Other`), `Machine`, `BindingState` (`Bound`, `Unbound` (template placeholder present), `NotFound`) |
 | | `ApphostBindingReader` | `Result<ApphostBinding> Read(Stream, RelativePath apphostLocation)` |
-| | `RuntimeDiagnostics` | `RPK2200`–`RPK2299` |
+| | `RuntimeDiagnostics` | `TLR2200`–`TLR2299` |
 
 Diagnostics (minimum):
 
 | Code | Condition | Severity |
 |---|---|---|
-| `RPK2201` | runtimeconfig.json malformed JSON / missing `runtimeOptions` | Error |
-| `RPK2202` | runtimeconfig has both `framework` and `frameworks` | Warning (merged) |
-| `RPK2203` | runtimeconfig has both `frameworks` and `includedFrameworks` | Warning |
-| `RPK2210` | deps.json malformed (reader exception wrapped) | Error |
-| `RPK2220` | Apphost binding not found (not an apphost) | Warning |
-| `RPK2221` | Apphost is an unbound template (placeholder present) | Warning |
-| `RPK2222` | Bound path invalid (absolute, escaping, invalid chars) | Error (structural) |
+| `TLR2201` | runtimeconfig.json malformed JSON / missing `runtimeOptions` | Error |
+| `TLR2202` | runtimeconfig has both `framework` and `frameworks` | Warning (merged) |
+| `TLR2203` | runtimeconfig has both `frameworks` and `includedFrameworks` | Warning |
+| `TLR2210` | deps.json malformed (reader exception wrapped) | Error |
+| `TLR2220` | Apphost binding not found (not an apphost) | Warning |
+| `TLR2221` | Apphost is an unbound template (placeholder present) | Warning |
+| `TLR2222` | Bound path invalid (absolute, escaping, invalid chars) | Error (structural) |
 
 ## Design Notes
 
@@ -76,9 +76,9 @@ Diagnostics (minimum):
 - [ ] AC-2 FD WindowsDesktop runtimeconfig (`frameworks` with `Microsoft.NETCore.App` + `Microsoft.WindowsDesktop.App`) → two entries in file order.
 - [ ] AC-3 SC runtimeconfig (`includedFrameworks`) → `IsSelfContained = true`, entries read.
 - [ ] AC-4 `rollForward`, `applyPatches` and `configProperties` (bool, string, number) are read; properties sorted ordinally.
-- [ ] AC-5 Comments/trailing commas tolerated; malformed JSON → `RPK2201`; both `framework` and `frameworks` → `RPK2202`.
-- [ ] AC-6 deps.json fixtures (FD, SC with `runtimepack.*`, with `runtimes/win-x64/native` and `runtimes/linux-x64/lib` assets, with resource assemblies) → `RuntimeTargetName`, `RuntimeTargetRid`, libraries, per-RID assets and cultures match committed golden files; malformed → `RPK2210`.
-- [ ] AC-7 Synthetic apphost-like PE with an embedded bound path `Viewer.dll` → `Bound`, path `Viewer.dll`; with the placeholder still present → `Unbound` + `RPK2221`; bound path `..\x.dll` → `RPK2222`.
+- [ ] AC-5 Comments/trailing commas tolerated; malformed JSON → `TLR2201`; both `framework` and `frameworks` → `TLR2202`.
+- [ ] AC-6 deps.json fixtures (FD, SC with `runtimepack.*`, with `runtimes/win-x64/native` and `runtimes/linux-x64/lib` assets, with resource assemblies) → `RuntimeTargetName`, `RuntimeTargetRid`, libraries, per-RID assets and cultures match committed golden files; malformed → `TLR2210`.
+- [ ] AC-7 Synthetic apphost-like PE with an embedded bound path `Viewer.dll` → `Bound`, path `Viewer.dll`; with the placeholder still present → `Unbound` + `TLR2221`; bound path `..\x.dll` → `TLR2222`.
 - [ ] AC-8 Matrix (`Category=Matrix`): for net8 and net10 × FD and SC apphosts in the matrix, `BoundAssemblyPath` equals `<AppName>.dll` and subsystem matches the app type (M2 criterion).
 - [ ] AC-9 Matrix: every `*.runtimeconfig.json` and `*.deps.json` in the matrix reads without error; `IsSelfContained` matches the matrix manifest's FD/SC flag.
 - [ ] AC-10 Readers never throw on truncated/garbage input (fuzz loop over each reader, 1,000 iterations).

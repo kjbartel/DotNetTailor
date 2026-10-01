@@ -29,7 +29,7 @@ Tailor is a binary-first .NET CLI tool. It analyses, validates and transforms co
 ### 1.2 Non-goals (v1)
 
 - Source builds, MSBuild or SDK targets, installers, Native AOT, IL rewriting, and running the application as a tool feature ([RQ §2.2](../Requirements/Repackage_tool_Requirements_v1.1.md), [CK §13](../Requirements/Read_to_run_Cake.md)).
-- Single-file bundles as input. The tool detects them and refuses with diagnostic `RPK2xxx`.
+- Single-file bundles as input. The tool detects them and refuses with diagnostic `TLR2xxx`.
 - Multi-RID output, PGO and CPU-specific R2R. The design leaves room for them ([RD §12](../Requirements/R2R_tool_Design.md)).
 - Authenticode re-signing (see [§20](#20-open-questions)).
 
@@ -42,7 +42,7 @@ Tailor is a binary-first .NET CLI tool. It analyses, validates and transforms co
 | Effective Application Model (EAM) | The fully resolved in-memory model built from AppSpec + tree: matched folders, classifications, associations, identities, graphs |
 | Plan | Expanded, concrete, side-effect-free action list with provenance ([TS §31](../Requirements/Transformation_Specification.md)) |
 | Derived artefact | Regenerable output that is not authoritative, e.g. an inventory or graph ([AS §22](../Requirements/Application_Specification.md)) |
-| Sidecar | A tool-owned file inside the app folder (the AppSpec and `.repack/`). Sidecars are automatically excluded from app scope |
+| Sidecar | A tool-owned file inside the app folder (the AppSpec and `.tailor/`). Sidecars are automatically excluded from app scope |
 | FD / SC | Framework-dependent / self-contained |
 | WU | Work unit, an atomic agent task (see the plan) |
 
@@ -97,7 +97,7 @@ flowchart TD
 
 | Project | Owns | Must not |
 |---|---|---|
-| Core | `RelativePath` (always `/`, root-confined, ordinal-ignore-case comparison on Windows via a policy object), `Diagnostic` (`RPKnnnn`, severity, location, policy mapping), `Result<T>`, deterministic sort helpers, canonical JSON writer, SHA-256 content hashing, `TreeFingerprint`, `IPackageLocator` contract | Reference any other project |
+| Core | `RelativePath` (always `/`, root-confined, ordinal-ignore-case comparison on Windows via a policy object), `Diagnostic` (`TLRnnnn`, severity, location, policy mapping), `Result<T>`, deterministic sort helpers, canonical JSON writer, SHA-256 content hashing, `TreeFingerprint`, `IPackageLocator` contract | Reference any other project |
 | Specifications | Object models, System.Text.Json read (comments and trailing commas tolerated) and canonical write, `$schema`/`kind`/`schemaVersion`/`generator`, include resolution (cycle detection, precedence), variable resolution, schema generation (`JsonSchemaExporter`) and validation | Access the app tree |
 | Inspection | `PEReader`/`MetadataReader` facts, runtimeconfig/deps.json reading (Microsoft.Extensions.DependencyModel), apphost binding read (single owner), RID graph and culture knowledge, `IFrameworkCatalogue` contract | Make classification decisions |
 | Model | Folder matching, classification, associations, identities, reference resolution, dependency and plugin graphs, derived artefacts, deterministic deployment-model/framework/TFM detection primitives (`Model.Execution`) | Use heuristics (Analysis owns those) |
@@ -119,7 +119,7 @@ Contracts live in the lowest project that needs them; implementations live highe
 |---|---|---|---|---|
 | `IFrameworkCatalogue` | Inspection (WU-303) | Acquisition, RuntimeList-backed (WU-701) | Model reference resolution (WU-303) | `EmptyFrameworkCatalogue`: framework references become `framework-provided (unverified)` warnings |
 | `IPackageLocator` | Core (WU-100) | Acquisition (WU-700) | Execution executors (WU-601, WU-703) | None; a package source without a locator is an execution error |
-| `IConfigModifier` | Planning `Planning.Actions` (WU-503 defines, WU-601 consumes) | Transforms (WU-604 deps.json pruning, WU-801/802/803 config modifiers) | Execution `ModifyConfig` executor (WU-601) | None; an unknown modifier name is `RPK6103` |
+| `IConfigModifier` | Planning `Planning.Actions` (WU-503 defines, WU-601 consumes) | Transforms (WU-604 deps.json pruning, WU-801/802/803 config modifiers) | Execution `ModifyConfig` executor (WU-601) | None; an unknown modifier name is `TLR6103` |
 | `IAcquisitionPlanner` | Planning (WU-503) | Transforms adapter over Acquisition (WU-702) | Planner phase 2 | `NoAcquisitionPlanner` (v0.2.0): any acquisition request is an error |
 | `TreeFingerprint`, content hashing | Core (WU-100) | — | Model artefacts (WU-305 adds sidecar exclusion only), Validation, Execution | — |
 | Apphost binding read (`ApphostBindingReader`) | Inspection (WU-202), single owner | — | Analysis (WU-400), Validation (WU-403), Transforms; `Platform.Windows` reuses it internally to verify hosts it creates or patches (WU-800). `IApphostService` has no read operation | — |
@@ -143,7 +143,7 @@ flowchart LR
 
 | Verb | Stages | Mutates |
 |---|---|---|
-| `analyze` | Inspect → heuristics → draft AppSpec → EAM → self-validate → write AppSpec + derived artefacts | Writes sidecars only |
+| `analyse` | Inspect → heuristics → draft AppSpec → EAM → self-validate → write AppSpec + derived artefacts | Writes sidecars only |
 | `validate` | L → M → VA | Writes reports only |
 | `plan` | L → … → P | Writes the plan and reports. Downloads packages to the cache unless `--offline` |
 | `apply` | Full pipeline (`--dry-run` stops after P) | Writes the output directory |
@@ -172,15 +172,15 @@ Each artefact has a separate concern ([AS §22](../Requirements/Application_Spec
 
 | Artefact | File pattern | Authoritative | Deterministic |
 |---|---|---|---|
-| AppSpec | `*.appspec.json` (default `repack.appspec.json`) | Yes, once validated | Yes |
+| AppSpec | `*.appspec.json` (default `tailor.appspec.json`) | Yes, once validated | Yes |
 | TransformSpec | `*.transform.json` | Yes (intent) | Authored |
 | Plan | `*.plan.json` | No | Yes |
 | Derived analysis | `inventory.json`, `classification-map.json`, `assemblies.json`, `dependency-graph.json`, `plugin-graph.json`, `runtime-inventory.json`, `capabilities.json` | No | Yes |
 | Validation report | `validation-report.json` (spec hash + tree fingerprint + state) | No | Yes |
 | Execution report | `execution-report.json` (actual actions, tool outputs, timings) | No | Yes, except timings |
-| Logs | `repack.log` | No | No |
+| Logs | `tailor.log` | No | No |
 
-- Artefacts go to `--artefacts <dir>` (`--artifacts` remains a compatibility alias). The default is `.repack/` next to the AppSpec. **Decided (provisional).**
+- Artefacts go to `--artefacts <dir>` (`--artifacts` remains a permanent alias). The default is `.tailor/` next to the AppSpec. **Decided (provisional).**
 - Canonical JSON rules: UTF-8 without BOM, LF line endings (deliberate, see [§15](#15-determinism)), 2-space indentation, stable property order from the model, sorted collections, no timestamps. Informational timestamps ([AS §5.2](../Requirements/Application_Specification.md)) are never emitted in canonical artefacts.
 - The validation state is a separate report, not embedded in the AppSpec (see [§19](#19-resolved--open-inconsistencies) item 1). States: `Unvalidated | Validated | ValidatedWithWarnings | Invalid` ([AS §20.2](../Requirements/Application_Specification.md)). `apply` always re-validates.
 
@@ -190,7 +190,7 @@ Each artefact has a separate concern ([AS §22](../Requirements/Application_Spec
 
 - The header contains `$schema`, `kind` (`AppSpec` | `TransformSpec` | `Plan`), `schemaVersion` (`major.minor`), and `generator` (`{tool, version}`, optional). The AppSpec and TransformSpec schema versions are independent. An unknown major version is rejected. A newer minor version is accepted with a warning only if every member is known ([AS §5](../Requirements/Application_Specification.md), [TS §5](../Requirements/Transformation_Specification.md)).
 - JSON only for v1. **Decided (provisional).** Property names use camelCase.
-- `includes[]` holds document paths relative to the **including file's directory** (`..` allowed; absolute paths and URLs rejected). Resolution is depth-first and ordered, with cycle detection (`RPK1xxx`, the error lists the cycle chain). Precedence: the including document overrides included documents, and later includes override earlier ones for keyed members only (by `id`). A duplicate `id` at the same precedence level is an error ([AS §21](../Requirements/Application_Specification.md), [TS §27](../Requirements/Transformation_Specification.md)).
+- `includes[]` holds document paths relative to the **including file's directory** (`..` allowed; absolute paths and URLs rejected). Resolution is depth-first and ordered, with cycle detection (`TLR1xxx`, the error lists the cycle chain). Precedence: the including document overrides included documents, and later includes override earlier ones for keyed members only (by `id`). A duplicate `id` at the same precedence level is an error ([AS §21](../Requirements/Application_Specification.md), [TS §27](../Requirements/Transformation_Specification.md)).
 - Schemas are generated from the models with `JsonSchemaExporter`, committed under `schemas/`, and checked in CI for drift. The validator library is decided by spike WU-007.
 
 ### 6.2 AppSpec shape (illustrative; the WU-101 schema is normative)
@@ -261,7 +261,7 @@ Refs: [AS §10](../Requirements/Application_Specification.md), [RD §3](../Requi
 - A mask is a glob (Microsoft.Extensions.FileSystemGlobbing semantics) plus two built-in tokens. `<culture>` matches a known culture name (from the .NET culture list plus pattern validation). `<rid>` matches a RID from the RID knowledge base.
 - `**` matches **one or more** folder levels, never zero, so every `idRef` recursion step consumes at least one level. **Decided (provisional).**
 - `recurse: true` applies the definition to all descendants that no child definition matches. Child definitions apply relative to the explicitly matched folder only; they do **not** implicitly re-apply below recursed folders. Use `idRef` to repeat a structure at deeper levels. **Decided (provisional).**
-- `idRef` reuses a definition. Explicit members on the referencing node override the referenced definition. A self-reference through a nested child (recursive structure, e.g. plugins inside plugins) is allowed because it consumes one folder level per step. A pure alias cycle (`A → B → A` with no folder consumed) is an error (`RPK3xxx`).
+- `idRef` reuses a definition. Explicit members on the referencing node override the referenced definition. A self-reference through a nested child (recursive structure, e.g. plugins inside plugins) is allowed because it consumes one folder level per step. A pure alias cycle (`A → B → A` with no folder consumed) is an error (`TLR3xxx`).
 - Sibling specificity: a segment ranks literal > single-segment wildcard or token (`*`, `?`, `<culture>`, `<rid>`) > `**`. A multi-segment mask ranks by its **least-specific segment**; ties are broken by segment count (more segments = more specific). Two or more equally ranked matches for one folder is an error. **Decided (provisional).**
 - Paths are confined to the app root. The tool rejects absolute paths, `..`, and reparse points (symlinks or junctions) that resolve outside the root.
 - Enumeration is sorted ordinal-ignore-case. Sidecars are excluded.
@@ -349,7 +349,7 @@ public interface ITransformationHandler
 - Package: `Microsoft.NETCore.App.Host.win-x64`. The same `apphost.exe` serves FD and SC; SC is determined by `hostfxr.dll` in the app folder plus runtimeconfig `includedFrameworks`.
 - The tool uses its own minimal patcher in `Platform.Windows`: it replaces the SHA-256("foobar") placeholder with the relative DLL path, handles the .NET 9+ `DOTNET_ROOT` search placeholder, sets the PE subsystem to `WINDOWS_GUI` for GUI entry points, and copies Win32 resources (icon, version, manifest) from the original host. Microsoft.NET.HostModel is not used (it is not a supported nuget.org API).
 - Binding read has a single owner: `ApphostBindingReader` in Inspection (WU-202). `IApphostService` (WU-800) only creates and patches hosts; `Platform.Windows` reuses the reader internally to verify its output.
-- Modifying the apphost invalidates any Authenticode signature. The tool emits a warning (`RPK8xxx`); re-signing is out of scope.
+- Modifying the apphost invalidates any Authenticode signature. The tool emits a warning (`TLR8xxx`); re-signing is out of scope.
 
 ## 10. Acquisition
 
@@ -376,7 +376,7 @@ public interface ITransformationHandler
 - Input/output rules ([RQ §9](../Requirements/Repackage_tool_Requirements_v1.1.md), [TS §24.4](../Requirements/Transformation_Specification.md)): paths are canonicalised with symlinks and junctions resolved. Input ≠ output, and neither may be nested inside the other. The output must be absent or empty. Violations are unconditional structural errors (exit code 1), detected before any write.
 - Staging: the tool writes to a sibling `<output>.staging-<random>` directory, runs post-execution re-derivation, validation and output assertions there, then renames atomically (`Directory.Move` on the same volume). On failure (executor fault, post-validation or output-assertion failure, commit failure) it deletes staging and returns exit code 5. On cancellation (Ctrl+C) it deletes staging and returns exit code 130. No partial output remains.
 - Post-execution: the tool rebuilds the EAM from the staged tree with the projected AppSpec, compares it to the projection, and checks output assertions ([TS §25.4](../Requirements/Transformation_Specification.md)).
-- Output AppSpec: written to `<output>/repack.appspec.json` (sidecar) unless `--spec-out` is given.
+- Output AppSpec: written to `<output>/tailor.appspec.json` (sidecar) unless `--spec-out` is given.
 - Long paths (>260 characters) are supported through `\\?\`-safe APIs and are covered by tests.
 
 ## 12. Platform Abstraction
@@ -385,7 +385,7 @@ public interface ITransformationHandler
 
 ## 13. Diagnostics, Failure Policy and Exit Codes
 
-- Code ranges: `RPK0xxx` CLI/config, `1xxx` spec loading/schema, `2xxx` inspection, `3xxx` model, `4xxx` validation/analysis, `5xxx` planning/selectors, `6xxx` execution/safety, `7xxx` acquisition/R2R, `8xxx` deployment/apphost, `9xxx` retarget/patch. The full catalogue is in `Docs/Guides` (WU-1001).
+- Code ranges: `TLR0xxx` CLI/config, `1xxx` spec loading/schema, `2xxx` inspection, `3xxx` model, `4xxx` validation/analysis, `5xxx` planning/selectors, `6xxx` execution/safety, `7xxx` acquisition/R2R, `8xxx` deployment/apphost, `9xxx` retarget/patch. The full catalogue is in `Docs/Guides` (WU-1001).
 - A diagnostic carries a code, severity, message, location (spec document + JSON pointer, and/or relative path), and related locations.
 - Policy: per-condition policies in the TransformSpec (`error | warning | skip | preserve`) ([TS §24](../Requirements/Transformation_Specification.md)) combined with one global mode:
   - Default: warnings never fail the run.
@@ -401,12 +401,12 @@ public interface ITransformationHandler
 | 3 | Warnings treated as errors (`--strict`) |
 | 4 | Environment, tooling or acquisition failure |
 | 5 | Execution failure, including output-assertion or post-validation failure after execution (output rolled back) |
-| 70 | Internal error; also returned by verbs that are not implemented yet (stubs, `RPK0100`) |
+| 70 | Internal error; also returned by verbs that are not implemented yet (stubs, `TLR0100`) |
 | 130 | Cancelled (Ctrl+C); output rolled back |
 
 ## 14. CLI
 
-The CLI follows dotnet conventions, uses Australian spelling for canonical repository-owned names, and accepts the American spelling as a compatibility alias ([RQ §10](../Requirements/Repackage_tool_Requirements_v1.1.md)).
+The CLI follows dotnet conventions and uses Australian spelling for canonical repository-owned names. Where a name has a differing American spelling, that spelling is registered as a permanent alias ([RQ §10](../Requirements/Repackage_tool_Requirements_v1.1.md), [naming plan](../Plans/Tailor-naming.plan.md)).
 
 | Verb | Synopsis |
 |---|---|
@@ -417,12 +417,12 @@ The CLI follows dotnet conventions, uses Australian spelling for canonical repos
 | `inspect` | `dotnet-tailor inspect <appDir> --spec <file> [inventory\|classification\|assemblies\|graph\|plugins\|runtime] [--plugin <id>]` |
 | `schema export` | `dotnet-tailor schema export [appspec\|transformspec\|plan] [--output <dir>]` |
 
-- Global options: `--verbosity`, `--strict`/`--permissive`, `--artefacts <dir>` (with `--artifacts` compatibility alias), `--offline`, `--var name=value`, and `@file` response files (built into System.CommandLine).
-- `analyze` is a compatibility alias for canonical `analyse`; `--version` reports the packaged tool version.
-- Verbs that are declared but not implemented yet return exit code 70 with `RPK0100`.
+- Global options: `--verbosity`, `--strict`/`--permissive`, `--artefacts <dir>` (with `--artifacts` alias), `--offline`, `--var name=value`, and `@file` response files (built into System.CommandLine).
+- `analyze` is a permanent alias for canonical `analyse`; `--version` reports the packaged tool version.
+- Verbs that are declared but not implemented yet return exit code 70 with `TLR0100`.
 - Tool config file (M10, WU-1000): `dotnet-tailor.json`. Precedence ([CK §3.2](../Requirements/Read_to_run_Cake.md)):
   1. CLI arguments, with `@file` response files expanded inline (same layer, token order applies).
-  2. Environment variables (`DOTNET_REPACK_*`).
+  2. Environment variables (`DOTNET_TAILOR_*`).
   3. Repo config: the first `dotnet-tailor.json` found from the current directory upwards; discovery stops at the git root.
   4. User config (`%APPDATA%\dotnet-tailor\dotnet-tailor.json` via `IPlatformKnowledge`).
   5. Built-in defaults.
@@ -439,12 +439,12 @@ The CLI follows dotnet conventions, uses Australian spelling for canonical repos
 ## 16. Testing Strategy
 
 - Unit tests: one xUnit v3 project per src project. Golden files are used for models, plans and artefacts.
-- Golden-file helper (`tests/Tailor.Testing`, class library; project delivered by WU-000, helper by WU-100): `Golden.AssertMatches(string actual, string name, [CallerFilePath] string callerPath = "")`. Golden files live next to the test class under `Golden/<TestClass>/<name>.golden.json` (or `.golden.txt`) and are committed, always LF. Comparison is ordinal text equality after applying only test-supplied scrubbers (e.g. temp paths → `{TEMP}`, repo root → `{REPO}`). On mismatch the actual output is written to `<name>.received.json` (git-ignored) and the assertion message shows a unified diff summary. `DOTNET_REPACK_UPDATE_GOLDEN=1` overwrites golden files instead of failing; it is never set in CI, and CI asserts it is unset. No third-party snapshot library ([§19](#19-resolved--open-inconsistencies) item 37).
+- Golden-file helper (`tests/Tailor.Testing`, class library; project delivered by WU-000, helper by WU-100): `Golden.AssertMatches(string actual, string name, [CallerFilePath] string callerPath = "")`. Golden files live next to the test class under `Golden/<TestClass>/<name>.golden.json` (or `.golden.txt`) and are committed, always LF. Comparison is ordinal text equality after applying only test-supplied scrubbers (e.g. temp paths → `{TEMP}`, repo root → `{REPO}`). On mismatch the actual output is written to `<name>.received.json` (git-ignored) and the assertion message shows a unified diff summary. `DOTNET_TAILOR_UPDATE_GOLDEN=1` overwrites golden files instead of failing; it is never set in CI, and CI asserts it is unset. No third-party snapshot library ([§19](#19-resolved--open-inconsistencies) item 37).
 - Test apps (`tests/TestApps/`): console, WinForms, WPF, a plugin host with a one-way plugin chain, a deliberately cyclic plugin variant, satellite resources, native DLLs, a multi-RID `runtimes/` folder, and mixed-mode (C++/CLI, optional).
 - Matrix built by `build/Build-TestApps.ps1`: `{net8.0, net10.0} × {FD, SC} × {R2R off, on}`. Output goes to `artifacts/testapps/` with `manifest.json`. CI caches it, keyed on the TestApps source hash and SDK version.
 - Integration and regression tests: CLI end-to-end over the matrix, dry-run no-mutation enforcement (filesystem snapshot before and after), determinism (two runs, byte comparison), and launch smoke tests for outputs. Launch smoke tests are test-harness only, not a tool feature ([RQ §2.2](../Requirements/Repackage_tool_Requirements_v1.1.md)).
 - Matrix fixtures flagged `expectedInvalid` in `manifest.json` (e.g. the cyclic plugin app) are excluded from "zero errors" checks and must instead produce their listed diagnostics.
-- Conventions: every test carries `[Trait("WU", "<id>")]`. Run one WU with `dotnet test --project <test project path> --filter-trait "WU=<id>"` (MTP mode, no `--` separator). `Category` traits (combinable): `Integration` (cross-project in-process pipeline/CLI tests), `Matrix` (needs `artifacts/testapps`; skips with a reason locally when absent, never in CI), `Network` (external feeds; skipped unless `DOTNET_REPACK_TEST_NETWORK=1`, run nightly), `Launch` (starts produced apps). The default run makes no network calls.
+- Conventions: every test carries `[Trait("WU", "<id>")]`. Run one WU with `dotnet test --project <test project path> --filter-trait "WU=<id>"` (MTP mode, no `--` separator). `Category` traits (combinable): `Integration` (cross-project in-process pipeline/CLI tests), `Matrix` (needs `artifacts/testapps`; skips with a reason locally when absent, never in CI), `Network` (external feeds; skipped unless `DOTNET_TAILOR_TEST_NETWORK=1`, run nightly), `Launch` (starts produced apps). The default run makes no network calls.
 - Naming: standard .NET naming, no underscores. Test classes are `<TypeUnderTest>Tests`; test methods are PascalCase `<Subject><Condition><ExpectedResult>`, e.g. `ReferencedAssemblyLoads`, `ParseRejectsAbsolutePath`, `ClassifyReturnsCatchAllForUnknownFile`. CA1707 is not suppressed.
 
 ## 17. Security
@@ -463,7 +463,7 @@ The CLI follows dotnet conventions, uses Australian spelling for canonical repos
 | # | Conflict | Decision | Rationale | Status |
 |---|---|---|---|---|
 | 1 | [AS §20](../Requirements/Application_Specification.md) validation state inside the spec vs state-only / history-free ([AS §1](../Requirements/Application_Specification.md), [RQ §8](../Requirements/Repackage_tool_Requirements_v1.1.md)) | Separate validation report (spec hash + tree fingerprint). `apply` always re-validates | A self-attested flag goes stale after edits ([AS §20.4](../Requirements/Application_Specification.md)) | Provisional, confirm |
-| 2 | [RQ §9](../Requirements/Repackage_tool_Requirements_v1.1.md) / [AS §23.1](../Requirements/Application_Specification.md) default AppSpec in the app folder vs "analysis never modifies input" ([RQ §4.1](../Requirements/Repackage_tool_Requirements_v1.1.md)) | AppSpec and `.repack/` are sidecars, auto-excluded from scope. Written to the app folder only if it is writable, otherwise `--spec-out` is required | App files are never modified; sidecars do not change app state | Provisional, confirm |
+| 2 | [RQ §9](../Requirements/Repackage_tool_Requirements_v1.1.md) / [AS §23.1](../Requirements/Application_Specification.md) default AppSpec in the app folder vs "analysis never modifies input" ([RQ §4.1](../Requirements/Repackage_tool_Requirements_v1.1.md)) | AppSpec and `.tailor/` are sidecars, auto-excluded from scope. Written to the app folder only if it is writable, otherwise `--spec-out` is required | App files are never modified; sidecars do not change app state | Provisional, confirm |
 | 3 | [RD §7.2](../Requirements/R2R_tool_Design.md) metadata `transformations[]`/`diagnostics[]` | Superseded by the plan and report artefacts | [TS §31](../Requirements/Transformation_Specification.md) | Decided |
 | 4 | [CK §7.3](../Requirements/Read_to_run_Cake.md) English-only and [CK §6.2](../Requirements/Read_to_run_Cake.md)/[§7.1](../Requirements/Read_to_run_Cake.md) other-RID removal as mandatory | Preserve by default. Shipped template `enterprise-win-x64.transform.json` (WU-1003) | [TS §9.5](../Requirements/Transformation_Specification.md), [TS §21.4](../Requirements/Transformation_Specification.md) | Decided |
 | 5 | [FS](../Requirements/folderspec.json) `other` `**` overlapping siblings vs "no ambiguous matches" ([RD §3.4](../Requirements/R2R_tool_Design.md)) | Sibling specificity precedence ([§7.1](#71-folder-matching)) | Keeps the catch-all concise | Decided |
@@ -489,7 +489,7 @@ The CLI follows dotnet conventions, uses Australian spelling for canonical repos
 | 25 | `**` zero-level matches, multi-segment mask ranking, child definitions below recursed folders | `**` = one or more levels; rank by least-specific segment, then segment count; no implicit re-application below recursed folders ([§7.1](#71-folder-matching)) | Terminating `idRef` recursion, predictable ranking | Provisional |
 | 26 | Undefined exit codes for cancellation, post-execution assertion failure, path violations, stub verbs | 130 cancelled; 5 output-assertion failure after execution; 1 path violations; 70 stubs ([§13](#13-diagnostics-failure-policy-and-exit-codes)) | Conventional codes; path violations are structural ([TS §24.4](../Requirements/Transformation_Specification.md)) | Decided |
 | 27 | `--permissive` semantics undefined | Warnings never fail; [TS §24.2](../Requirements/Transformation_Specification.md) policy-configurable conditions become warnings; [TS §24.4](../Requirements/Transformation_Specification.md) structural errors unaffected ([§13](#13-diagnostics-failure-policy-and-exit-codes)) | Mirrors the TransformSpec policy model | Decided |
-| 28 | M5 "zero mutations outside `--artifacts`" vs plan-time package downloads (§4) | Zero mutations outside `--artifacts` and the NuGet package cache; the cache only when not `--offline` | Acquisition is the only declared side effect | Decided |
+| 28 | M5 "zero mutations outside `--artefacts`" vs plan-time package downloads (§4) | Zero mutations outside `--artefacts` and the NuGet package cache; the cache only when not `--offline` | Acquisition is the only declared side effect | Decided |
 | 29 | Credentials limited to env/credential providers (WU-700) vs "honours `nuget.config`" (§10) | Standard NuGet hierarchy exactly as NuGet does, incl. `packageSourceCredentials` and credential providers; never in specs, CLI or tool config ([§10](#10-acquisition)) | Behaves like `dotnet restore` | Decided |
 | 30 | Inconsistent test commands and categories across specs | `dotnet test --project <path> --filter-trait "WU=<id>"`; categories `Integration`/`Matrix`/`Network`/`Launch`; default run has no network ([§16](#16-testing-strategy)) | One convention for agents and CI | Decided |
 | 31 | Tool config name, response-file layer, repo vs user config, discovery boundary | `dotnet-tailor.json`; CLI (response files inline) > env > repo (stop at git root) > user > defaults ([§14](#14-cli)) | Response files are CLI input; git root bounds discovery | Decided |
@@ -523,7 +523,7 @@ Owned by work units or deferred:
 - **Resolved** — committed tool-generated files are LF-exempt like golden files: `.gitattributes` adds `schemas/** text eol=lf` and `Docs/Guides/diagnostics.md text eol=lf`; `.editorconfig` mirrors them. Drift tests stay byte-wise. Any future committed generated file gets the same exception (WU-000 D4).
 - `$schema` URI hosting (repo raw URL vs versioned docs site).
 - Should `apply --plan <file>` replay a pinned plan exactly (stronger reproducibility, [TS §3.6](../Requirements/Transformation_Specification.md))? Not in v1 scope.
-- Default artefacts location for `apply` when the AppSpec lives in the read-only input: provisional `<output>.repack/` sibling of the output.
+- Default artefacts location for `apply` when the AppSpec lives in the read-only input: provisional `<output>.tailor/` sibling of the output.
 
 ## 21. Spikes Feeding This Document
 

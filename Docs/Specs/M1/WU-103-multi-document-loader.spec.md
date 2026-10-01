@@ -48,18 +48,18 @@ Namespace `Tailor.Specifications.Loading`.
 | `sealed record LoadedSpecification<TDocument>` | `Effective` (typed, `Includes` empty), `Documents` (ordered `LoadedDocument` list: display name, full path, schema version, depth), `Provenance` |
 | `sealed class ProvenanceMap` | `SourceLocation Resolve(JsonPointer effectivePointer)` → `(DocumentDisplayName, JsonPointer)`; falls back to nearest ancestor pointer |
 | `static IncludeMerger` | DOM merge (internal, unit-tested) |
-| `static LoadingDiagnostics` | `RPK1300`–`RPK1399` |
+| `static LoadingDiagnostics` | `TLR1300`–`TLR1399` |
 
 Diagnostics (minimum):
 
 | Code | Condition | Severity |
 |---|---|---|
-| `RPK1301` | Include file not found | Error |
-| `RPK1302` | Include cycle; message lists the chain `a.json → b.json → a.json` | Error (structural) |
-| `RPK1303` | Include kind differs from root kind | Error |
-| `RPK1304` | Include path absolute, URL, or empty | Error |
-| `RPK1305` | Duplicate `id` within one keyed array of one document (if not already `RPK11xx`/`RPK12xx`) | Error |
-| `RPK1306` | Include major version differs from root major version | Error |
+| `TLR1301` | Include file not found | Error |
+| `TLR1302` | Include cycle; message lists the chain `a.json → b.json → a.json` | Error (structural) |
+| `TLR1303` | Include kind differs from root kind | Error |
+| `TLR1304` | Include path absolute, URL, or empty | Error |
+| `TLR1305` | Duplicate `id` within one keyed array of one document (if not already `TLR11xx`/`TLR12xx`) | Error |
+| `TLR1306` | Include major version differs from root major version | Error |
 
 ## Design Notes
 
@@ -80,12 +80,12 @@ Diagnostics (minimum):
 
 - [ ] AC-1 A single root document without `includes` loads to an effective model equal to WU-101/WU-102's single-document read.
 - [ ] AC-2 Include paths resolve relative to the including file (fixture `a/root.json` includes `shared/x.json` which includes `../y.json`); resolved documents appear in `Documents` in depth-first order.
-- [ ] AC-3 A cycle `root → a → b → a` yields `RPK1302` whose message contains `a.json → b.json → a.json` (relative display names) and nothing is deserialised.
-- [ ] AC-4 A self-include yields `RPK1302`; a diamond (`root → a, root → b, a → c, b → c`) loads `c` once without error.
-- [ ] AC-5 Missing include → `RPK1301` with location = including document + pointer `/includes/<n>`; absolute or URL include → `RPK1304`.
+- [ ] AC-3 A cycle `root → a → b → a` yields `TLR1302` whose message contains `a.json → b.json → a.json` (relative display names) and nothing is deserialised.
+- [ ] AC-4 A self-include yields `TLR1302`; a diamond (`root → a, root → b, a → c, b → c`) loads `c` once without error.
+- [ ] AC-5 Missing include → `TLR1301` with location = including document + pointer `/includes/<n>`; absolute or URL include → `TLR1304`.
 - [ ] AC-6 Precedence: root overrides includes; `include[1]` overrides `include[0]` for keyed items (e.g. `rules` id `no-xml-docs`, `folders.definitions` id `runtimes`); unkeyed arrays are replaced wholesale; covered by theory tests for both kinds.
 - [ ] AC-7 Duplicate `id` inside one document's keyed array is an error even when another document defines the same id.
-- [ ] AC-8 An AppSpec including a TransformSpec yields `RPK1303`; an include with major `2.0` under a `1.0` root yields `RPK1005` or `RPK1306`.
+- [ ] AC-8 An AppSpec including a TransformSpec yields `TLR1303`; an include with major `2.0` under a `1.0` root yields `TLR1005` or `TLR1306`.
 - [ ] AC-9 `ProvenanceMap.Resolve` returns the originating document and pointer for a merged rule and for a nested member of a replaced keyed item.
 - [ ] AC-10 Loading is deterministic: the canonical write of `Effective` is byte-identical across two loads and independent of `IDocumentSource` enumeration order (golden file).
 - [ ] AC-11 The same `SpecificationLoader` code path loads both kinds (test with one AppSpec and one TransformSpec multi-document fixture set).

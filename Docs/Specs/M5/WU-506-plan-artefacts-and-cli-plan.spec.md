@@ -14,7 +14,7 @@
 
 ## Goal
 
-Serialise planning results into deterministic artefacts (`*.plan.json` with schema `plan/v1`, per-file action report, projected AppSpec). Ship `plan` and `apply --dry-run` end to end, with a test-enforced guarantee that they make zero filesystem mutations outside `--artifacts` and the NuGet package cache (the cache only when not `--offline`).
+Serialise planning results into deterministic artefacts (`*.plan.json` with schema `plan/v1`, per-file action report, projected AppSpec). Ship `plan` and `apply --dry-run` end to end, with a test-enforced guarantee that they make zero filesystem mutations outside `--artefacts` and the NuGet package cache (the cache only when not `--offline`).
 
 ## Requirement Traceability
 
@@ -30,7 +30,7 @@ Serialise planning results into deterministic artefacts (`*.plan.json` with sche
 ## Scope
 
 **In**
-- Plan DTOs and the canonical writer. Plan schema generation, commit and drift test. `schema export plan` enabled (replaces `RPK0104`).
+- Plan DTOs and the canonical writer. Plan schema generation, commit and drift test. `schema export plan` enabled (replaces `TLR0104`).
 - Per-file action report and output file manifest.
 - `plan <appDir> --spec <file> --transform <file> [--out-plan <file>]` and `apply … --output <dir> --dry-run` (same pipeline; `--output` is recorded, never touched).
 - `PlanPipeline` composition: load AppSpec → validate (WU-403) → load TransformSpec + `--var` (WU-103/104) → WU-502 → WU-503 (with WU-504/505/507 handlers) → write artefacts.
@@ -49,9 +49,9 @@ Serialise planning results into deterministic artefacts (`*.plan.json` with sche
 | `PlanArtefactWriter.WriteAll(PlanResult, ArtefactPaths)` | Writes `<name>.plan.json`, `<name>.projected.appspec.json`, `action-report.json` |
 | `action-report.json` | Per input and output file: `path`, `action`, `destination?`, `phase`, `ruleId?`, `handler`, `reason` (TS §26.4 wording: copy, add, remove, replace, move, modify configuration, optimise, extract to symbols output, preserve unchanged). Sorted by path |
 | `Cli.Commands.Plan.PlanCommand` | Replaces the WU-105 stub action |
-| `Cli.Commands.Apply.ApplyCommand` (dry-run branch) | `--dry-run` runs `PlanPipeline` and exits. Without `--dry-run` it keeps the stub (`RPK0100`) until WU-603 |
-| Locations | `--out-plan` or `<artifacts>/repack.plan.json`. Artefacts dir = `--artifacts`, else `.repack/` next to the AppSpec (architecture §5). A non-writable artefacts dir → exit 2 |
-| `PlanCliDiagnostics` | `RPK0410`–`RPK0419` (CLI range, as in WU-404) |
+| `Cli.Commands.Apply.ApplyCommand` (dry-run branch) | `--dry-run` runs `PlanPipeline` and exits. Without `--dry-run` it keeps the stub (`TLR0100`) until WU-603 |
+| Locations | `--out-plan` or `<artifacts>/tailor.plan.json`. Artefacts dir = `--artefacts`, else `.tailor/` next to the AppSpec (architecture §5). A non-writable artefacts dir → exit 2 |
+| `PlanCliDiagnostics` | `TLR0410`–`TLR0419` (CLI range, as in WU-404) |
 
 **Exit codes** (architecture §13)
 
@@ -61,7 +61,7 @@ Serialise planning results into deterministic artefacts (`*.plan.json` with sche
 | 1 | Input AppSpec invalid, TransformSpec semantic/assertion/conflict/collision/safety errors, projected validation failure |
 | 2 | Usage errors, missing files, non-writable artefacts location |
 | 3 | `--strict` with warnings |
-| 4 | Acquisition failure (`RPK5305`, offline miss) |
+| 4 | Acquisition failure (`TLR5305`, offline miss) |
 | 130 | Cancelled (Ctrl+C); only partial artefacts may remain |
 
 ## Design Notes
@@ -78,11 +78,11 @@ Serialise planning results into deterministic artefacts (`*.plan.json` with sche
 - [ ] AC-2 A plan for the WU-504 `filtering` scenario is schema-valid, has `kind: Plan`, and lists every action with `phase`, `order`, `provenance`.
 - [ ] AC-3 `action-report.json` lists every in-scope input file and every output file exactly once, with the TS §26.4 action wording (coverage test).
 - [ ] AC-4 `inputs.variables` records each resolved variable with its source. `acquisitions` records exact versions and sha512 (fake acquisition planner).
-- [ ] AC-5 `plan` without `--out-plan` writes `<artifacts>/repack.plan.json`, `repack.projected.appspec.json` and `action-report.json`. `--out-plan <file>` writes the plan there.
-- [ ] AC-6 **Zero mutation** (M5 criterion 1): for each scenario (filtering, symbols dir, symbols zip, docs, resources, additions), on a temp copy of a matrix app with `--artifacts` outside the app, `plan` and `apply --dry-run --output <tmp>/out --symbols-output <tmp>/sym` leave (a) the input tree fingerprint **including sidecars and empty directories** unchanged, (b) `<tmp>/out` and `<tmp>/sym` non-existent, and (c) no new entries anywhere under `<tmp>` except the artefacts directory (before/after directory snapshot). The global packages folder is redirected to an isolated temp cache and must also be unchanged (no handler acquires in v0.2.0).
+- [ ] AC-5 `plan` without `--out-plan` writes `<artifacts>/tailor.plan.json`, `tailor.projected.appspec.json` and `action-report.json`. `--out-plan <file>` writes the plan there.
+- [ ] AC-6 **Zero mutation** (M5 criterion 1): for each scenario (filtering, symbols dir, symbols zip, docs, resources, additions), on a temp copy of a matrix app with `--artefacts` outside the app, `plan` and `apply --dry-run --output <tmp>/out --symbols-output <tmp>/sym` leave (a) the input tree fingerprint **including sidecars and empty directories** unchanged, (b) `<tmp>/out` and `<tmp>/sym` non-existent, and (c) no new entries anywhere under `<tmp>` except the artefacts directory (before/after directory snapshot). The global packages folder is redirected to an isolated temp cache and must also be unchanged (no handler acquires in v0.2.0).
 - [ ] AC-7 Two `plan` runs over the same inputs produce byte-identical `*.plan.json`, projected AppSpec and `action-report.json` (M5 criterion 3).
 - [ ] AC-8 The plan contains no absolute path of the temp root, no `Environment.MachineName` and no ISO-8601 timestamp (grep test).
-- [ ] AC-9 Scenario exit codes: equal-precedence conflict → 1 (`RPK5101`); output collision → 1 (`RPK5301`); unsafe removal → 1 (`RPK5302`); failed input assertion → 1 (`RPK4405`); warnings + `--strict` → 3; missing `--transform` file → 2.
+- [ ] AC-9 Scenario exit codes: equal-precedence conflict → 1 (`TLR5101`); output collision → 1 (`TLR5301`); unsafe removal → 1 (`TLR5302`); failed input assertion → 1 (`TLR4405`); warnings + `--strict` → 3; missing `--transform` file → 2.
 - [ ] AC-10 `apply` without `--dry-run` still returns the WU-105 not-implemented result (unchanged until WU-603).
 - [ ] AC-11 `plan` and `apply --dry-run` produce identical artefacts for the same inputs.
 
@@ -105,8 +105,8 @@ Serialise planning results into deterministic artefacts (`*.plan.json` with sche
 ## Open Questions
 
 - **Resolved** — WU-404 dependency (composition root; WU-105 stubs are transitive): added to the plan.
-- Artefact file names (`repack.plan.json`, `repack.projected.appspec.json`, `action-report.json`) are proposals. Architecture §5 only fixes `*.plan.json`.
-- **Resolved** — dry-run wording: zero mutations outside `--artifacts` and the NuGet package cache (cache only when not `--offline`); plan M5 criterion 1 and architecture §19 item 28 updated.
+- Artefact file names (`tailor.plan.json`, `tailor.projected.appspec.json`, `action-report.json`) are proposals. Architecture §5 only fixes `*.plan.json`.
+- **Resolved** — dry-run wording: zero mutations outside `--artefacts` and the NuGet package cache (cache only when not `--offline`); plan M5 criterion 1 and architecture §19 item 28 updated.
 
 ## Test Evidence
 

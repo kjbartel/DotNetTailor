@@ -61,7 +61,7 @@ Namespace `Tailor.Specifications.TransformSpec`. Root `sealed record TransformSp
 
 `Selector` (single record; properties in one object are AND-ed): `all[]?`, `any[]?`, `not?`, `folderId?`, `folderRole?`, `classification?`, `association?`, `assemblyRole?`, `plugin?`, `frameworkRole?`, `rid?`, `culture?`, `tfm?`, `name?`, `path?` — each predicate a `StringList` (string or array) ([§8](../../Architecture/Tailor.architecture.md#8-selectors-precedence-and-actions), [TS §8](../../Requirements/Transformation_Specification.md)). Empty object `{}` is invalid; absent means whole app ([TS §8.5](../../Requirements/Transformation_Specification.md)).
 
-Per-document structural checks (`RPK1200`–`1299`): duplicate `rules[].id` / `layout[].id` / `additions[].id`; empty selector object; `not` with zero predicates; library entry `allow: range` without `range`, `exact` without `version`; `sources[]` entry with both or neither of `name`/`url`, or a `url` containing userinfo (`user:pass@`) → structural error; `layout.destination`/`additions.destination` failing `RelativePath`; invalid variable name.
+Per-document structural checks (`TLR1200`–`1299`): duplicate `rules[].id` / `layout[].id` / `additions[].id`; empty selector object; `not` with zero predicates; library entry `allow: range` without `range`, `exact` without `version`; `sources[]` entry with both or neither of `name`/`url`, or a `url` containing userinfo (`user:pass@`) → structural error; `layout.destination`/`additions.destination` failing `RelativePath`; invalid variable name.
 
 Schema: `schemas/transformspec/v1/transformspec.schema.json`, same generator and post-processing as WU-101; `kind` const `TransformSpec`; `TransformSpecFormat.Instance` supports `1.0`.
 
@@ -82,8 +82,8 @@ Fixtures (`Fixtures/TransformSpec/`): `minimal`, `architecture-example` ([§6.3]
 - [ ] AC-2 Round-trip (read → write → read) over all valid fixtures is lossless and the second write is byte-identical (golden file per fixture).
 - [ ] AC-3 `ts33-conceptual-example.transform.json` is schema-valid; its golden file contains a rule or operation for each of the 12 TS §33 bullets (checklist test mapping bullet → JSON pointer).
 - [ ] AC-4 `${targetTfm}` values survive round-trip unchanged.
-- [ ] AC-5 `wrong-kind` → `RPK1003`; `major-2` → `RPK1005`; `unknown-member` → `RPK1010` with a JSON pointer (e.g. `/rules/0/selct`).
-- [ ] AC-6 `credential-in-url`, `duplicate-rule-id`, `empty-selector` each yield a distinct `RPK12xx` error with a JSON pointer; `unknown-policy-condition` yields a schema or `RPK12xx` error.
+- [ ] AC-5 `wrong-kind` → `TLR1003`; `major-2` → `TLR1005`; `unknown-member` → `TLR1010` with a JSON pointer (e.g. `/rules/0/selct`).
+- [ ] AC-6 `credential-in-url`, `duplicate-rule-id`, `empty-selector` each yield a distinct `TLR12xx` error with a JSON pointer; `unknown-policy-condition` yields a schema or `TLR12xx` error.
 - [ ] AC-7 `SchemaDriftTests` fails when `schemas/transformspec/v1/transformspec.schema.json` differs from the generated schema (same update switch as WU-101).
 - [ ] AC-8 The committed schema has `kind` const `TransformSpec`, `additionalProperties: false` everywhere except `operations.extensions` values, and `oneOf` string/array for selector predicates.
 - [ ] AC-9 An `operations.extensions["optimisation.pgo"]` object round-trips without schema errors.

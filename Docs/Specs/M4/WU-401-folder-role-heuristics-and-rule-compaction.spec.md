@@ -40,7 +40,7 @@ Produce a concise, human-editable draft AppSpec from an unknown tree: assign fol
 | `Tailor.Analysis.Heuristics.FolderRoleHeuristics` | Produces `FolderRoleAssignment` (path, role, confidence, evidence) per folder of the bootstrap EAM |
 | `Tailor.Analysis.Compaction.RuleCompactor` | Converts per-folder assignments into a compact folder-definition tree |
 | `Tailor.Analysis.DraftAppSpecGenerator.Generate(IAppTree, ExecutionModelResult, EffectiveApplicationModel bootstrap)` → `DraftAppSpecResult` | `AppSpec` (WU-101 model), `Diagnostics`, `SelfCheck` (EAM built from the draft) |
-| Diagnostic codes (proposed, `RPK41xx`) | `RPK4101` draft self-check failed (error; indicates a heuristic bug), `RPK4102` low-confidence role assignment (info) |
+| Diagnostic codes (proposed, `TLR41xx`) | `TLR4101` draft self-check failed (error; indicates a heuristic bug), `TLR4102` low-confidence role assignment (info) |
 
 ## Design Notes
 
@@ -67,7 +67,7 @@ Produce a concise, human-editable draft AppSpec from an unknown tree: assign fol
 - [ ] AC-5 No file paths are enumerated in the draft for any matrix app (test asserts no file-level entries).
 - [ ] AC-6 Folder-definition count for each matrix draft is ≤ the number of distinct role structures + 2 (root, catch-all) (computed test).
 - [ ] AC-7 Drafts are deterministic: two generations are byte-identical after canonical serialisation.
-- [ ] AC-8 Self-check: the EAM built from each matrix draft has zero error diagnostics (warnings such as `RPK3302` allowed), except variants flagged `expectedInvalid` in the WU-003 manifest (the cyclic plugin variant), whose only error is `RPK3401`.
+- [ ] AC-8 Self-check: the EAM built from each matrix draft has zero error diagnostics (warnings such as `TLR3302` allowed), except variants flagged `expectedInvalid` in the WU-003 manifest (the cyclic plugin variant), whose only error is `TLR3401`.
 - [ ] AC-9 Drafts carry confidence annotations for execution, framework contexts and inferred roles, and contain `idRef`, recursion and a catch-all where the layout allows (golden file per matrix entry, reviewed in PR).
 - [ ] AC-10 A plugin-host draft classifies each plugin folder as `plugin` and the plugin graph matches the WU-003 intended topology.
 

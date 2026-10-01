@@ -43,7 +43,7 @@ Pure, deterministic transformation of `*.runtimeconfig.json` between FD and SC s
 - `RuntimeConfigTarget {DeploymentModel, Tfm?, Frameworks[{Name, Version}], RollForward?}`.
 - `RuntimeConfigTransformer`, `RuntimeConfigWriter` (UTF-8 no BOM, 2-space indent; shape per SDK).
 - `JsonSemanticComparer` test utility (shared with WU-802/805; place in the existing test-support project if one exists).
-- Diagnostics (proposed `RPK81xx`): both `framework(s)` and `includedFrameworks` present, missing target version, unknown framework name, invalid JSON.
+- Diagnostics (proposed `TLR81xx`): both `framework(s)` and `includedFrameworks` present, missing target version, unknown framework name, invalid JSON.
 
 ## Design Notes
 
@@ -66,7 +66,7 @@ Pure, deterministic transformation of `*.runtimeconfig.json` between FD and SC s
 - [ ] AC-3 `configProperties` and unknown members (fixture with custom properties) survive both directions unchanged.
 - [ ] AC-4 FD output never contains `includedFrameworks`; SC output never contains `framework`/`frameworks`.
 - [ ] AC-5 FD→FD with a new version changes only framework versions.
-- [ ] AC-6 Invalid inputs (both shapes present, malformed JSON, missing version) yield `RPK81xx` diagnostics without exceptions.
+- [ ] AC-6 Invalid inputs (both shapes present, malformed JSON, missing version) yield `TLR81xx` diagnostics without exceptions.
 - [ ] AC-7 Output for identical inputs is byte-identical; UTF-8 without BOM.
 - [ ] AC-8 `JsonSemanticComparer` has its own tests (order-insensitive objects, framework arrays keyed by name, number/string distinctions kept).
 
@@ -79,7 +79,7 @@ Pure, deterministic transformation of `*.runtimeconfig.json` between FD and SC s
 
 ## Definition of Done
 
-- All AC ticked by the Verifier; CI green; `RPK81xx` codes listed for WU-1001.
+- All AC ticked by the Verifier; CI green; `TLR81xx` codes listed for WU-1001.
 
 ## Agent Notes
 

@@ -46,7 +46,7 @@ Plan framework-dependent → self-contained conversion for `win-x64`: add runtim
 ## Deliverables
 
 - `DeploymentModelHandler`, `IDeploymentModelConversion`, `FrameworkDependentToSelfContained`, `WindowsDesktopProfileResolver`, `FrameworkFileConflictResolver`, `ConfigGenerationHandler`; DI registration.
-- Diagnostics (proposed `RPK83xx`): unsupported RID, framework not resolvable, profile undeterminable (fallback all profiles + warning), app-local override kept, bundle input refused (via WU-800), missing apphost and no entry point, missing runtime version or policy.
+- Diagnostics (proposed `TLR83xx`): unsupported RID, framework not resolvable, profile undeterminable (fallback all profiles + warning), app-local override kept, bundle input refused (via WU-800), missing apphost and no entry point, missing runtime version or policy.
 
 ## Design Notes
 
@@ -70,7 +70,7 @@ Plan framework-dependent → self-contained conversion for `win-x64`: add runtim
 - [ ] AC-10 The projected AppSpec validates against output assertions `deploymentModel: selfContained`, `rid: win-x64`.
 - [ ] AC-11 Two plans are byte-identical.
 - [ ] AC-12 `apply` of the net10 console FD→SC plan produces an output that launches (smoke, harness only).
-- [ ] AC-13 An FD→SC TransformSpec without `runtimeVersion` and without `patch.runtime` fails validation with the `RPK83xx` missing-runtime-version error; `matchSource`, `latestPatch`, `exact` and `range` each resolve to the expected pinned version on the local feed.
+- [ ] AC-13 An FD→SC TransformSpec without `runtimeVersion` and without `patch.runtime` fails validation with the `TLR83xx` missing-runtime-version error; `matchSource`, `latestPatch`, `exact` and `range` each resolve to the expected pinned version on the local feed.
 
 ## Test Requirements
 
@@ -81,7 +81,7 @@ Plan framework-dependent → self-contained conversion for `win-x64`: add runtim
 
 ## Definition of Done
 
-- All AC ticked by the Verifier; CI green; `RPK83xx` codes listed for WU-1001.
+- All AC ticked by the Verifier; CI green; `TLR83xx` codes listed for WU-1001.
 
 ## Agent Notes
 

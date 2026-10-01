@@ -40,7 +40,7 @@ Implement the `Patch.Runtime` handler. It moves an app to another runtime patch 
 - FD: set `runtimeOptions.framework(s)[].version` to the target version. `rollForward` is written only when the TransformSpec sets it explicitly. All other runtimeconfig members are preserved.
 - R2R invalidation: detect app/plugin images whose version bubble includes framework assemblies (`--inputbubble` or composite with the framework, from the input publish). If R2R is selected for them, emit `Optimise` actions for the app/plugin images against the target pack (via WU-702, executed by WU-703); framework assemblies themselves are never recompiled in v1 (architecture §9.1). Otherwise fail planning. Non-bubble R2R images are preserved, with a `Preserve` reason in the plan.
 - Guards: cross-major target → error (points to retargeting). Same version → no-op plus info diagnostic. Lower version → error (see Open Questions).
-- Diagnostics in `RPK9xxx` (proposed sub-range `RPK90xx`), registered in the Core registry.
+- Diagnostics in `TLR9xxx` (proposed sub-range `TLR90xx`), registered in the Core registry.
 
 **Out**
 - Major-version changes and TFM changes (WU-901). FD⇄SC (WU-803/WU-804). Library patching (WU-902).
@@ -70,10 +70,10 @@ Implement the `Patch.Runtime` handler. It moves an app to another runtime patch 
 - [ ] AC-3 Every file not listed in the source RuntimeList is copied with an unchanged SHA-256 (test-enforced).
 - [ ] AC-4 `latestPatch` resolves to the highest same-major version in the local feed and is pinned in the plan with id, version, source and sha512. Two plan runs are byte-identical.
 - [ ] AC-5 `--offline` with only an older patch cached resolves to that version and emits a warning. With nothing cached it fails with exit code 4.
-- [ ] AC-6 A target in a different major version (e.g. 10.0.x for a net8 input) fails planning with an `RPK9xxx` error and exit code 1.
+- [ ] AC-6 A target in a different major version (e.g. 10.0.x for a net8 input) fails planning with an `TLR9xxx` error and exit code 1.
 - [ ] AC-7 FD patch: the runtimeconfig framework `version` equals the target. `rollForward` is unchanged unless the TransformSpec sets it, and is written exactly when set. The other members are semantically unchanged.
 - [ ] AC-8 SC patch: runtimeconfig `includedFrameworks` and deps.json `runtimepack.*` entries carry the target version. A normalised comparison against an SDK publish at the target patch (when that fixture exists) is equal.
-- [ ] AC-9 An input-bubble/composite R2R fixture that includes the framework: with R2R selected, the plan contains `Optimise` actions for exactly those images; without R2R selected, planning fails with an `RPK9xxx` error naming the images.
+- [ ] AC-9 An input-bubble/composite R2R fixture that includes the framework: with R2R selected, the plan contains `Optimise` actions for exactly those images; without R2R selected, planning fails with an `TLR9xxx` error naming the images.
 - [ ] AC-10 Non-bubble R2R app assemblies get `Preserve` with a reason and no `Optimise` action.
 - [ ] AC-11 No deps.json library other than `runtimepack.*` / framework references changes version, and only runtime packs are acquired (test-enforced).
 - [ ] AC-12 `apply` output launches (test-harness smoke run exits 0). The inspector reports the target `FileVersion` for `System.Private.CoreLib.dll`. The output AppSpec validates.
