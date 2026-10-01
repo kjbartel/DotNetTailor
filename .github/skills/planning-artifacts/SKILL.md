@@ -18,7 +18,7 @@ description: "Use when creating or changing .NET Tailor epics, features, milesto
 
 - Next free number per level. WU IDs use the milestone range (M3 → `WU-3xx`, M10 → `WU-10xx`).
 - Parent links are one-way up (WU → feature → epic) plus a child list in the parent; keep both in sync.
-- Existing standalone plans (e.g. `Docs/Plans/DotNetTailor-Rename.plan.md`) stay valid; convert to an epic when they need WUs.
+- Existing standalone plans (e.g. `Docs/Plans/Tailor-naming.plan.md`) stay valid; convert to an epic when they need WUs.
 
 ## Statuses
 

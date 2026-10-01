@@ -14,3 +14,6 @@ Link to [the architecture](../../Docs/Architecture/Tailor.architecture.md) and [
 - Record architecture changes in `Docs/Decisions/ADR-NNNN-<slug>.md` and update the architecture only with that decision.
 - Spike reports in `Docs/Spikes/` state the question, method, findings, recommendation and decision/ADR; keep spike code isolated from `src/`.
 - Keep generated artefacts and source line-ending policies from architecture §15; committed golden files and generated schema files use LF.
+- Follow [the naming plan](../../Docs/Plans/Tailor-naming.plan.md) for product, command, option and package names, and for Australian English spelling.
+- Tailoring and sewing metaphors are welcome in prose to keep the tone light, provided they never replace a fact the reader needs and never appear in command names, option names, schema text, diagnostic codes or other machine-readable identifiers. Drop the metaphor whenever the plain word is clearer.
+- Describe the artefact as it stands. Do not record session narrative ("changed from…", "as agreed above") outside an explicit history, drift or completion note.
