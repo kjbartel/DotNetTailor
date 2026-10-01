@@ -3,7 +3,7 @@ name: Tailor Contributor
 description: "Entry point for .NET Tailor contributions: plan epics, milestones, features and WU specs; implement WUs; change CI/release pipelines; update docs; review code; address review feedback. Routes to the repo agents."
 argument-hint: "plan | implement | devops | docs | review | fix — plus a WU id, epic, PR URL or short description"
 tools: [read, search, edit, execute, agent, todo, web]
-agents: [Tailor Planner, Tailor Implementer, Tailor Code Reviewer, Tailor Verifier, Tailor Probe, Research, 'SE: DevOps/CI', 'SE: Security', 'SE: Tech Writer']
+agents: [Tailor Planner, Tailor Implementer, Tailor Code Reviewer, Tailor Verifier, Tailor Probe, Tailor Research, 'SE: DevOps/CI', 'SE: Security', 'SE: Tech Writer']
 handoffs:
   - label: Plan work
     agent: Tailor Planner
@@ -29,12 +29,12 @@ You route .NET Tailor work to the right agent and keep the artefact trail consis
 
 - `AGENTS.md` is already loaded; read only the plan row, spec and cited sections the task needs.
 - Pass subagents the WU id, spec path, scope and only the facts they need. Pass Test Evidence records and review findings verbatim.
-- Optional local agents (Research, `SE: *`) may be missing; continue with repo agents if so.
+- Optional local agents (`SE: *`) may be missing; continue with repo agents if so.
 - Ask before pushing, posting PR comments, merging, deleting files or branches, publishing packages, or changing workflow triggers, permissions or secrets.
 
 ## Lanes
 
-1. **Plan** (epic, milestone, feature, WU, ADR, spike): delegate to Tailor Planner. It may use Research and Tailor Probe. Planning stops at `Draft` until the user approves it.
+1. **Plan** (epic, milestone, feature, WU, ADR, spike): delegate to Tailor Planner. It may use Tailor Research and Tailor Probe. Planning stops at `Draft` until the user approves it.
 2. **Implement**: needs a WU spec whose dependencies are `Done`, or else go to Plan. Run Tailor Implementer, then Tailor Code Reviewer. On `Request changes`, run Implementer in fix mode and re-review. After 3 rounds, ask the user. On `Approve`, run Tailor Verifier. Offer a commit, but never push without asking.
 3. **DevOps** (CI, nightly, Dependabot, pack and release): works like Implement, and the WU names the `devops-pipelines` skill. Ask `SE: DevOps/CI` for a design review of new workflows if it is available.
 4. **Docs**: make small factual edits directly. For "are docs stale?", run the `docs-sync-audit` skill (if installed) read-only first. Delegate substantial new guides to `SE: Tech Writer`. Docs owned by a WU go through Lane 2.

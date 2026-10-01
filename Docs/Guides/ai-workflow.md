@@ -30,6 +30,7 @@ Epic → Feature → Work unit → Step, with milestones grouping features for r
 | Tailor Code Reviewer | Read-only review; verdict `Approve` or `Request changes` | None |
 | Tailor Verifier | Ticks proven steps and criteria; Completion notes; `Done` for WU, and feature/epic when complete | Specs, features, epics, plan status |
 | Tailor Probe | Behaviour checks with evidence (subagent only) | Scratch or test files |
+| Tailor Research | Sourced options and trade-offs for a decision (subagent only) | None |
 
 ## Skills and prompts
 
@@ -44,11 +45,10 @@ Agent reviews use `CR-n` IDs, and GitHub PR comments use `PR-n`. The Implementer
 
 When one of these is missing, the repo agents carry on without it.
 
-| Used by | Asset | Type | Source (marketplace / id) | Version |
+| Used by | Asset | Type | Source (marketplace / id / url) | Version |
 |---|---|---|---|---|
 | Contributor, Code Reviewer | `SE: Security`, `SE: DevOps/CI`, `SE: Tech Writer` | Agents | awesome-copilot ([github/awesome-copilot](https://github.com/github/awesome-copilot)) / `software-engineering-team` plugin | 1.0.0 |
-| Contributor, Planner | `Research` | Agent | User-level custom agent (`~/.copilot/agents/research.agent.md`) | unversioned |
-| Contributor (docs lane) | `docs-sync-audit`, `documentation-writer` | Skills | User-level skills (`~/.agents/skills/`); upstream not recorded | unversioned |
-| Contributor (commit) | `git-commit` | Skill | User-level skill (`~/.agents/skills/`); upstream not recorded | unversioned |
+| Contributor (docs lane) | `docs-sync-audit`, `documentation-writer` | Skills | awesome-copilot ([github/awesome-copilot](https://github.com/github/awesome-copilot)) / skills | 2026-09-07, 2026-02-19 |
+| Contributor (commit) | `git-commit` | Skill | awesome-copilot ([github/awesome-copilot](https://github.com/github/awesome-copilot)) / skills | 2026-01-23 |
 
-The `test-evidence` skill and the Probe agent are vendored into the repo, so contributors need no local copies.
+The `test-evidence` skill and the Probe and Research agents are vendored into the repo, so contributors need no local copies.
