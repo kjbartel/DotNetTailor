@@ -5,7 +5,7 @@
 | ID | WU-507 |
 | Title | additions-handler |
 | Milestone | M5 Transformation Planning & Dry-run |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-503 |
 | Parallel with | WU-504, WU-505, WU-601, WU-702 |
 | Target project(s)/paths | `src/Tailor.Transforms/Additions/`, `tests/Tailor.Transforms.Tests/Additions/` |

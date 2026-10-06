@@ -5,7 +5,7 @@
 | ID | WU-901 |
 | Title | tfm-retargeting-and-compat-analysis |
 | Milestone | M9 Retargeting & Patching → v0.5.0-preview |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-801, WU-802, WU-701, WU-503, WU-201, WU-800, WU-702 |
 | Parallel with | WU-703, WU-704, WU-803–WU-805, WU-900, WU-902 |
 | Target project(s)/paths | `src/Tailor.Transforms/` (`Retarget` handler, compatibility analyser), `src/Tailor.Acquisition/` (known-breaking-API data, if placed there), `src/Tailor.Specifications/` (compatibility policy, only if missing), `tests/Tailor.Transforms.Tests/`, `tests/Tailor.IntegrationTests/`, `tests/TestApps/` (BinaryFormatter fixture) |
@@ -97,13 +97,11 @@ Implement the `Retarget` handler. It changes the TFM (e.g. `net8.0` → `net10.0
 
 ## Agent Notes
 
-- All dependencies (including WU-503, WU-201, WU-800 and WU-702) are in the plan's dependency column.
 - Use WU-201's MemberRef scan API. Do not re-implement metadata walking.
 - Keep the analyser pure (inputs: assemblies + target implementation set). This makes it unit-testable without packages.
 
 ## Open Questions
 
-- **Resolved** — plan dependency gap: WU-503, WU-201, WU-800 and WU-702 added to the plan.
 - Policy member name and values (`compatibility: error|warning|skip`) and whether it can be scoped per assembly selector.
 - Content and ownership of the known-breaking-API list beyond BinaryFormatter (source: official breaking-change docs).
 - Whether partial retarget ([TS §11.3](../../Requirements/Transformation_Specification.md)) is required for v1.

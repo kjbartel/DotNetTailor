@@ -5,7 +5,7 @@
 | ID | WU-804 |
 | Title | sc-to-fd-handler |
 | Milestone | M8 Deployment Model Conversion (v0.4.0-preview) |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-801, WU-802, WU-503, WU-803 |
 | Parallel with | WU-603, M7 |
 | Target | `src/Tailor.Transforms/DeploymentModel/SelfContainedToFrameworkDependent.cs`, `tests/Tailor.Transforms.Tests/DeploymentModel/` |
@@ -87,4 +87,3 @@ Plan self-contained → framework-dependent conversion: remove only files owned 
 ## Open Questions
 
 - How to detect `--inputbubble` R2R app assemblies compiled against the bundled framework (invalid after SC→FD)? Warn only, or require a TransformSpec acknowledgement?
-- **Resolved** — WU-803/WU-804 shared seams: WU-804 now depends on WU-803, which owns the dispatcher and ConfigGeneration handler.

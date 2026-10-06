@@ -5,7 +5,7 @@
 | ID | WU-704 |
 | Title | r2r-e2e |
 | Milestone | M7 Acquisition & ReadyToRun (v0.3.0-preview) |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-703, WU-603 |
 | Parallel with | M8 |
 | Target | `tests/Tailor.IntegrationTests/ReadyToRun/`, `tests/Tailor.IntegrationTests/Fixtures/r2r/*.transform.json`, `src/Tailor.Cli/Composition/` (Acquisition wiring); fixes in `src/Tailor.*` only where E2E exposes defects |

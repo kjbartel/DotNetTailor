@@ -5,7 +5,7 @@
 | ID | WU-603 |
 | Title | cli-apply-and-e2e |
 | Milestone | M6 Execution Engine (v0.2.0-preview) |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-602, WU-506, WU-405, WU-604 |
 | Parallel with | WU-702, WU-703 |
 | Target project(s)/paths | `src/Tailor.Cli/Commands/Apply/`, `src/Tailor.Cli/Composition/`, `tests/Tailor.Cli.Tests/Apply/`, `tests/Tailor.IntegrationTests/Cli/Apply/`, `tests/Tailor.IntegrationTests/TransformSpecs/`, `tests/Tailor.IntegrationTests/Support/` (launch helper) |
@@ -118,7 +118,6 @@ Ship `dotnet-tailor apply` end to end: pre-flight safety, plan, execute, post-va
 
 ## Open Questions
 
-- **Resolved** — WU-405 dependency (`MatrixFixture`): added to the plan.
 - **Resolved** — cancellation exit code: 130.
 - **Resolved** — output-path safety violations: exit 1 (structural, TS §24.4).
 - **Resolved** — deps.json pruning for v0.2.0: WU-604 (dependency) prunes removed assets; WU-802 builds on it.

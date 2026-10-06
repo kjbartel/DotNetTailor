@@ -5,7 +5,7 @@
 | ID | WU-504 |
 | Title | filtering-symbols-resources-layout-handlers |
 | Milestone | M5 Transformation Planning & Dry-run |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-503 |
 | Parallel with | WU-507, WU-601, WU-702 |
 | Target project(s)/paths | `src/Tailor.Transforms/{Filtering,Symbols,Documentation,Resources,Layout,Common}/`, `tests/Tailor.Transforms.Tests/{Filtering,Symbols,Documentation,Resources,Layout}/` |
@@ -112,7 +112,6 @@ Namespace `Tailor.Transforms`.
 ## Open Questions
 
 - **Resolved** — deps.json consistency after filtering: WU-604 (M6) prunes removed satellite, RID and library assets so v0.2.0 outputs launch.
-- **Resolved** — `additions[]` owner: WU-507.
 - Where does `separate` symbols output go when neither `symbols.output.path` nor `--symbols-output` is given? Proposed default: `<output>.symbols` (directory) or `<output>.symbols.zip`. This needs an architecture decision (WU-600/WU-601).
 - Default association mode for rules (`group` proposed; TS §10.4 examples imply it for removal).
 

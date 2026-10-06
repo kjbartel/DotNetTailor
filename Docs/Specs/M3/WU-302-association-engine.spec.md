@@ -5,7 +5,7 @@
 | ID | WU-302 |
 | Title | association-engine |
 | Milestone | M3 Effective Application Model |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-301 |
 | Parallel with | WU-303, WU-304 |
 | Target project(s)/paths | `src/Tailor.Model/Associations/`, `tests/Tailor.Model.Tests/Associations/` |

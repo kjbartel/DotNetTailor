@@ -68,7 +68,7 @@ Give AI coding agents a single, consistent source of repo conventions and a repe
 - Where WU-003 details (script parameters) do not exist yet, the `test-apps` skill cites [WU-003 spec](WU-003-test-app-suite.spec.md) and marks the section "update when WU-003 lands".
 - The `test-evidence` skill is vendored in the repo. `AGENTS.md` and `work-unit-workflow` also include the Test Evidence block format so contributors can follow the protocol without depending on user-level assets.
 - Keep `copilot-instructions.md` under ~60 lines. Put longer guidance in scoped instruction files.
-- ~~Commands must match WU-000 exactly (`Tailor.slnx`, `dotnet test --solution …`).~~ **Verifier note:** this solution filename expectation is stale. The current repository uses `DotNetTailor.slnx`, as do the current README and root `AGENTS.md`; the commands in `AGENTS.md` were validated as written.
+- Commands use `DotNetTailor.slnx` and match WU-000 and root `AGENTS.md`.
 - Boundaries to state: never modify `Docs/Requirements/**`; spikes code is never referenced from `src/`; no new package without CPM entry; no timestamps/GUIDs/machine paths in canonical output.
 
 ## Acceptance Criteria
@@ -78,8 +78,8 @@ Give AI coding agents a single, consistent source of repo conventions and a repe
 - [x] AC-3 Every `SKILL.md` has frontmatter `name` equal to its folder name and a non-empty `description`.
 - [ ] AC-4 Every `*.prompt.md` and `*.agent.md` has frontmatter with `description`; YAML parses (e.g. `ConvertFrom-Yaml` or any YAML linter). **Incomplete:** descriptions/frontmatter were inspected, but no YAML parser evidence is available.
 - [x] AC-5 `implement-work-unit.prompt.md` references `Docs/Plans/Tailor.plan.md` and the path convention `Docs/Specs/<Milestone>/<ID>-<slug>.spec.md` (M0 milestone criterion 5).
-- [x] AC-6 `AGENTS.md` and each instruction file link to `Docs/Architecture/Tailor.architecture.md`; all relative links resolve. **Verified:** all 13 deliverables exist and all 19 relative Markdown links resolve.
-- [x] AC-7 Commands in `AGENTS.md` run successfully as written. **Drift:** the criterion's examples name `Tailor.slnx`; the current repository and `AGENTS.md` use `DotNetTailor.slnx`, and all three current commands passed.
+- [x] AC-6 `AGENTS.md` and each instruction file link to `Docs/Architecture/Tailor.architecture.md`; all relative links resolve. **Verified:** all 19 relative Markdown links resolve.
+- [x] AC-7 Commands in `AGENTS.md` run successfully as written. **Verified:** all three commands passed using `DotNetTailor.slnx`.
 - [ ] AC-8 Reviewer confirms no statement contradicts the architecture (project boundaries §3.1, exit codes §13, artefact rules §5, determinism §15). **Incomplete:** no contradictions were found in the reviewed deliverables, but no PR record was available to verify the required recording.
 - [x] AC-9 `reviewer.agent.md` tool list excludes file-editing tools other than those needed to tick ACs and plan status. **Verified:** `edit` is available for that purpose and the role instructions limit its use to the selected WU spec and plan status; production code and tests remain read-only.
 
@@ -139,7 +139,6 @@ Give AI coding agents a single, consistent source of repo conventions and a repe
 
 ## Open Questions
 
-- Should `reviewer.agent.md` be allowed to run the full test-app matrix, or only reuse CI evidence? **Unresolved at verification:** current guidance allows only relevant uncovered checks; it does not specifically authorize the full matrix.
-- Whether to add an `architecture-change` skill (ADR + architecture edit) now or when the first ADR lands (spikes). **Unresolved at verification.**
-- The reviewer deliverable description says `read/search/test only`, while AC-9 permits the edit capability needed to update verifier-owned checklists and plan status. The implementation follows AC-9 and scopes edits in its role instructions; clarify this wording before treating it as a strict no-edit requirement.
+- May the Verifier run the full test-app matrix, or only relevant uncovered checks and reused CI evidence?
+- Add an `architecture-change` skill now or with the first ADR?
 - AC-8 requires the architecture review to be recorded in a PR; no PR record was available in this verification context.

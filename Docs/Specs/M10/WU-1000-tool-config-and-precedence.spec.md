@@ -5,7 +5,7 @@
 | ID | WU-1000 |
 | Title | tool-config-and-precedence |
 | Milestone | M10 Configuration, Hardening & Release → v1.0.0 |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-105 |
 | Parallel with | M2–M9 |
 | Target project(s)/paths | `src/Tailor.Cli/` (config discovery, merge, binding), `src/Tailor.Core/` (settings model, if shared), `schemas/config/v1/` (generated schema), `tests/Tailor.Cli.Tests/`, `Docs/Guides/configuration.md`, `Docs/Architecture/Tailor.architecture.md` §14 + ADR |
@@ -49,7 +49,7 @@ Add a tool configuration file at repo and user level. Merge all configuration so
 ## Deliverables
 
 - Settings model + loader + merger (pure, unit-testable) and CLI binding.
-- Schema file, drift test, guide, ADR `Docs/Decisions/ADR-NNNN-tool-config-precedence.md` confirming architecture §14 (already updated by the reconciliation pass).
+- Schema file, drift test, guide, ADR `Docs/Decisions/ADR-NNNN-tool-config-precedence.md` confirming architecture §14.
 
 ## Design Notes
 
@@ -90,6 +90,6 @@ Add a tool configuration file at repo and user level. Merge all configuration so
 
 ## Open Questions
 
-- **Resolved** — file name: `dotnet-tailor.json` (architecture §14; may change with the final product name, see plan open questions).
+- Config file name: `dotnet-tailor.json` (architecture §14).
 - **Resolved** — repo discovery stops at the git root.
 - Is `defaults.toolPackages` needed in v1, or should tool packages always follow the resolved target runtime version (`matchTarget`)?

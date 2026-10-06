@@ -5,7 +5,7 @@
 | ID | WU-101 |
 | Title | appspec-model-and-schema |
 | Milestone | M1 Core Primitives & Specification Documents |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-100, WU-007 |
 | Parallel with | WU-102, WU-105, M2 |
 | Target project(s)/paths | `src/Tailor.Specifications/` (`Common/`, `AppSpec/`), `schemas/appspec/v1/appspec.schema.json`, `tests/Tailor.Specifications.Tests/` (`Common/`, `AppSpec/`, `Fixtures/AppSpec/`) |
@@ -113,7 +113,7 @@ Per-document structural checks (`TLR1100`–`1199`): duplicate `id` among `folde
 - [ ] AC-6 `unknown-member` yields `TLR1010` whose location has the document name and a JSON pointer to the offending member (e.g. `/folders/root/folders/1/masks`).
 - [ ] AC-7 `escaping-reference` (`references: ["../x"]`) and an absolute `mask` yield `TLR11xx` errors with pointers; `duplicate-sibling-id` yields `TLR11xx` naming the id.
 - [ ] AC-8 `folderspec-equivalent.appspec.json` is schema-valid and its golden file shows `<culture>`, `/` separators, `duplicates: "error"` and the recursive `plugins` `idRef`.
-- [ ] AC-9 `SchemaDriftTests` regenerates the schema and fails with a diff message if it differs byte-wise from `schemas/appspec/v1/appspec.schema.json`; an env var `REPACK_UPDATE_SCHEMAS=1` rewrites the file locally instead (never set in CI).
+- [ ] AC-9 `SchemaDriftTests` regenerates the schema and fails with a diff message if it differs byte-wise from `schemas/appspec/v1/appspec.schema.json`; an env var `DOTNET_TAILOR_UPDATE_SCHEMAS=1` rewrites the file locally instead (never set in CI).
 - [ ] AC-10 The committed schema declares `additionalProperties: false` on all object schemas, `kind` const `AppSpec`, and the `schemaVersion` pattern.
 - [ ] AC-11 `ISchemaValidator` is implemented only by the adapter for the library chosen in the WU-007 ADR; no other project references that library.
 - [ ] AC-12 Reading any fixture never throws; all failures surface as diagnostics (test iterates all invalid fixtures).

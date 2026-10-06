@@ -5,7 +5,7 @@
 | ID | WU-600 |
 | Title | output-safety-and-staging |
 | Milestone | M6 Execution Engine (v0.2.0-preview) |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-100 |
 | Parallel with | M2–M5 |
 | Target project(s)/paths | `src/Tailor.Platform.Abstractions/Paths/`, `src/Tailor.Platform.Windows/Paths/`, `src/Tailor.Execution/Safety/`, `src/Tailor.Execution/Staging/`, `tests/Tailor.Execution.Tests/{Safety,Staging}/`, `tests/Tailor.Platform.Windows.Tests/Paths/` |

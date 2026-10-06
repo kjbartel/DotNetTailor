@@ -5,7 +5,7 @@
 | ID | WU-1001 |
 | Title | diagnostics-catalogue |
 | Milestone | M10 Configuration, Hardening & Release → v1.0.0 |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-603 |
 | Parallel with | M7–M9 |
 | Target project(s)/paths | `src/Tailor.Core/` (diagnostic descriptor registry), `src/Tailor.Cli/` (help text), `Docs/Guides/diagnostics.md` (generated), `tests/Tailor.Core.Tests/`, `tests/Tailor.Cli.Tests/` |
@@ -34,7 +34,7 @@ Every `TLR` code has one registry descriptor and a user-facing entry in `Docs/Gu
   - Registry ↔ committed markdown: regenerated content equals the committed file.
   - Source ↔ registry: no `TLR\d{4}` literal outside the registry. Every registered code is referenced by at least one emission site or marked `reserved`.
   - Range check: each code is inside its project's range ([Architecture §13](../../Architecture/Tailor.architecture.md)). Codes are unique.
-- Help text completeness: every command, subcommand, option and argument has a non-empty description. `--help` output per verb is compared against golden files. Help mentions exit codes (root help) and `analyse` as an alias.
+- Help text: every command, subcommand, option and argument has a description; per-verb `--help` matches golden files. Root help lists exit codes; `analyse` is canonical, with permanent alias `analyze`.
 
 **Out**
 - Localisation of messages. An online docs site. `helpUri` hosting (may be added later).

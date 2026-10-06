@@ -5,7 +5,7 @@
 | ID | WU-505 |
 | Title | projected-appspec-and-output-assertions |
 | Milestone | M5 Transformation Planning & Dry-run |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-503, WU-504 |
 | Parallel with | WU-507, WU-601, WU-702 |
 | Target project(s)/paths | `src/Tailor.Planning/Projection/`, `src/Tailor.Validation/TransformSpec/` (output-assertion extension of `StateAssertionEvaluator`), `tests/Tailor.Planning.Tests/Projection/`, `tests/Tailor.Validation.Tests/TransformSpec/` |

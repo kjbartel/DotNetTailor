@@ -22,8 +22,9 @@ See [the architecture](../../Docs/Architecture/Tailor.architecture.md), especial
 Follow [the naming plan](../../Docs/Plans/Tailor-naming.plan.md) for spelling and voice.
 
 - Write a comment only for what the code cannot show: a non-obvious constraint, an external quirk, or a reason a simpler approach fails. Never restate the next line.
-- Never narrate a chat session. No "changed to…", "as discussed", "previously we…", "TODO from review", dates, agent names or work-unit numbers in code. Decisions belong in the WU spec or an ADR.
+- Never narrate a chat session or draft revision. No "changed to…", "as discussed", "previously we…", "TODO from review", dates, agent names or work-unit numbers in code. Keep local rationale in concise comments or specs; architectural decisions require an ADR.
 - Keep comments short, usually one line, and true of the code as it stands now, not of how it got there.
+- Update or remove comments and XML docs with the implementation they describe. Keep temporary clarifications and mid-feature reminders in session memory; remove them before review and feature completion.
 - Write comments that survive refactoring: describe intent and invariants, not line counts, call order, type names or file paths that a rename would falsify.
 - Do not restate a symbol name in prose where a code reference works. Use `<see cref="..."/>` and `<paramref name="..."/>` in XML docs and `<see cref="..."/>` in comments so rename and find-references keep them correct.
 - XML docs are for public and protected API. One summary sentence is usually enough; add `<param>`, `<returns>` or `<exception>` only where the behaviour is not evident from the signature.

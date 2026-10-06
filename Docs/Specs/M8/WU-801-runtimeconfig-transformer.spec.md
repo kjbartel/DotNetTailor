@@ -5,7 +5,7 @@
 | ID | WU-801 |
 | Title | runtimeconfig-transformer |
 | Milestone | M8 Deployment Model Conversion (v0.4.0-preview) |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-202, WU-003 |
 | Parallel with | M3–M7 |
 | Target | `src/Tailor.Transforms/Configuration/RuntimeConfig/`, `tests/Tailor.Transforms.Tests/Configuration/` |
@@ -88,4 +88,3 @@ Pure, deterministic transformation of `*.runtimeconfig.json` between FD and SC s
 ## Open Questions
 
 - **Resolved** — default FD framework version on SC→FD: none. The TransformSpec must state an explicit version or runtime version policy (`matchSource` = the SC included version); a missing value is a validation error in the calling handler (architecture §10, §19 item 33). This transformer always receives explicit versions.
-- **Resolved** — WU-003 matrix dependency: added to the plan.

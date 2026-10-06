@@ -5,7 +5,7 @@
 | ID | WU-506 |
 | Title | plan-artefacts-and-cli-plan |
 | Milestone | M5 Transformation Planning & Dry-run |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-504, WU-505, WU-404, WU-507 |
 | Parallel with | WU-602, WU-604 |
 | Target project(s)/paths | `src/Tailor.Planning/Artefacts/`, `schemas/plan/v1/plan.schema.json`, `src/Tailor.Cli/Commands/Plan/`, `src/Tailor.Cli/Commands/Apply/` (dry-run path only), `src/Tailor.Cli/Composition/`, `tests/Tailor.Planning.Tests/Artefacts/`, `tests/Tailor.Cli.Tests/`, `tests/Tailor.IntegrationTests/Cli/Plan/` |
@@ -104,8 +104,7 @@ Serialise planning results into deterministic artefacts (`*.plan.json` with sche
 
 ## Open Questions
 
-- **Resolved** — WU-404 dependency (composition root; WU-105 stubs are transitive): added to the plan.
-- Artefact file names (`tailor.plan.json`, `tailor.projected.appspec.json`, `action-report.json`) are proposals. Architecture §5 only fixes `*.plan.json`.
+- `action-report.json` remains proposed; `tailor.plan.json` and `tailor.projected.appspec.json` are fixed by [the naming plan](../../Plans/Tailor-naming.plan.md).
 - **Resolved** — dry-run wording: zero mutations outside `--artefacts` and the NuGet package cache (cache only when not `--offline`); plan M5 criterion 1 and architecture §19 item 28 updated.
 
 ## Test Evidence

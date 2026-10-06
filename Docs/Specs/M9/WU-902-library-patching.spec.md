@@ -5,7 +5,7 @@
 | ID | WU-902 |
 | Title | library-patching |
 | Milestone | M9 Retargeting & Patching → v0.5.0-preview |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-700, WU-802, WU-503, WU-305 |
 | Parallel with | WU-603, M7, WU-803–WU-805, WU-900, WU-901 |
 | Target project(s)/paths | `src/Tailor.Transforms/` (`Patch.Library` handler, asset selection), `src/Tailor.Specifications/` (only if members are missing), `tests/Tailor.Transforms.Tests/`, `tests/Tailor.IntegrationTests/`, `tests/TestApps/` |
@@ -95,6 +95,5 @@ Implement the `Patch.Library` handler. It updates **explicitly selected** non-co
 
 ## Open Questions
 
-- **Resolved** — plan dependency gap: WU-503 and WU-305 added to the plan.
 - Should selection support id globs (`Contoso.*`) or selector-based assembly groups ([TS §12.3](../../Requirements/Transformation_Specification.md))? Proposed: exact ids in v1.
 - Default for "update unavailable": `warning` (proposed) or `error`.

@@ -5,7 +5,7 @@
 | ID | WU-702 |
 | Title | r2r-eligibility-planner |
 | Milestone | M7 Acquisition & ReadyToRun (v0.3.0-preview) |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-503, WU-200, WU-701 |
 | Parallel with | WU-504, WU-505, M6 |
 | Target | `src/Tailor.Transforms/Optimisation/ReadyToRun/`, `tests/Tailor.Transforms.Tests/` |
@@ -112,5 +112,4 @@ Every managed assembly in the projected output gets exactly one entry. Non-manag
 ## Open Questions
 
 - **Resolved** — explicit selection of framework assemblies: never recompiled in v1 (warning + skip); composite/inputbubble exclude framework assemblies (architecture §9.1, §19 item 32).
-- **Resolved** — `SatelliteResource` (Ineligible) and runtime-pack framework (Skipped) are now in architecture §9.1.
 - Should `--pdb` (R2R native PDB) be tied to the symbols policy (TS §16) or be an explicit R2R option only?

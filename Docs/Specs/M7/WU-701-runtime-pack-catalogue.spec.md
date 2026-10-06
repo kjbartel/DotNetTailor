@@ -5,7 +5,7 @@
 | ID | WU-701 |
 | Title | runtime-pack-catalogue |
 | Milestone | M7 Acquisition & ReadyToRun (v0.3.0-preview) |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-700, WU-006 |
 | Parallel with | M3–M6 |
 | Target | `src/Tailor.Acquisition/` (`RuntimePacks/`), `tests/Tailor.Acquisition.Tests/` |

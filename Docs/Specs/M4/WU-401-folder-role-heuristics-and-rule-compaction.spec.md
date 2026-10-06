@@ -5,7 +5,7 @@
 | ID | WU-401 |
 | Title | folder-role-heuristics-and-rule-compaction |
 | Milestone | M4 Analysis & Validation |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-400 |
 | Parallel with | WU-402, WU-403, WU-500, WU-501 |
 | Target project(s)/paths | `src/Tailor.Analysis/Heuristics/`, `src/Tailor.Analysis/Compaction/`, `src/Tailor.Analysis/DraftAppSpecGenerator.cs`, `tests/Tailor.Analysis.Tests/Heuristics/`, `tests/Tailor.Analysis.Tests/Compaction/`, `tests/Tailor.IntegrationTests/Analysis/` |

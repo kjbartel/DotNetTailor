@@ -23,6 +23,7 @@ The [master plan](../../../Docs/Plans/Tailor.plan.md) owns sequencing and status
 - Tailor Code Reviewer verdict is `Approve` at the verified HEAD (or a user waiver is recorded).
 - Required focused tests, build, formatting and lint checks pass; failures and exclusions are documented.
 - The diff stays within scope, preserves safety and determinism, and includes any necessary user-facing documentation.
+- Before review and feature completion, docs and comments reflect current contracts (planned work labelled); no chat narrative, resolved clarification notes, temporary probes or unit tests for removal of superseded code remain. Preserve required evidence and contract-focused regression/compatibility coverage; see [AGENTS.md](../../../AGENTS.md#documentation-comments-and-tests).
 
 ## Completion Note
 

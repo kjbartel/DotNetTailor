@@ -5,7 +5,7 @@
 | ID | WU-703 |
 | Title | crossgen2-invoker |
 | Milestone | M7 Acquisition & ReadyToRun (v0.3.0-preview) |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-702, WU-004 |
 | Parallel with | M6, M8 |
 | Target | `src/Tailor.Execution/ReadyToRun/`, `tests/Tailor.Execution.Tests/` |

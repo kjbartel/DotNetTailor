@@ -5,7 +5,7 @@
 | ID | WU-201 |
 | Title | managed-metadata-reader |
 | Milestone | M2 Binary Inspection |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-100 |
 | Parallel with | WU-200, WU-202, WU-203, M1 |
 | Target project(s)/paths | `src/Tailor.Inspection/Metadata/`, `tests/Tailor.Inspection.Tests/Metadata/`, `tests/Tailor.IntegrationTests/Inspection/` |

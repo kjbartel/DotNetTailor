@@ -5,7 +5,7 @@
 | ID | WU-300 |
 | Title | folder-matching-engine |
 | Milestone | M3 Effective Application Model |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-101, WU-203 |
 | Parallel with | WU-200–WU-202, WU-103 |
 | Target project(s)/paths | `src/Tailor.Model/Tree/`, `src/Tailor.Model/Folders/`, `tests/Tailor.Model.Tests/Folders/` |
@@ -14,7 +14,7 @@
 
 ## Goal
 
-Match every folder of an application tree to exactly one effective folder definition from a loaded AppSpec, deterministically and confined to the app root. This is the first stage of the Effective Application Model (EAM) build.
+Match every app-tree folder to exactly one effective AppSpec folder definition, deterministically and confined to the app root. First stage of the Effective Application Model (EAM) build.
 
 ## Requirement Traceability
 

@@ -5,7 +5,7 @@
 | ID | WU-403 |
 | Title | appspec-validation-engine |
 | Milestone | M4 Analysis & Validation |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-305, WU-202 |
 | Parallel with | WU-400–WU-402, WU-500, WU-501 |
 | Target project(s)/paths | `src/Tailor.Validation/AppSpec/`, `tests/Tailor.Validation.Tests/AppSpec/`, `tests/Tailor.IntegrationTests/Validation/` |
@@ -96,7 +96,6 @@ Validate an AppSpec against a physical tree covering every check in AS §20.3, c
 
 ## Open Questions
 
-- **Resolved** — WU-202 dependency: added to the plan.
 - **Resolved** — duplicated FD/SC/TFM extraction: moved to Model `Model.Execution` (WU-305), used by WU-400 and this WU.
 - **Resolved** — permissive semantics: descriptor-driven (`IsPolicyConfigurable`), architecture §13. The concrete flagged code list above is still proposed; confirm during review. Meaning of `Unvalidated` as in Design Notes.
 - "Added file" (plan M4 criterion 3): with a catch-all, an added file is valid by design; detection only occurs when it breaks a rule (see WU-405 scenarios). Confirm this interpretation.

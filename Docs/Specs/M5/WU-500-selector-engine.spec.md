@@ -5,7 +5,7 @@
 | ID | WU-500 |
 | Title | selector-engine |
 | Milestone | M5 Transformation Planning & Dry-run |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-305, WU-102 |
 | Parallel with | WU-400–WU-403 |
 | Target project(s)/paths | `src/Tailor.Planning/Selectors/`, `tests/Tailor.Planning.Tests/Selectors/`, `tests/Tailor.IntegrationTests/Planning/Selectors/` |
@@ -66,7 +66,7 @@ Namespace `Tailor.Planning.Selectors`.
 | `rid` | RID context from `<rid>` folder tokens | A value `R` matches when the artefact's RID context is in the RID-graph compatibility closure of `R` (WU-203). Example: `win-x64` matches `win-x64`, `win` and `any` | Files without RID context |
 | `culture` | Culture context from `<culture>` folders or satellite facts | Exact or `*` glob (`en`, `en-*`), case-insensitive | Invariant/neutral files |
 | `tfm` | `TargetFrameworkAttribute` TFM of a managed assembly | Glob (`net8.0*`) | Non-assemblies |
-| `name` | File name | Glob, case-insensitive (`Legacy.*`) | — |
+| `name` | File name | Glob, case-insensitive (`Excluded.*`) | — |
 | `path` | Root-relative path | Microsoft.Extensions.FileSystemGlobbing semantics (`**`), `/` separators | — |
 
 ## Design Notes
@@ -76,13 +76,13 @@ Namespace `Tailor.Planning.Selectors`.
 - The engine evaluates over **files**. Folder semantics are reached through `FolderChain`. Folder-level exclusion is expressed as "all files under folder X".
 - Evaluation is pure. It never reads file content, because all facts come from the EAM. It is thread-safe, and results are sorted with the `PathPolicy` comparer.
 - Globs and value lists are compiled once per selector. Evaluation cost is O(artefacts × predicates).
-- Architecture §8 lists `name`. The user list for this WU does not, but `name` is in the WU-102 model, so it is implemented.
+- Implement `name` as defined by architecture §8 and the WU-102 model.
 
 ## Acceptance Criteria
 
 - [ ] AC-1 Every predicate in the table has a theory test over a synthetic `InMemoryAppTree` EAM that covers match, non-match and (where applicable) `Unknown`.
 - [ ] AC-2 `all`/`any`/`not` follow the Kleene truth tables (exhaustive table test over `True`/`False`/`Unknown`).
-- [ ] AC-3 The TS §8.4 example "all managed assemblies under plugin folders except `Legacy.*`" (`all: [{folderRole: plugin}, {classification: managed}, {not: {name: "Legacy.*"}}]`) selects exactly the expected files on the plugin synthetic tree, including nested plugin folders.
+- [ ] AC-3 A TS §8.4-style selector for all managed assemblies under plugin folders except `Excluded.*` (`all: [{folderRole: plugin}, {classification: managed}, {not: {name: "Excluded.*"}}]`) selects exactly the expected files on the plugin synthetic tree, including nested plugin folders.
 - [ ] AC-4 `not: {culture: ["en", "en-*"]}` with `classification: resource` selects `de/*` and `fr/*` satellites only. Invariant resources are not selected.
 - [ ] AC-5 `not: {rid: "win-x64"}` on the `ConsoleApp/<tfm>-fdportable-il` matrix variant selects only `runtimes/<rid>/…` files whose RID is not in the `win-x64` compatibility closure.
 - [ ] AC-6 An absent selector selects every in-scope artefact and no sidecar.

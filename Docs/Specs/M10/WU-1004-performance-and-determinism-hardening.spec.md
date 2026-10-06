@@ -5,7 +5,7 @@
 | ID | WU-1004 |
 | Title | performance-and-determinism-hardening |
 | Milestone | M10 Configuration, Hardening & Release → v1.0.0 |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-903 |
 | Parallel with | WU-1003 |
 | Target project(s)/paths | `tests/Tailor.PerformanceTests/` (new), `tests/Fixtures/Synthetic/` (generator), `tests/Tailor.Inspection.Tests/` + `tests/Tailor.Specifications.Tests/` (fuzz), `.github/workflows/determinism.yml`, `src/Tailor.Inspection/`, `src/Tailor.Model/` (parallelism, memory fixes), `Docs/Decisions/` (budget ADR) |

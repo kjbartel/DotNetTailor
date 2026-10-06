@@ -5,7 +5,7 @@
 | ID | WU-301 |
 | Title | file-classification-engine |
 | Milestone | M3 Effective Application Model |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-300, WU-200 |
 | Parallel with | WU-201, WU-202, WU-600 |
 | Target project(s)/paths | `src/Tailor.Model/Classification/`, `tests/Tailor.Model.Tests/Classification/`, `tests/Tailor.IntegrationTests/Model/` |

@@ -5,7 +5,7 @@
 | ID | WU-1003 |
 | Title | user-guides-and-templates |
 | Milestone | M10 Configuration, Hardening & Release → v1.0.0 |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-903, WU-1000, WU-1001 |
 | Parallel with | WU-1004 |
 | Target project(s)/paths | `Docs/Guides/` (guides), `templates/` (TransformSpec templates), `src/Tailor.Cli/Tailor.Cli.csproj` (pack templates as package content), `tests/Tailor.IntegrationTests/` (template + example validation), `tests/Tailor.Specifications.Tests/` (doc example schema validation) |
@@ -90,4 +90,3 @@ Ship user guides and reusable TransformSpec templates, including `enterprise-win
 ## Open Questions
 
 - How users get templates from an installed tool: package content only, release assets, or a `dotnet-tailor template export <name>` verb (new CLI surface, not planned).
-- **Resolved** — WU-1000/WU-1001 cross-links: both are dependencies in the plan.

@@ -5,7 +5,7 @@
 | ID | WU-501 |
 | Title | rule-precedence-and-conflicts |
 | Milestone | M5 Transformation Planning & Dry-run |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-500 |
 | Parallel with | WU-400–WU-403 |
 | Target project(s)/paths | `src/Tailor.Planning/Precedence/`, `tests/Tailor.Planning.Tests/Precedence/` |

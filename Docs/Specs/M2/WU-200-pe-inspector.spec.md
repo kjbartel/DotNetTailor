@@ -5,7 +5,7 @@
 | ID | WU-200 |
 | Title | pe-inspector |
 | Milestone | M2 Binary Inspection |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-100 |
 | Parallel with | WU-201–WU-203, M1 |
 | Target project(s)/paths | `src/Tailor.Inspection/Pe/`, `tests/Tailor.Inspection.Tests/Pe/` (+ `Fixtures/Pe/`), `tests/Tailor.IntegrationTests/Inspection/` |

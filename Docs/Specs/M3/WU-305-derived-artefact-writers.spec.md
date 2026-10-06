@@ -5,7 +5,7 @@
 | ID | WU-305 |
 | Title | derived-artefact-writers |
 | Milestone | M3 Effective Application Model |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-302, WU-304, WU-202 |
 | Parallel with | WU-600, WU-700, WU-801 |
 | Target project(s)/paths | `src/Tailor.Model/` (`EffectiveModelBuilder`, `Artefacts/`, `Fingerprints/`, `Execution/`), `tests/Tailor.Model.Tests/Artefacts/`, `tests/Tailor.Model.Tests/Execution/`, `tests/Tailor.IntegrationTests/AppSpecs/`, `tests/Tailor.IntegrationTests/Model/` |
@@ -86,7 +86,6 @@ Compose the M3 stages into one `EffectiveApplicationModel` build and write the s
 
 ## Open Questions
 
-- **Resolved** — WU-202 dependency: added to the plan.
 - **Resolved** — FD/SC/TFM detection shared by WU-400 and WU-403: `Model.Execution` primitives owned here (architecture §3.2).
 - Spec hash over the merged canonical AppSpec (provisional) vs raw root-file bytes.
 - Plan assigns no owner for "hand-authored AppSpecs for every test app" (M3 criterion 1); assigned here provisionally.

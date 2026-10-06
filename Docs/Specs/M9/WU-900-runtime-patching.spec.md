@@ -5,7 +5,7 @@
 | ID | WU-900 |
 | Title | runtime-patching |
 | Milestone | M9 Retargeting & Patching → v0.5.0-preview |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-803, WU-702, WU-703 |
 | Parallel with | WU-901, WU-902, WU-805 |
 | Target project(s)/paths | `src/Tailor.Transforms/` (`Patch.Runtime` handler), `src/Tailor.Inspection/` (R2R version-bubble facts, only if missing), `src/Tailor.Specifications/` (runtime patch options, only if missing), `tests/Tailor.Transforms.Tests/`, `tests/Tailor.IntegrationTests/` |

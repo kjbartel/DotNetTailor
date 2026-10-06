@@ -5,7 +5,7 @@
 | ID | WU-105 |
 | Title | cli-skeleton |
 | Milestone | M1 Core Primitives & Specification Documents |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-100 (`schema export` ACs need WU-101 and WU-102 `Done`) |
 | Parallel with | WU-101–WU-104, M2 |
 | Target project(s)/paths | `src/Tailor.Cli/`, `tests/Tailor.Cli.Tests/` |
@@ -79,7 +79,7 @@ From [the naming plan](../../Plans/Tailor-naming.plan.md), policy item 2. This W
 
 - Australian English is the canonical spelling for every command, option and piece of help text.
 - Whenever a command or option name has a differing US spelling, register **both**. The Australian form is the command/option name; the US form is an alias.
-- US aliases are permanent and are never marked deprecated. They exist so scripts, shell completion and other tools resolve the command with whichever spelling an author reaches for first. No alias emits a deprecation warning, and removing one would be a breaking change.
+- US aliases are permanent and non-deprecated, emit no deprecation warning, and cannot be removed without a breaking change.
 - Help output lists the Australian form first; an alias is shown as an alias, never as a second command.
 - This applies only to the CLI surface. Diagnostic codes, diagnostic message text, canonical JSON, schema identifiers and configuration file keys use one spelling only, decided by the owning WU.
 - Current pairs: `analyse`/`analyze`, `--artefacts`/`--artifacts`.

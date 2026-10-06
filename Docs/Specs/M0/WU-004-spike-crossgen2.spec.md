@@ -5,7 +5,7 @@
 | ID | WU-004 |
 | Title | spike-crossgen2 |
 | Milestone | [M0 Foundation & Repo Bootstrap](../../Plans/Tailor.plan.md#m0-foundation--repo-bootstrap) |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-003 |
 | Parallel with | WU-005, WU-006, WU-007, M1, M2 |
 | Target paths | `Docs/Spikes/WU-004-spike-crossgen2.md`, `Docs/Decisions/ADR-0001-crossgen2-acquisition-and-invocation.md`, `spikes/WU-004/` (throwaway), architecture §9.1 and §21 |
@@ -52,7 +52,7 @@ Establish how the tool acquires and invokes crossgen2 for `net8.0` and `net10.0`
 - `Docs/Spikes/WU-004-spike-crossgen2.md` with sections: Question, Method, Findings (one subsection per Q1–Q8 with **Answer** and **Evidence**), Decision, Recommended ADR, Impact on architecture/plan, Follow-ups.
 - `Docs/Decisions/ADR-0001-crossgen2-acquisition-and-invocation.md` (status `Proposed`; context, decision, consequences, alternatives).
 - Architecture update in the same PR: [§9.1](../../Architecture/Tailor.architecture.md#91-readytorun-details) (confirmed layout, argument baseline, skip reasons, determinism result) and the WU-004 row in [§21](../../Architecture/Tailor.architecture.md#21-spikes-feeding-this-document) (link report + ADR).
-- `spikes/WU-004/` throwaway code (e.g. PowerShell scripts or a console project) with its own `Directory.Build.props` and `Directory.Packages.props` (`ManagePackageVersionsCentrally=false`) so the root props do not apply. Not added to `Tailor.slnx`.
+- `spikes/WU-004/` throwaway code (e.g. PowerShell scripts or a console project) with its own `Directory.Build.props` and `Directory.Packages.props` (`ManagePackageVersionsCentrally=false`) so the root props do not apply. Not added to `DotNetTailor.slnx`.
 
 ## Design Notes
 
@@ -68,8 +68,8 @@ Establish how the tool acquires and invokes crossgen2 for `net8.0` and `net10.0`
 - [ ] AC-3 The Q6 findings include a hash table from two runs (same inputs) and state byte-identical: yes/no, with the differing files if no.
 - [ ] AC-4 `Docs/Decisions/ADR-0001-crossgen2-acquisition-and-invocation.md` exists with status `Proposed` and sections Context, Decision, Consequences, Alternatives.
 - [ ] AC-5 Architecture §9.1 and the §21 WU-004 row reflect the decision and link the report and ADR; §19 item 13 status is updated if Q2 changes it.
-- [ ] AC-6 `spikes/WU-004/` exists, is not referenced by `Tailor.slnx` (`Select-String -Path Tailor.slnx -Pattern spikes` returns nothing), and contains a README stating how to rerun the evidence.
-- [ ] AC-7 `dotnet build Tailor.slnx -c Release -warnaserror`, `dotnet test --solution Tailor.slnx -c Release` and `dotnet format Tailor.slnx --verify-no-changes` still pass.
+- [ ] AC-6 `spikes/WU-004/` exists, is not referenced by `DotNetTailor.slnx` (`Select-String -Path DotNetTailor.slnx -Pattern spikes` returns nothing), and contains a README stating how to rerun the evidence.
+- [ ] AC-7 `dotnet build DotNetTailor.slnx -c Release -warnaserror`, `dotnet test --solution DotNetTailor.slnx -c Release` and `dotnet format DotNetTailor.slnx --verify-no-changes` still pass.
 - [ ] AC-8 No binaries or `.nupkg` files are committed (`git diff --stat main -- '*.dll' '*.exe' '*.nupkg'` is empty).
 
 ## Test Requirements

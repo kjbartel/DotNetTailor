@@ -5,7 +5,7 @@
 | ID | WU-502 |
 | Title | transformspec-validation |
 | Milestone | M5 Transformation Planning & Dry-run |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-501, WU-403, WU-104 |
 | Parallel with | WU-404, WU-405 |
 | Target project(s)/paths | `src/Tailor.Validation/TransformSpec/`, `src/Tailor.Planning/Validation/`, `tests/Tailor.Validation.Tests/TransformSpec/`, `tests/Tailor.Planning.Tests/Validation/` |
@@ -79,7 +79,7 @@ Turn a loaded TransformSpec plus a validated input AppSpec into a `ValidatedTran
 
 ## Design Notes
 
-- Architecture §3.1 puts TransformSpec validation in Validation and selectors in Planning, and forbids Validation → Planning. The split above respects that: selector-free checks live in Validation, and the pipeline that needs selectors lives in Planning.
+- Per architecture §3.1, selector-free TransformSpec checks belong in Validation; the selector-dependent pipeline belongs in Planning. Validation must not reference Planning.
 - Input assertions are evaluated against the **validated input AppSpec** and its EAM, never against heuristics. `tfm` and `version` use glob/range semantics as in WU-102. `folderIds`, `plugins` and `assemblies` are checked for presence in the EAM.
 - `--strict` / `--permissive` combine with `PolicySet` through `PolicyEvaluator` (WU-100). Structural descriptors stay `Error` ([TS §24.4](../../Requirements/Transformation_Specification.md#24-validation-and-failure-policies)).
 - All diagnostics are collected; validation never stops at the first error, except that a failed WU-104 resolution stops before semantic checks (unresolved values are meaningless).

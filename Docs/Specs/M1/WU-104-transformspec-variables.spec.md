@@ -5,7 +5,7 @@
 | ID | WU-104 |
 | Title | transformspec-variables |
 | Milestone | M1 Core Primitives & Specification Documents |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-102, WU-103 |
 | Parallel with | WU-105, M2, M3 |
 | Target project(s)/paths | `src/Tailor.Specifications/Variables/`, `src/Tailor.Specifications/TransformSpec/` (attribute annotations only), `tests/Tailor.Specifications.Tests/Variables/` |

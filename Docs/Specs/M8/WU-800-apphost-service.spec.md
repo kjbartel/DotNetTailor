@@ -5,7 +5,7 @@
 | ID | WU-800 |
 | Title | apphost-service |
 | Milestone | M8 Deployment Model Conversion (v0.4.0-preview) |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-005, WU-700 |
 | Parallel with | M3–M7 |
 | Target | `src/Tailor.Platform.Abstractions/` (`IApphostService`), `src/Tailor.Platform.Windows/Apphost/`, `src/Tailor.Transforms/DeploymentModel/ApphostTemplateResolver.cs`, `tests/Tailor.Platform.Windows.Tests/` |

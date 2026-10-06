@@ -5,7 +5,7 @@
 | ID | WU-304 |
 | Title | dependency-and-plugin-graphs |
 | Milestone | M3 Effective Application Model |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-303 |
 | Parallel with | WU-302 |
 | Target project(s)/paths | `src/Tailor.Model/Graphs/`, `tests/Tailor.Model.Tests/Graphs/`, `tests/Tailor.IntegrationTests/Model/` |

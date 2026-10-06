@@ -5,7 +5,7 @@
 | ID | WU-400 |
 | Title | execution-model-analysis |
 | Milestone | M4 Analysis & Validation |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-202, WU-305 |
 | Parallel with | WU-403, WU-500 |
 | Target project(s)/paths | `src/Tailor.Analysis/Execution/`, `src/Tailor.Analysis/Bootstrap/`, `tests/Tailor.Analysis.Tests/Execution/`, `tests/Tailor.IntegrationTests/Analysis/` |

@@ -5,7 +5,7 @@
 | ID | WU-1002 |
 | Title | packaging-and-release-workflow |
 | Milestone | M10 Configuration, Hardening & Release → v1.0.0 (**Scheduled: immediately after WU-404; enables v0.1.0-preview**, plan risk R11 resolved) |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-002, WU-404 |
 | Parallel with | WU-405, WU-406, M5–M9 |
 | Target project(s)/paths | `src/Tailor.Cli/Tailor.Cli.csproj` (tool packaging), `Directory.Build.props` / `Directory.Packages.props` (MinVer, SourceLink, deterministic CI build), `.github/workflows/release.yml`, `.github/workflows/ci.yml` (pack + install smoke), `Docs/Guides/releasing.md`, `tests/Tailor.IntegrationTests/` (tool install smoke) |
@@ -28,7 +28,7 @@ Make `dotnet-tailor` a releasable `dotnet tool`: SemVer from git tags, a tag-tri
 
 ## Identity
 
-All values are settled by [the naming plan](../../Plans/Tailor-naming.plan.md); do not restate or vary them here.
+The following values are fixed by [the naming plan](../../Plans/Tailor-naming.plan.md).
 
 | Surface | Value |
 |---|---|
@@ -102,6 +102,4 @@ The id was confirmed available on nuget.org on 2026-10-01 but is **not reserved*
 ## Open Questions
 
 - SBOM format (SPDX via Microsoft `sbom-tool` vs CycloneDX).
-- **Resolved** — licence: `Apache-2.0`, declared in [LICENSE](../../../LICENSE) and `PackageLicenseExpression`.
-- **Resolved** — package id and tool command: both `dotnet-tailor` ([naming plan](../../Plans/Tailor-naming.plan.md)). Reserving the id on nuget.org before the first preview remains an action, not a decision.
-- **Resolved** — milestone placement: the WU keeps its M10 ID and file; the plan marks it "Scheduled: immediately after WU-404 (enables v0.1.0-preview)".
+- Reserve the package id before the first preview; see [the naming plan](../../Plans/Tailor-naming.plan.md).

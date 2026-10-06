@@ -5,7 +5,7 @@
 | ID | WU-005 |
 | Title | spike-apphost-deployment-model |
 | Milestone | [M0 Foundation & Repo Bootstrap](../../Plans/Tailor.plan.md#m0-foundation--repo-bootstrap) |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-003, WU-006 |
 | Parallel with | WU-004, WU-007, M1, WU-200, WU-201, WU-203 |
 | Target paths | `Docs/Spikes/WU-005-spike-apphost-deployment-model.md`, `Docs/Decisions/ADR-0002-apphost-patching-and-deployment-model.md`, `spikes/WU-005/` (throwaway), architecture §9.2, §19 item 12, §21 |
@@ -55,7 +55,7 @@ Prove that a custom apphost patcher plus runtimeconfig/deps.json rewriting can c
 - `Docs/Spikes/WU-005-spike-apphost-deployment-model.md`: Question, Method, Findings (Q1–Q9, each **Answer** + **Evidence**), Decision, Recommended ADR, Impact, Follow-ups.
 - `Docs/Decisions/ADR-0002-apphost-patching-and-deployment-model.md` (status `Proposed`): custom patcher vs HostModel, resource-copy mechanism, deps.json/runtimeconfig transformation approach.
 - Architecture update in the same PR: [§9.2](../../Architecture/Tailor.architecture.md#92-apphost), §9 DeploymentModel row if the file set changes, [§19 item 12](../../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies) status, the WU-005 row in [§21](../../Architecture/Tailor.architecture.md#21-spikes-feeding-this-document).
-- `spikes/WU-005/` throwaway code with its own `Directory.Build.props`/`Directory.Packages.props` (`ManagePackageVersionsCentrally=false`), README with rerun steps. Not in `Tailor.slnx`.
+- `spikes/WU-005/` throwaway code with its own `Directory.Build.props`/`Directory.Packages.props` (`ManagePackageVersionsCentrally=false`), README with rerun steps. Not in `DotNetTailor.slnx`.
 
 ## Design Notes
 
@@ -73,8 +73,8 @@ Prove that a custom apphost patcher plus runtimeconfig/deps.json rewriting can c
 - [ ] AC-4 Q7 findings state "lossless round-trip: yes/no" with a diff excerpt as evidence.
 - [ ] AC-5 `Docs/Decisions/ADR-0002-apphost-patching-and-deployment-model.md` exists, status `Proposed`, sections Context, Decision, Consequences, Alternatives.
 - [ ] AC-6 Architecture §9.2, §19 item 12 and the §21 WU-005 row are updated and link the report and ADR.
-- [ ] AC-7 `spikes/WU-005/` exists, is not referenced by `Tailor.slnx`, and has a README.
-- [ ] AC-8 Solution build (`-warnaserror`), `dotnet test --solution Tailor.slnx -c Release` and format verify still pass; no binaries committed.
+- [ ] AC-7 `spikes/WU-005/` exists, is not referenced by `DotNetTailor.slnx`, and has a README.
+- [ ] AC-8 Solution build (`-warnaserror`), `dotnet test --solution DotNetTailor.slnx -c Release` and format verify still pass; no binaries committed.
 
 ## Test Requirements
 
@@ -94,5 +94,4 @@ Prove that a custom apphost patcher plus runtimeconfig/deps.json rewriting can c
 
 ## Open Questions
 
-- **Resolved** — WU-006 as a formal dependency of WU-005: yes (plan updated).
 - If Q7 shows DependencyModel cannot round-trip, confirm WU-202/WU-604/WU-802 switch to a JSON-DOM reader/writer.

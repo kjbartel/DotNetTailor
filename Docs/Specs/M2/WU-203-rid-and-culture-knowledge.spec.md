@@ -5,7 +5,7 @@
 | ID | WU-203 |
 | Title | rid-and-culture-knowledge |
 | Milestone | M2 Binary Inspection |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-100 |
 | Parallel with | WU-200–WU-202, M1 |
 | Target project(s)/paths | `src/Tailor.Inspection/Rids/`, `src/Tailor.Inspection/Cultures/`, embedded data under `src/Tailor.Inspection/Data/`, `tests/Tailor.Inspection.Tests/Rids/`, `tests/Tailor.Inspection.Tests/Cultures/`, `tests/Tailor.IntegrationTests/Inspection/` |
@@ -26,8 +26,8 @@ Provide deterministic, host-independent knowledge of RIDs (parsing, portable gra
 ## Scope
 
 **In**
-- `Rid` parsing into OS / version / qualifier / architecture; portable vs non-portable (legacy) classification.
-- Embedded RID graph (portable graph + documented legacy RIDs) with fallback chains and compatibility check.
+- `Rid` parsing into OS / version / qualifier / architecture; portable vs non-portable classification.
+- Embedded RID graph (portable graph + documented non-portable RIDs) with fallback chains and compatibility check.
 - `RuntimeAssetPath` parser for `runtimes/<rid>/lib/<tfm>/…` and `runtimes/<rid>/native/…`.
 - `CultureCatalogue` (embedded, deterministic) + BCP-47 syntax check + optional `CultureInfo` cross-check safe under invariant globalisation.
 - `CulturePattern` (`en`, `en-*`, `*`, explicit names) matching.
@@ -41,7 +41,7 @@ Provide deterministic, host-independent knowledge of RIDs (parsing, portable gra
 | Namespace | Type | API |
 |---|---|---|
 | `…Inspection.Rids` | `readonly record struct Rid` | `static bool TryParse(string, out Rid)`, `Value` (lower-case), `Os`, `OsVersion?`, `Qualifier?` (e.g. `musl`), `Architecture?` (`x64`, `x86`, `arm64`, `arm`, …), `IsPortable`, `ToString()` |
-| | `interface IRidGraph` / `EmbeddedRidGraph` | `bool IsKnown(Rid)`, `IReadOnlyList<Rid> GetFallbacks(Rid)` (self first, ending in `any`), `bool IsCompatible(Rid target, Rid asset)` (asset in target's fallback chain), `Rid? ToPortable(Rid)` (legacy → portable, e.g. `win10-x64` → `win-x64`) |
+| | `interface IRidGraph` / `EmbeddedRidGraph` | `bool IsKnown(Rid)`, `IReadOnlyList<Rid> GetFallbacks(Rid)` (self first, ending in `any`), `bool IsCompatible(Rid target, Rid asset)` (asset in target's fallback chain), `Rid? ToPortable(Rid)` (non-portable → portable, e.g. `win10-x64` → `win-x64`) |
 | | `static RuntimeAssetPath` | `bool TryParse(RelativePath, out RuntimeAsset)`; `RuntimeAsset(Rid Rid, RuntimeAssetKind Kind /* Lib, Native */, string? Tfm, RelativePath RemainingPath)`; matches `runtimes/<rid>/lib/<tfm>/…` and `runtimes/<rid>/native/…` at any depth prefix |
 | `…Inspection.Cultures` | `interface ICultureCatalogue` / `EmbeddedCultureCatalogue` | `bool IsKnown(string name)`, `string? Normalise(string name)` (canonical casing, e.g. `zh-hant` → `zh-Hant`), `bool IsNeutral(string)`, `string? Parent(string)` |
 | | `CultureInfoCrossCheck` | `CultureCheckResult Check(string name)` → `Known`, `Unknown`, `Unavailable` (invariant globalisation / predefined-only mode) |
@@ -51,7 +51,7 @@ Provide deterministic, host-independent knowledge of RIDs (parsing, portable gra
 Diagnostics (minimum): `TLR2301` invalid RID syntax; `TLR2302` unknown RID (warning); `TLR2310` invalid culture pattern; `TLR2311` unknown culture name (warning).
 
 Embedded data (`EmbeddedResource`, canonical JSON, committed):
-- `Data/rid-graph.json`: portable RID graph for .NET 8+ (`any`, `base`, `win`, `win-x86`, `win-x64`, `win-arm64`, `unix`, `linux`, `linux-{x64,arm64,arm,musl-*}`, `osx`, `osx-{x64,arm64}`, …) plus legacy aliases (`win7-*`, `win8-*`, `win81-*`, `win10-*`, `alpine*`, …) mapped to portable parents. Source and licence attribution recorded in a header member (`source`, `license`).
+- `Data/rid-graph.json`: portable RID graph for .NET 8+ (`any`, `base`, `win`, `win-x86`, `win-x64`, `win-arm64`, `unix`, `linux`, `linux-{x64,arm64,arm,musl-*}`, `osx`, `osx-{x64,arm64}`, …) plus non-portable aliases (`win7-*`, `win8-*`, `win81-*`, `win10-*`, `alpine*`, …) mapped to portable parents. Source and licence attribution recorded in a header member (`source`, `license`).
 - `Data/cultures.json`: sorted list of culture names (e.g. from .NET's ICU culture set plus `qps-ploc`, `zh-Hans`, `zh-Hant` and the SDK's satellite culture set), with neutral/parent info. Generated once by a documented script or test helper; not regenerated at runtime.
 
 ## Design Notes
@@ -61,7 +61,7 @@ Embedded data (`EmbeddedResource`, canonical JSON, committed):
 - `CulturePattern`: `en` matches only `en`; `en-*` matches any culture whose name starts with `en-` and has at least one further subtag (`en-US`, `en-GB`, `en-Latn-US`), not `en` itself; `*` matches any known culture; explicit names match exactly. Patterns must be syntactically valid BCP-47 prefixes; `e*`, `en*`, `*-US` are invalid (`TLR2310`).
 - `<culture>` token matching for folders (WU-300) = `IsKnown(name)`; unknown culture-looking folders are content, not resources ([AS §10.7](../../Requirements/Application_Specification.md)).
 - RID parsing: `os[.version][-qualifier]-arch` per the .NET RID catalogue; lower-case normalisation; `any`, `base`, `win`, `unix`, `linux` are valid architecture-less RIDs.
-- Compatibility: `win-x64` target accepts assets for `win-x64`, `win`, `any`; rejects `win-x86`, `win-arm64`, `linux-x64`. Legacy asset RIDs (`win10-x64`) are compatible with `win-x64` via `ToPortable` (NuGet packages still ship them).
+- Compatibility: `win-x64` target accepts assets for `win-x64`, `win`, `any`; rejects `win-x86`, `win-arm64`, `linux-x64`. Non-portable asset RIDs (`win10-x64`) are compatible with `win-x64` via `ToPortable` (NuGet packages still ship them).
 - No hard-coded RID strings outside this namespace and `Platform.*` ([§12](../../Architecture/Tailor.architecture.md#12-platform-abstraction)).
 
 ## Acceptance Criteria

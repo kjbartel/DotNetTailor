@@ -5,7 +5,7 @@
 | ID | WU-303 |
 | Title | reference-resolution |
 | Milestone | M3 Effective Application Model |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-301, WU-201 |
 | Parallel with | WU-302 |
 | Target project(s)/paths | `src/Tailor.Model/References/`, `src/Tailor.Model/Identities/`, `src/Tailor.Inspection/Frameworks/` (catalogue contract only), `tests/Tailor.Model.Tests/References/` |

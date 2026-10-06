@@ -5,7 +5,7 @@
 | ID | WU-100 |
 | Title | core-primitives |
 | Milestone | M1 Core Primitives & Specification Documents |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-000 |
 | Parallel with | WU-001–WU-007 |
 | Target project(s)/paths | `src/Tailor.Core/`, `tests/Tailor.Core.Tests/`, `tests/Tailor.Testing/` |
@@ -67,7 +67,7 @@ Test support (`tests/Tailor.Testing`, namespace `Tailor.Testing`; no package or 
 | Type | API |
 |---|---|
 | `static class Golden` | `AssertMatches(string actual, string name, GoldenOptions? options = null, [CallerFilePath] string callerPath = "")`. Resolves `<dir of callerPath>/Golden/<caller file name without .cs>/<name>.golden<ext>`; `name` may contain `/`-separated segments (no `..`, not rooted). Update mode when `DOTNET_TAILOR_UPDATE_GOLDEN=1`. Delegates to `GoldenStore`. |
-| `sealed record GoldenOptions` | `Extension` (`.json` default, `.txt` for text); `Scrubbers` (ordered ordinal literal `(find, replacement)` pairs applied to `actual` only); `WithTemp(string tempRoot)` → `{TEMP}`, `WithRepoRoot()` → `{REPO}` (directory containing `Tailor.slnx`, found upward from `callerPath`); path scrubbers match both the raw and the JSON-escaped (`\\`) form. |
+| `sealed record GoldenOptions` | `Extension` (`.json` default, `.txt` for text); `Scrubbers` (ordered ordinal literal `(find, replacement)` pairs applied to `actual` only); `WithTemp(string tempRoot)` → `{TEMP}`, `WithRepoRoot()` → `{REPO}` (directory containing `DotNetTailor.slnx`, found upward from `callerPath`); path scrubbers match both the raw and the JSON-escaped (`\\`) form. |
 | `sealed class GoldenStore` | `GoldenStore(bool update)`; `AssertMatches(string actual, string goldenPath, GoldenOptions?)`. Testable without the env var. |
 | `sealed class GoldenMismatchException : Exception` | Message: golden path, received path, unified diff summary (first differing hunks, capped). |
 

@@ -5,7 +5,7 @@
 | ID | WU-007 |
 | Title | spike-nuget-and-libraries |
 | Milestone | [M0 Foundation & Repo Bootstrap](../../Plans/Tailor.plan.md#m0-foundation--repo-bootstrap) |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-000 |
 | Parallel with | WU-001–WU-006, WU-100 |
 | Target paths | `Docs/Spikes/WU-007-spike-nuget-and-libraries.md`, `Docs/Decisions/ADR-0004-nuget-acquisition.md`, `Docs/Decisions/ADR-0005-json-schema-validator.md`, `spikes/WU-007/` (throwaway), architecture §6.1, §10, §20, §21 |
@@ -48,7 +48,7 @@ Prove package acquisition with NuGet.Protocol/NuGet.Configuration (config hierar
 | Q6 | Offline: resolve id/version from the global packages folder only; `latestPatch` with `--offline` picks the latest cached version and warns (architecture §19 item 18). |
 | Q7 | Version listing for `latestPatch`/`range`: `GetAllVersionsAsync`, prerelease exclusion, unlisted packages, caching (`SourceCacheContext`) and determinism (pin in plan). |
 | Q8 | JSON Schema validator: compare JsonSchema.Net, Corvus.JsonSchema, NJsonSchema (and any other viable candidate) on licence (current terms, verified at source), draft 2020-12 support (dialect emitted by `JsonSchemaExporter`), System.Text.Json native, error output with JSON pointer (needed for `TLR1xxx`), performance, maintenance. |
-| Q9 | Library baseline: licence and version table for every planned third-party package (NuGet.Protocol, NuGet.Configuration, System.CommandLine, Microsoft.Extensions.DependencyModel, Microsoft.Extensions.FileSystemGlobbing, Microsoft.Extensions.DependencyInjection, xUnit v3, the chosen validator, WU-003's native-asset package). Flag any licence incompatible with an undecided product licence. |
+| Q9 | Library baseline: licence and version table for every planned third-party package (NuGet.Protocol, NuGet.Configuration, System.CommandLine, Microsoft.Extensions.DependencyModel, Microsoft.Extensions.FileSystemGlobbing, Microsoft.Extensions.DependencyInjection, xUnit v3, the chosen validator, WU-003's native-asset package). Flag incompatibility with Apache-2.0. |
 
 ## Deliverables
 
@@ -56,7 +56,7 @@ Prove package acquisition with NuGet.Protocol/NuGet.Configuration (config hierar
 - `Docs/Decisions/ADR-0004-nuget-acquisition.md` (status `Proposed`): API surface, cache layout, integrity, credentials, offline.
 - `Docs/Decisions/ADR-0005-json-schema-validator.md` (status `Proposed`): chosen library, licence, rejected alternatives.
 - Architecture update in the same PR: [§10](../../Architecture/Tailor.architecture.md#10-acquisition), [§6.1](../../Architecture/Tailor.architecture.md#61-common-rules) validator sentence, remove the validator item from [§20](../../Architecture/Tailor.architecture.md#20-open-questions), the WU-007 row in [§21](../../Architecture/Tailor.architecture.md#21-spikes-feeding-this-document).
-- `spikes/WU-007/` throwaway code (props isolation as in WU-004), README with rerun steps. Not in `Tailor.slnx`.
+- `spikes/WU-007/` throwaway code (props isolation as in WU-004), README with rerun steps. Not in `DotNetTailor.slnx`.
 
 ## Design Notes
 
@@ -74,8 +74,8 @@ Prove package acquisition with NuGet.Protocol/NuGet.Configuration (config hierar
 - [ ] AC-5 Q9 findings contain a licence table for every listed package with SPDX id and source link.
 - [ ] AC-6 `ADR-0004-nuget-acquisition.md` and `ADR-0005-json-schema-validator.md` exist, status `Proposed`, sections Context, Decision, Consequences, Alternatives.
 - [ ] AC-7 Architecture §6.1, §10, §20 and the §21 WU-007 row are updated and link the report and ADRs.
-- [ ] AC-8 `spikes/WU-007/` exists, is not referenced by `Tailor.slnx`, has a README; no binaries or secrets committed.
-- [ ] AC-9 Solution build (`-warnaserror`), `dotnet test --solution Tailor.slnx -c Release` and format verify still pass.
+- [ ] AC-8 `spikes/WU-007/` exists, is not referenced by `DotNetTailor.slnx`, has a README; no binaries or secrets committed.
+- [ ] AC-9 Solution build (`-warnaserror`), `dotnet test --solution DotNetTailor.slnx -c Release` and format verify still pass.
 
 ## Test Requirements
 
@@ -95,5 +95,4 @@ Prove package acquisition with NuGet.Protocol/NuGet.Configuration (config hierar
 
 ## Open Questions
 
-- The product licence is undecided (plan Open Questions); the validator decision may need revisiting once it is chosen.
 - Is NuGet repository-signature verification in scope for v1?

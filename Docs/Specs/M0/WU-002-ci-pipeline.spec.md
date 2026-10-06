@@ -5,7 +5,7 @@
 | ID | WU-002 |
 | Title | ci-pipeline |
 | Milestone | [M0 Foundation & Repo Bootstrap](../../Plans/Tailor.plan.md#m0-foundation--repo-bootstrap) |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-000 |
 | Parallel with | WU-001, WU-003, WU-006, WU-007, WU-100 |
 | Target paths | `.github/workflows/ci.yml`, `.github/dependabot.yml` |
@@ -42,11 +42,11 @@ Run build, test and format verification on every push and PR on `windows-latest`
 | Permissions | Top-level `permissions: contents: read`; job-level additions only if needed (`checks: write` only if a test reporter action is used) |
 | Concurrency | `group: ci-${{ github.ref }}`, `cancel-in-progress: true` for PRs |
 | Env | `DOTNET_NOLOGO=1`, `DOTNET_CLI_TELEMETRY_OPTOUT=1`, `NUGET_PACKAGES=${{ github.workspace }}/.nuget/packages` |
-| Job `build-test` | `runs-on: windows-latest`; checkout; `actions/setup-dotnet` with `global-json-file: global.json` **and** `dotnet-version: 8.0.x` (runtime for net8 test apps); NuGet cache (`actions/cache`, key `nuget-${{ runner.os }}-${{ hashFiles('global.json','Directory.Packages.props','**/*.csproj','**/Directory.Build.props') }}`); `dotnet restore Tailor.slnx`; `dotnet build Tailor.slnx -c Release --no-restore -warnaserror`; a guard step that fails when `DOTNET_TAILOR_UPDATE_GOLDEN` is set (golden files must never be rewritten in CI, architecture §16); `dotnet test --solution Tailor.slnx -c Release --no-build --report-xunit-trx --results-directory TestResults`; `dotnet format Tailor.slnx --verify-no-changes --no-restore`; `actions/upload-artifact` of `TestResults/**` with `if: always()` |
+| Job `build-test` | `runs-on: windows-latest`; checkout; `actions/setup-dotnet` with `global-json-file: global.json` **and** `dotnet-version: 8.0.x` (runtime for net8 test apps); NuGet cache (`actions/cache`, key `nuget-${{ runner.os }}-${{ hashFiles('global.json','Directory.Packages.props','**/*.csproj','**/Directory.Build.props') }}`); `dotnet restore DotNetTailor.slnx`; `dotnet build DotNetTailor.slnx -c Release --no-restore -warnaserror`; a guard step that fails when `DOTNET_TAILOR_UPDATE_GOLDEN` is set (golden files must never be rewritten in CI, architecture §16); `dotnet test --solution DotNetTailor.slnx -c Release --no-build --report-xunit-trx --results-directory TestResults`; `dotnet format DotNetTailor.slnx --verify-no-changes --no-restore`; `actions/upload-artifact` of `TestResults/**` with `if: always()` |
 | Job `test-apps` | `runs-on: windows-latest`; guarded with `if: hashFiles('build/Build-TestApps.ps1') != ''` (script arrives in WU-003); setup-dotnet as above; cache `artifacts/testapps` keyed by the key printed by `build/Build-TestApps.ps1 -PrintCacheKey` (contract defined in [WU-003](WU-003-test-app-suite.spec.md)); run the script only on cache miss; upload `artifacts/testapps/manifest.json` as an artifact |
 | Pinning | Every `uses:` pinned to a full 40-char commit SHA with a trailing `# vX.Y.Z` comment |
 
-`.github/workflows/nightly.yml`: `schedule` (daily) + `workflow_dispatch`; same setup and pinning rules as `ci.yml`; `needs`-style reuse of the test-apps cache; steps run `dotnet test --solution Tailor.slnx -c Release --filter-trait "Category=Network"` with `DOTNET_TAILOR_TEST_NETWORK=1`, then `--filter-trait "Category=Launch"`, then `Tailor.PerformanceTests` when that project exists. Each step passes `--ignore-exit-code 8` so tiers with zero tests (before M7/M10) do not fail. Later WUs (WU-700, WU-704, WU-1004) only add tests, not workflow steps.
+`.github/workflows/nightly.yml`: `schedule` (daily) + `workflow_dispatch`; same setup and pinning rules as `ci.yml`; `needs`-style reuse of the test-apps cache; steps run `dotnet test --solution DotNetTailor.slnx -c Release --filter-trait "Category=Network"` with `DOTNET_TAILOR_TEST_NETWORK=1`, then `--filter-trait "Category=Launch"`, then `Tailor.PerformanceTests` when that project exists. Each step passes `--ignore-exit-code 8` so tiers with zero tests (before M7/M10) do not fail. Later WUs (WU-700, WU-704, WU-1004) only add tests, not workflow steps.
 
 `.github/dependabot.yml`: `version: 2`; ecosystems `nuget` (directory `/`) and `github-actions` (directory `/`); weekly; grouped updates (`xunit*` test group, `NuGet.*` group, all actions in one group); `open-pull-requests-limit: 5`.
 
@@ -75,7 +75,7 @@ Run build, test and format verification on every push and PR on `windows-latest`
 ## Test Requirements
 
 - No new code tests. Evidence is the CI run links (AC-3..AC-6, AC-9) recorded in the PR.
-- Record a Test Evidence block for the local `dotnet test --solution Tailor.slnx -c Release` equivalent.
+- Record a Test Evidence block for the local `dotnet test --solution DotNetTailor.slnx -c Release` equivalent.
 
 ## Definition of Done
 

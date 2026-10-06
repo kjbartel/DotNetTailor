@@ -5,7 +5,7 @@
 | ID | WU-601 |
 | Title | action-executor-and-symbols-output |
 | Milestone | M6 Execution Engine (v0.2.0-preview) |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-600, WU-503 |
 | Parallel with | WU-504, WU-505, WU-507 |
 | Target project(s)/paths | `src/Tailor.Execution/{Executor,Actions,Symbols,Reports}/`, `tests/Tailor.Execution.Tests/{Executor,Actions,Symbols,Reports}/` |

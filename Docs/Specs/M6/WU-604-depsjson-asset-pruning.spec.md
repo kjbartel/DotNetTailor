@@ -5,7 +5,7 @@
 | ID | WU-604 |
 | Title | depsjson-asset-pruning |
 | Milestone | M6 Execution Engine (v0.2.0-preview) |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-202, WU-601 |
 | Parallel with | WU-505, WU-506, WU-602, WU-702 |
 | Target project(s)/paths | `src/Tailor.Transforms/Configuration/DepsJson/Pruning/`, `tests/Tailor.Transforms.Tests/Configuration/DepsJson/` |

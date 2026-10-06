@@ -5,7 +5,7 @@
 | ID | WU-402 |
 | Title | capability-assessment |
 | Milestone | M4 Analysis & Validation |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-400 |
 | Parallel with | WU-401, WU-403, WU-500, WU-501 |
 | Target project(s)/paths | `src/Tailor.Analysis/Capabilities/`, `tests/Tailor.Analysis.Tests/Capabilities/`, `tests/Tailor.IntegrationTests/Analysis/` |

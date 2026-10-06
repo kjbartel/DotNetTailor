@@ -5,7 +5,7 @@
 | ID | WU-903 |
 | Title | combined-transform-e2e |
 | Milestone | M9 Retargeting & Patching → v0.5.0-preview |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-900, WU-901, WU-902, WU-704 |
 | Parallel with | WU-1000–WU-1002 |
 | Target project(s)/paths | `tests/Tailor.IntegrationTests/` (TS §33 scenario, fixtures under `Fixtures/Ts33/`), `tests/Tailor.RegressionTests/` (golden files). Production code only for defects found (see Scope) |

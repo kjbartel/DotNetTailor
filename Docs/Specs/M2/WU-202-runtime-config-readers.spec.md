@@ -5,7 +5,7 @@
 | ID | WU-202 |
 | Title | runtime-config-readers |
 | Milestone | M2 Binary Inspection |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-100, WU-005 |
 | Parallel with | WU-200, WU-201, WU-203, M1 |
 | Target project(s)/paths | `src/Tailor.Inspection/Runtime/`, `src/Tailor.Inspection/Apphost/`, `tests/Tailor.Inspection.Tests/Runtime/`, `tests/Tailor.Inspection.Tests/Apphost/`, `tests/Tailor.IntegrationTests/Inspection/` |
@@ -103,7 +103,6 @@ Diagnostics (minimum):
 
 ## Open Questions
 
-- **Resolved** — WU-005 dependency: added to the plan.
 - **Resolved** — duplicate `ApphostBinding` types: this spec's `Inspection.Apphost.ApphostBinding` is the only one; `IApphostService` exposes no binding read (architecture §3.2).
 - Whether `ApphostBinding` should report the .NET 9+ `DOTNET_ROOT` search options ([§9.2](../../Architecture/Tailor.architecture.md#92-apphost)); proposed: add when WU-800 needs it.
 

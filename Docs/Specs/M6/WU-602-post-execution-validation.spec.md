@@ -5,7 +5,7 @@
 | ID | WU-602 |
 | Title | post-execution-validation |
 | Milestone | M6 Execution Engine (v0.2.0-preview) |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-601, WU-505 |
 | Parallel with | WU-506, WU-604 |
 | Target project(s)/paths | `src/Tailor.Execution/PostValidation/`, `src/Tailor.Execution/Pipeline/`, `src/Tailor.Execution/Reports/`, `tests/Tailor.Execution.Tests/{PostValidation,Pipeline}/`, `tests/Tailor.IntegrationTests/Execution/` |

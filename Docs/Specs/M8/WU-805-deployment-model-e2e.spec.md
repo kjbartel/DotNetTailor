@@ -5,7 +5,7 @@
 | ID | WU-805 |
 | Title | deployment-model-e2e |
 | Milestone | M8 Deployment Model Conversion (v0.4.0-preview) |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-803, WU-804, WU-603 |
 | Parallel with | WU-704, WU-900–WU-902 |
 | Target | `tests/Tailor.IntegrationTests/DeploymentModel/`, `tests/Tailor.IntegrationTests/Fixtures/deployment/*.transform.json`; fixes in `src/Tailor.*` only where E2E exposes defects |

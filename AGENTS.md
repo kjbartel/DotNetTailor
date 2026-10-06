@@ -1,6 +1,6 @@
 # Repository Guidance
 
-This file is the repository-wide agent guide. The design authority is [the architecture](Docs/Architecture/Tailor.architecture.md); sequencing and work-unit status live in [the master plan](Docs/Plans/Tailor.plan.md). A work unit's spec is its implementation contract. Agents, lanes and review flow are in [the AI workflow guide](Docs/Guides/ai-workflow.md); start with the **Tailor Contributor** agent.
+Follow [the architecture](Docs/Architecture/Tailor.architecture.md) for design, [the master plan](Docs/Plans/Tailor.plan.md) for sequencing and status, and the selected work unit's spec for scope. Start with **Tailor Contributor**; agents, lanes and review flow are in [the AI workflow guide](Docs/Guides/ai-workflow.md).
 
 ## Repository Map
 
@@ -23,19 +23,34 @@ dotnet test --solution DotNetTailor.slnx -c Release
 dotnet format DotNetTailor.slnx --verify-no-changes
 ```
 
-Run one work unit's tests with `dotnet test --project <project> --filter-trait "WU=<id>"`. Use the WU trait, MTP conventions and test categories defined in the [plan](Docs/Plans/Tailor.plan.md#test-conventions). Tests make no network calls by default.
+For one WU, use `dotnet test --project <project> --filter-trait "WU=<id>"`. Follow the [plan's test conventions](Docs/Plans/Tailor.plan.md#test-conventions) for traits, MTP and categories. Tests make no network calls by default.
+
+## Agent Tooling
+
+- Prefer PowerShell, the .NET CLI and repository scripts. Use Python or other runtimes only when needed and confirmed available; do not install tools to satisfy assumed dependencies.
+- Before first use of an unfamiliar command, run `Get-Command <name> -ErrorAction SilentlyContinue`; confirm its path and relevant version. Use an available equivalent if missing.
+- Linux/Bash commands and syntax require explicitly invoked, verified Git Bash and confirmed utilities; Git alone is not enough. Never use them in PowerShell. This terminal-only exception does not relax application process safety below.
+- Never invent arguments. Use repo-documented commands or check the installed subcommand's help, `Get-Help`, or version-matched official docs; options vary by version and test runner.
+- Keep tool paths, versions, supported arguments and failures in session context; pass them to delegates and scoped persistent memory when available. Never commit machine-specific paths. Do not repeat missing commands or rejected arguments unchanged; recheck only after environment changes or new evidence, and discard stale records.
+
+## Documentation, Comments and Tests
+
+- Keep documentation and comments concise and accurate for the current repository. Label planned behaviour explicitly; never describe unfinished work as implemented. Update or remove stale text with the code it describes.
+- Describe contracts, constraints and durable rationale, never chat decisions, review conversations or mid-feature change history. Keep temporary clarifications and progress notes in session memory, not maintained docs or comments. ADRs and required verification evidence record technical decisions and observed results, not session narrative.
+- Tests assert current observable behaviour, including required rejection and safety guarantees. Never add unit tests for deleted code/text being absent or superseded behaviour no longer occurring; retain regression coverage for the current contract.
+- Before review and again at feature completion, remove temporary probes, obsolete draft checks, stale comments and resolved clarification notes, or convert useful probes into contract-focused tests. Do not discard required Test Evidence or genuine compatibility coverage for released behaviour.
 
 ## Implementation Workflow
 
 Follow [How Agents Use This Plan](Docs/Plans/Tailor.plan.md#how-agents-use-this-plan):
 
-1. Select a `Ready` (legacy `Not started`) WU whose dependencies are all `Done`; prefer the critical path.
-2. Read its `Docs/Specs/<Milestone>/<ID>-<slug>.spec.md`, cited architecture sections and requirements.
-3. Set the WU `In progress` and work on `wu/<id>-<slug>`.
-4. Implement only its scope, following its `## Steps` in order; add focused tests (WU trait, plus `AC` trait for `(T)` criteria) and run formatting, lint and relevant checks.
-5. Record the required Test Evidence block with the exact functional-state fingerprint and environment.
-6. Keep changes reviewable and open a PR titled `WU-<id>: <title>` when using a remote. The Tailor Code Reviewer (and any human PR review) must `Approve`; resolve findings with the `code-review` skill.
-7. The Verifier checks evidence, ticks steps and acceptance criteria, appends a concise Completion note and sets status to `Done`. Implementers never tick their own work.
+1. Select a `Ready` (legacy `Not started`) WU with all dependencies `Done`; prefer the critical path.
+2. Read `Docs/Specs/<Milestone>/<ID>-<slug>.spec.md` and its cited architecture and requirements.
+3. Set `In progress`; use branch `wu/<id>-<slug>`.
+4. Implement only its scope and follow `## Steps` in order. Add focused tests with WU traits and `AC` traits for `(T)` criteria; run formatting, lint and relevant checks.
+5. Record Test Evidence with the exact functional-state fingerprint and environment.
+6. Keep changes reviewable; when using a remote, open a PR titled `WU-<id>: <title>`. Require `Approve` from Tailor Code Reviewer and any human reviewer; resolve findings with the `code-review` skill.
+7. The Verifier checks evidence; only the Verifier ticks steps and criteria, adds a concise Completion note and sets `Done`. Implementers never tick their own work.
 
 ## Boundaries
 
@@ -59,7 +74,7 @@ Respect the ownership and dependency rules in [architecture §3.1](Docs/Architec
 
 ## Test Evidence
 
-For selected checks, follow the [`test-evidence` skill](.github/skills/test-evidence/SKILL.md) and record the state fingerprint and all context needed to reuse the result:
+Follow the [`test-evidence` skill](.github/skills/test-evidence/SKILL.md); record each selected check for exact-state reuse:
 
 ```markdown
 ## Test Evidence

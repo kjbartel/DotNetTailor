@@ -5,7 +5,7 @@
 | ID | WU-404 |
 | Title | cli-analyse-validate |
 | Milestone | M4 Analysis & Validation |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-401, WU-402, WU-403, WU-105, WU-103 |
 | Parallel with | WU-502, WU-503 |
 | Target project(s)/paths | `src/Tailor.Cli/Commands/Analyse/`, `src/Tailor.Cli/Commands/Validate/`, `src/Tailor.Cli/Composition/`, `tests/Tailor.Cli.Tests/`, `tests/Tailor.IntegrationTests/Cli/` |
@@ -61,7 +61,7 @@ Ship `analyse` (alias `analyze`) and `validate` end to end: correct spec and art
 
 ## Acceptance Criteria
 
-- [ ] AC-1 `analyse` and `analyse` are both accepted; `--help` lists both verbs with the synopsis from architecture §14.
+- [ ] AC-1 `analyse` and `analyze` are both accepted; `--help` lists both verbs with the synopsis from architecture §14.
 - [ ] AC-2 `analyse <dir>` on a writable copy of a matrix app writes `tailor.appspec.json` and `.tailor/{inventory,classification-map,assemblies,dependency-graph,plugin-graph,runtime-inventory,capabilities,validation-report}.json`.
 - [ ] AC-3 `analyse --spec-out <outside>` writes the AppSpec there and artefacts next to it; the app tree fingerprint **including sidecars** is unchanged.
 - [ ] AC-4 A non-writable input (fake probe; plus one real ACL-deny test) without `--spec-out` exits 2 with `TLR0402` and writes nothing.
@@ -92,7 +92,5 @@ Ship `analyse` (alias `analyze`) and `validate` end to end: correct spec and art
 
 ## Open Questions
 
-- **Resolved** — WU-103 dependency: added to the plan.
 - Overwrite policy for an existing AppSpec (provisional: refuse; alternatives `--force` or write alongside).
-- **Resolved** — `inspect` owner: WU-406.
 - **Resolved** — pack/install criterion overlap: this WU covers the local smoke (AC-12); WU-1002 (scheduled immediately after this WU) covers publishing.

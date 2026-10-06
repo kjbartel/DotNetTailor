@@ -5,7 +5,7 @@
 | ID | WU-803 |
 | Title | fd-to-sc-handler |
 | Milestone | M8 Deployment Model Conversion (v0.4.0-preview) |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-800, WU-801, WU-802, WU-503 |
 | Parallel with | WU-603, M7 |
 | Target | `src/Tailor.Transforms/DeploymentModel/`, `src/Tailor.Transforms/Configuration/ConfigGenerationHandler.cs`, `tests/Tailor.Transforms.Tests/DeploymentModel/` |

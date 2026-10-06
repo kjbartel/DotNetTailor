@@ -5,7 +5,7 @@
 | ID | WU-503 |
 | Title | planner-core |
 | Milestone | M5 Transformation Planning & Dry-run |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-502 |
 | Parallel with | WU-404, WU-405 |
 | Target project(s)/paths | `src/Tailor.Planning/{Handlers,Actions,Pipeline,State,Checks,Acquisition}/`, `tests/Tailor.Planning.Tests/{Pipeline,Checks}/` |
@@ -14,7 +14,7 @@
 
 ## Goal
 
-Provide the side-effect-free planner. It defines the handler contract, runs the fixed phase sequence, lets handlers contribute intents and actions against an evolving projected state, and records planner-derived order and provenance. It also detects output collisions and unsafe removals, and resolves declared acquisitions through a seam. Later WUs add categories without changing the core.
+Provide the side-effect-free planner: handler contracts, fixed phases, evolving projected state, action order and provenance. Detect output collisions and unsafe removals; resolve declared acquisitions through `IAcquisitionPlanner`. New categories require no core changes.
 
 ## Requirement Traceability
 

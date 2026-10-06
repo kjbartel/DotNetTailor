@@ -5,7 +5,7 @@
 | ID | WU-405 |
 | Title | regression-harness |
 | Milestone | M4 Analysis & Validation |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-404, WU-003, WU-002 |
 | Parallel with | WU-406, M5, WU-1002 |
 | Target project(s)/paths | `tests/Tailor.RegressionTests/`, `.github/workflows/` (regression job only) |
@@ -91,6 +91,5 @@ Provide a regression harness that runs `analyse` + `validate` over the full test
 
 ## Open Questions
 
-- **Resolved** — WU-002 dependency: added to the plan.
 - Plan M4 criterion 3 lists "added file"; with a catch-all an added file is valid unless it breaks a rule. The `added-file` scenario above uses a duplicate-candidate interpretation; confirm.
 - Scenario `missing-catch-all` requires the WU-101 schema to allow an explicit null catch-all (see WU-301).

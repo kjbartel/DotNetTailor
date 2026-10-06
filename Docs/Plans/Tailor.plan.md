@@ -8,21 +8,21 @@ Deliver `dotnet-tailor` v1.0.0. The tool analyses, validates and transforms comp
 
 ## How Agents Use This Plan
 
-1. Pick a WU with status `Ready` (legacy `Not started`) whose **Depends on** WUs are all `Done`. Prefer WUs on the critical path (see [Critical path](#critical-path)).
-2. Read the WU spec (`../Specs/<Milestone>/<ID>-<slug>.spec.md`), the architecture sections it cites, and the requirement sections it links. If the spec does not exist yet, create it first with the `new-work-unit-spec` prompt and have it reviewed.
-3. Set the status to `In progress`. Work on branch `wu/<id>-<slug>` (e.g. `wu/300-folder-matching-engine`).
-4. Implement using the `implement-work-unit` prompt. Add focused tests. Satisfy every acceptance criterion in the spec. Keep the change to one atomic commit, or a small number of reviewable ones.
-5. Open a PR titled `WU-<id>: <title>`. CI must be green and code review (`review-changes` prompt and any human review) must approve.
-6. The Verifier (`verify-work-unit` prompt) checks each criterion and ticks it in the spec. It appends a Completion note, sets the status here to `Done`, and ticks milestone criteria when they are met.
-7. If a WU finds an architecture change, record an ADR in `Docs/Decisions/` and update the architecture document in the same PR.
+1. Select a `Ready` WU with all dependencies `Done`; prefer the [critical path](#critical-path).
+2. Read `../Specs/<Milestone>/<ID>-<slug>.spec.md` and cited architecture/requirements. If missing, create it with `new-work-unit-spec` and have it reviewed.
+3. Set `In progress`; use branch `wu/<id>-<slug>`.
+4. Use `implement-work-unit`; satisfy the spec with focused tests and reviewable commits, then set `In review`.
+5. Open a PR titled `WU-<id>: <title>`; require green CI and approval via `review-changes` and any human review.
+6. The Verifier (`verify-work-unit`) checks and ticks proven criteria, adds a Completion note, sets `Done`, and ticks met milestone criteria.
+7. For design changes, record an ADR in `Docs/Decisions/` and update the architecture in the same PR.
 
-Statuses: `Draft` · `Ready` (legacy `Not started`) · `In progress` · `In review` · `Done` · `Blocked (<reason>)` · `Superseded`. Epics, features, steps, criteria and phase gates: `planning-artifacts` skill.
+Statuses: `Draft` · `Ready` · `In progress` · `In review` · `Done` · `Blocked (<reason>)` · `Superseded`. Epics, features, steps, criteria and phase gates: `planning-artifacts` skill.
 
 A milestone is a release grouping, not a start gate. A WU may start as soon as its dependencies are `Done`.
 
 ## Test Conventions
 
-- Every test carries `[Trait("WU", "<id>")]`. Run one WU with `dotnet test --project <test project path> --filter-trait "WU=<id>"` (MTP mode, no `--` separator). Full suite: `dotnet test --solution Tailor.slnx -c Release`.
+- Every test carries `[Trait("WU", "<id>")]`. Run one WU with `dotnet test --project <test project path> --filter-trait "WU=<id>"` (MTP mode, no `--` separator). Full suite: `dotnet test --solution DotNetTailor.slnx -c Release`.
 - `Category` traits (combinable): `Integration` (cross-project in-process pipeline/CLI tests), `Matrix` (needs `artifacts/testapps`; skips with an explicit reason locally when absent, never skips in CI), `Network` (external feeds; skipped unless `DOTNET_TAILOR_TEST_NETWORK=1`, run nightly), `Launch` (starts produced apps in the harness).
 - The default run (local and PR CI) makes no network calls.
 - Naming: test classes `<TypeUnderTest>Tests`; methods PascalCase `<Subject><Condition><ExpectedResult>` with no underscores (e.g. `ParseRejectsAbsolutePath`); CA1707 is not suppressed.
@@ -35,68 +35,68 @@ A milestone is a release grouping, not a start gate. A WU may start as soon as i
 |---|---|---|---|---|---|---|
 | WU-000 | repository-scaffold | M0 | — | — | [spec](../Specs/M0/WU-000-repository-scaffold.spec.md) | Done |
 | WU-001 | ai-enablement | M0 | WU-000 | WU-002, WU-003, WU-006, WU-007, WU-100 | [spec](../Specs/M0/WU-001-ai-enablement.spec.md) | In review |
-| WU-002 | ci-pipeline | M0 | WU-000 | WU-001, WU-003, WU-006, WU-007, WU-100 | [spec](../Specs/M0/WU-002-ci-pipeline.spec.md) | Not started |
-| WU-003 | test-app-suite | M0 | WU-000 | WU-001, WU-002, WU-006, WU-007, WU-100 | [spec](../Specs/M0/WU-003-test-app-suite.spec.md) | Not started |
-| WU-004 | spike-crossgen2 | M0 | WU-003 | WU-005, WU-006, WU-007, M1, M2 | [spec](../Specs/M0/WU-004-spike-crossgen2.spec.md) | Not started |
-| WU-005 | spike-apphost-deployment-model | M0 | WU-003, WU-006 | WU-004, WU-007, M1, WU-200, WU-201, WU-203 | [spec](../Specs/M0/WU-005-spike-apphost-deployment-model.spec.md) | Not started |
-| WU-006 | spike-runtime-packs | M0 | WU-000 | WU-001–WU-004, WU-007, WU-100 | [spec](../Specs/M0/WU-006-spike-runtime-packs.spec.md) | Not started |
-| WU-007 | spike-nuget-and-libraries | M0 | WU-000 | WU-001–WU-006, WU-100 | [spec](../Specs/M0/WU-007-spike-nuget-and-libraries.spec.md) | Not started |
-| WU-100 | core-primitives | M1 | WU-000 | WU-001–WU-007 | [spec](../Specs/M1/WU-100-core-primitives.spec.md) | Not started |
-| WU-101 | appspec-model-and-schema | M1 | WU-100, WU-007 | WU-102, WU-105, M2 | [spec](../Specs/M1/WU-101-appspec-model-and-schema.spec.md) | Not started |
-| WU-102 | transformspec-model-and-schema | M1 | WU-100, WU-007 | WU-101, WU-105, M2 | [spec](../Specs/M1/WU-102-transformspec-model-and-schema.spec.md) | Not started |
-| WU-103 | multi-document-loader | M1 | WU-101, WU-102 | WU-105, M2, WU-300 | [spec](../Specs/M1/WU-103-multi-document-loader.spec.md) | Not started |
-| WU-104 | transformspec-variables | M1 | WU-102, WU-103 | WU-105, M2, M3 | [spec](../Specs/M1/WU-104-transformspec-variables.spec.md) | Not started |
-| WU-105 | cli-skeleton | M1 | WU-100 (`schema export` after WU-101, WU-102) | WU-101–WU-104, M2 | [spec](../Specs/M1/WU-105-cli-skeleton.spec.md) | Not started |
-| WU-200 | pe-inspector | M2 | WU-100 | WU-201–WU-203, M1 | [spec](../Specs/M2/WU-200-pe-inspector.spec.md) | Not started |
-| WU-201 | managed-metadata-reader | M2 | WU-100 | WU-200, WU-202, WU-203, M1 | [spec](../Specs/M2/WU-201-managed-metadata-reader.spec.md) | Not started |
-| WU-202 | runtime-config-readers | M2 | WU-100, WU-005 | WU-200, WU-201, WU-203, M1 | [spec](../Specs/M2/WU-202-runtime-config-readers.spec.md) | Not started |
-| WU-203 | rid-and-culture-knowledge | M2 | WU-100 | WU-200–WU-202, M1 | [spec](../Specs/M2/WU-203-rid-and-culture-knowledge.spec.md) | Not started |
-| WU-300 | folder-matching-engine | M3 | WU-101, WU-203 | WU-200–WU-202, WU-103 | [spec](../Specs/M3/WU-300-folder-matching-engine.spec.md) | Not started |
-| WU-301 | file-classification-engine | M3 | WU-300, WU-200 | WU-201, WU-202, WU-600 | [spec](../Specs/M3/WU-301-file-classification-engine.spec.md) | Not started |
-| WU-302 | association-engine | M3 | WU-301 | WU-303, WU-304 | [spec](../Specs/M3/WU-302-association-engine.spec.md) | Not started |
-| WU-303 | reference-resolution | M3 | WU-301, WU-201 | WU-302 | [spec](../Specs/M3/WU-303-reference-resolution.spec.md) | Not started |
-| WU-304 | dependency-and-plugin-graphs | M3 | WU-303 | WU-302 | [spec](../Specs/M3/WU-304-dependency-and-plugin-graphs.spec.md) | Not started |
-| WU-305 | derived-artefact-writers | M3 | WU-302, WU-304, WU-202 | WU-600, WU-700, WU-801 | [spec](../Specs/M3/WU-305-derived-artefact-writers.spec.md) | Not started |
-| WU-400 | execution-model-analysis | M4 | WU-202, WU-305 | WU-403, WU-500 | [spec](../Specs/M4/WU-400-execution-model-analysis.spec.md) | Not started |
-| WU-401 | folder-role-heuristics-and-rule-compaction | M4 | WU-400 | WU-402, WU-403, WU-500, WU-501 | [spec](../Specs/M4/WU-401-folder-role-heuristics-and-rule-compaction.spec.md) | Not started |
-| WU-402 | capability-assessment | M4 | WU-400 | WU-401, WU-403, WU-500, WU-501 | [spec](../Specs/M4/WU-402-capability-assessment.spec.md) | Not started |
-| WU-403 | appspec-validation-engine | M4 | WU-305, WU-202 | WU-400–WU-402, WU-500, WU-501 | [spec](../Specs/M4/WU-403-appspec-validation-engine.spec.md) | Not started |
-| WU-404 | cli-analyse-validate | M4 | WU-401, WU-402, WU-403, WU-105, WU-103 | WU-502, WU-503 | [spec](../Specs/M4/WU-404-cli-analyse-validate.spec.md) | Not started |
-| WU-405 | regression-harness | M4 | WU-404, WU-003, WU-002 | WU-406, M5, WU-1002 | [spec](../Specs/M4/WU-405-regression-harness.spec.md) | Not started |
-| WU-406 | cli-inspect | M4 | WU-404, WU-305 | WU-405, M5, WU-1002 | [spec](../Specs/M4/WU-406-cli-inspect.spec.md) | Not started |
-| WU-500 | selector-engine | M5 | WU-305, WU-102 | WU-400–WU-403 | [spec](../Specs/M5/WU-500-selector-engine.spec.md) | Not started |
-| WU-501 | rule-precedence-and-conflicts | M5 | WU-500 | WU-400–WU-403 | [spec](../Specs/M5/WU-501-rule-precedence-and-conflicts.spec.md) | Not started |
-| WU-502 | transformspec-validation | M5 | WU-501, WU-403, WU-104 | WU-404, WU-405 | [spec](../Specs/M5/WU-502-transformspec-validation.spec.md) | Not started |
-| WU-503 | planner-core | M5 | WU-502 | WU-404, WU-405 | [spec](../Specs/M5/WU-503-planner-core.spec.md) | Not started |
-| WU-504 | filtering-symbols-resources-layout-handlers | M5 | WU-503 | WU-507, WU-601, WU-702 | [spec](../Specs/M5/WU-504-filtering-symbols-resources-layout-handlers.spec.md) | Not started |
-| WU-505 | projected-appspec-and-output-assertions | M5 | WU-503, WU-504 | WU-507, WU-601, WU-702 | [spec](../Specs/M5/WU-505-projected-appspec-and-output-assertions.spec.md) | Not started |
-| WU-506 | plan-artefacts-and-cli-plan | M5 | WU-504, WU-505, WU-404, WU-507 | WU-602, WU-604 | [spec](../Specs/M5/WU-506-plan-artefacts-and-cli-plan.spec.md) | Not started |
-| WU-507 | additions-handler | M5 | WU-503 | WU-504, WU-505, WU-601, WU-702 | [spec](../Specs/M5/WU-507-additions-handler.spec.md) | Not started |
-| WU-600 | output-safety-and-staging | M6 | WU-100 | M2–M5 | [spec](../Specs/M6/WU-600-output-safety-and-staging.spec.md) | Not started |
-| WU-601 | action-executor-and-symbols-output | M6 | WU-600, WU-503 | WU-504, WU-505, WU-507 | [spec](../Specs/M6/WU-601-action-executor-and-symbols-output.spec.md) | Not started |
-| WU-602 | post-execution-validation | M6 | WU-601, WU-505 | WU-506, WU-604 | [spec](../Specs/M6/WU-602-post-execution-validation.spec.md) | Not started |
-| WU-603 | cli-apply-and-e2e | M6 | WU-602, WU-506, WU-405, WU-604 | WU-702, WU-703 | [spec](../Specs/M6/WU-603-cli-apply-and-e2e.spec.md) | Not started |
-| WU-604 | depsjson-asset-pruning | M6 | WU-202, WU-601 | WU-505, WU-506, WU-602, WU-702 | [spec](../Specs/M6/WU-604-depsjson-asset-pruning.spec.md) | Not started |
-| WU-700 | nuget-acquisition-service | M7 | WU-007, WU-100 | M2–M6 | [spec](../Specs/M7/WU-700-nuget-acquisition-service.spec.md) | Not started |
-| WU-701 | runtime-pack-catalogue | M7 | WU-700, WU-006 | M3–M6 | [spec](../Specs/M7/WU-701-runtime-pack-catalogue.spec.md) | Not started |
-| WU-702 | r2r-eligibility-planner | M7 | WU-503, WU-200, WU-701 | WU-504, WU-505, M6 | [spec](../Specs/M7/WU-702-r2r-eligibility-planner.spec.md) | Not started |
-| WU-703 | crossgen2-invoker | M7 | WU-702, WU-004 | M6, M8 | [spec](../Specs/M7/WU-703-crossgen2-invoker.spec.md) | Not started |
-| WU-704 | r2r-e2e | M7 | WU-703, WU-603 | M8 | [spec](../Specs/M7/WU-704-r2r-e2e.spec.md) | Not started |
-| WU-800 | apphost-service | M8 | WU-005, WU-700 | M3–M7 | [spec](../Specs/M8/WU-800-apphost-service.spec.md) | Not started |
-| WU-801 | runtimeconfig-transformer | M8 | WU-202, WU-003 | M3–M7 | [spec](../Specs/M8/WU-801-runtimeconfig-transformer.spec.md) | Not started |
-| WU-802 | depsjson-transformer | M8 | WU-202, WU-701, WU-003, WU-604 | WU-603, M7, WU-800, WU-801 | [spec](../Specs/M8/WU-802-depsjson-transformer.spec.md) | Not started |
-| WU-803 | fd-to-sc-handler | M8 | WU-800, WU-801, WU-802, WU-503 | WU-603, M7 | [spec](../Specs/M8/WU-803-fd-to-sc-handler.spec.md) | Not started |
-| WU-804 | sc-to-fd-handler | M8 | WU-801, WU-802, WU-503, WU-803 | WU-603, M7 | [spec](../Specs/M8/WU-804-sc-to-fd-handler.spec.md) | Not started |
-| WU-805 | deployment-model-e2e | M8 | WU-803, WU-804, WU-603 | WU-704, WU-900–WU-902 | [spec](../Specs/M8/WU-805-deployment-model-e2e.spec.md) | Not started |
-| WU-900 | runtime-patching | M9 | WU-803, WU-702, WU-703 | WU-901, WU-902, WU-805 | [spec](../Specs/M9/WU-900-runtime-patching.spec.md) | Not started |
-| WU-901 | tfm-retargeting-and-compat-analysis | M9 | WU-801, WU-802, WU-701, WU-503, WU-201, WU-800, WU-702 | WU-703, WU-704, WU-803–WU-805, WU-900, WU-902 | [spec](../Specs/M9/WU-901-tfm-retargeting-and-compat-analysis.spec.md) | Not started |
-| WU-902 | library-patching | M9 | WU-700, WU-802, WU-503, WU-305 | WU-603, M7, WU-803–WU-805, WU-900, WU-901 | [spec](../Specs/M9/WU-902-library-patching.spec.md) | Not started |
-| WU-903 | combined-transform-e2e | M9 | WU-900, WU-901, WU-902, WU-704 | WU-1000–WU-1002 | [spec](../Specs/M9/WU-903-combined-transform-e2e.spec.md) | Not started |
-| WU-1000 | tool-config-and-precedence | M10 | WU-105 | M2–M9 | [spec](../Specs/M10/WU-1000-tool-config-and-precedence.spec.md) | Not started |
-| WU-1001 | diagnostics-catalogue | M10 | WU-603 | M7–M9 | [spec](../Specs/M10/WU-1001-diagnostics-catalogue.spec.md) | Not started |
-| WU-1002 | packaging-and-release-workflow (**Scheduled: immediately after WU-404, enables v0.1.0-preview**) | M10 | WU-002, WU-404 | WU-405, WU-406, M5–M9 | [spec](../Specs/M10/WU-1002-packaging-and-release-workflow.spec.md) | Not started |
-| WU-1003 | user-guides-and-templates | M10 | WU-903, WU-1000, WU-1001 | WU-1004 | [spec](../Specs/M10/WU-1003-user-guides-and-templates.spec.md) | Not started |
-| WU-1004 | performance-and-determinism-hardening | M10 | WU-903 | WU-1003 | [spec](../Specs/M10/WU-1004-performance-and-determinism-hardening.spec.md) | Not started |
+| WU-002 | ci-pipeline | M0 | WU-000 | WU-001, WU-003, WU-006, WU-007, WU-100 | [spec](../Specs/M0/WU-002-ci-pipeline.spec.md) | Ready |
+| WU-003 | test-app-suite | M0 | WU-000 | WU-001, WU-002, WU-006, WU-007, WU-100 | [spec](../Specs/M0/WU-003-test-app-suite.spec.md) | Ready |
+| WU-004 | spike-crossgen2 | M0 | WU-003 | WU-005, WU-006, WU-007, M1, M2 | [spec](../Specs/M0/WU-004-spike-crossgen2.spec.md) | Ready |
+| WU-005 | spike-apphost-deployment-model | M0 | WU-003, WU-006 | WU-004, WU-007, M1, WU-200, WU-201, WU-203 | [spec](../Specs/M0/WU-005-spike-apphost-deployment-model.spec.md) | Ready |
+| WU-006 | spike-runtime-packs | M0 | WU-000 | WU-001–WU-004, WU-007, WU-100 | [spec](../Specs/M0/WU-006-spike-runtime-packs.spec.md) | Ready |
+| WU-007 | spike-nuget-and-libraries | M0 | WU-000 | WU-001–WU-006, WU-100 | [spec](../Specs/M0/WU-007-spike-nuget-and-libraries.spec.md) | Ready |
+| WU-100 | core-primitives | M1 | WU-000 | WU-001–WU-007 | [spec](../Specs/M1/WU-100-core-primitives.spec.md) | Ready |
+| WU-101 | appspec-model-and-schema | M1 | WU-100, WU-007 | WU-102, WU-105, M2 | [spec](../Specs/M1/WU-101-appspec-model-and-schema.spec.md) | Ready |
+| WU-102 | transformspec-model-and-schema | M1 | WU-100, WU-007 | WU-101, WU-105, M2 | [spec](../Specs/M1/WU-102-transformspec-model-and-schema.spec.md) | Ready |
+| WU-103 | multi-document-loader | M1 | WU-101, WU-102 | WU-105, M2, WU-300 | [spec](../Specs/M1/WU-103-multi-document-loader.spec.md) | Ready |
+| WU-104 | transformspec-variables | M1 | WU-102, WU-103 | WU-105, M2, M3 | [spec](../Specs/M1/WU-104-transformspec-variables.spec.md) | Ready |
+| WU-105 | cli-skeleton | M1 | WU-100 (`schema export` after WU-101, WU-102) | WU-101–WU-104, M2 | [spec](../Specs/M1/WU-105-cli-skeleton.spec.md) | Ready |
+| WU-200 | pe-inspector | M2 | WU-100 | WU-201–WU-203, M1 | [spec](../Specs/M2/WU-200-pe-inspector.spec.md) | Ready |
+| WU-201 | managed-metadata-reader | M2 | WU-100 | WU-200, WU-202, WU-203, M1 | [spec](../Specs/M2/WU-201-managed-metadata-reader.spec.md) | Ready |
+| WU-202 | runtime-config-readers | M2 | WU-100, WU-005 | WU-200, WU-201, WU-203, M1 | [spec](../Specs/M2/WU-202-runtime-config-readers.spec.md) | Ready |
+| WU-203 | rid-and-culture-knowledge | M2 | WU-100 | WU-200–WU-202, M1 | [spec](../Specs/M2/WU-203-rid-and-culture-knowledge.spec.md) | Ready |
+| WU-300 | folder-matching-engine | M3 | WU-101, WU-203 | WU-200–WU-202, WU-103 | [spec](../Specs/M3/WU-300-folder-matching-engine.spec.md) | Ready |
+| WU-301 | file-classification-engine | M3 | WU-300, WU-200 | WU-201, WU-202, WU-600 | [spec](../Specs/M3/WU-301-file-classification-engine.spec.md) | Ready |
+| WU-302 | association-engine | M3 | WU-301 | WU-303, WU-304 | [spec](../Specs/M3/WU-302-association-engine.spec.md) | Ready |
+| WU-303 | reference-resolution | M3 | WU-301, WU-201 | WU-302 | [spec](../Specs/M3/WU-303-reference-resolution.spec.md) | Ready |
+| WU-304 | dependency-and-plugin-graphs | M3 | WU-303 | WU-302 | [spec](../Specs/M3/WU-304-dependency-and-plugin-graphs.spec.md) | Ready |
+| WU-305 | derived-artefact-writers | M3 | WU-302, WU-304, WU-202 | WU-600, WU-700, WU-801 | [spec](../Specs/M3/WU-305-derived-artefact-writers.spec.md) | Ready |
+| WU-400 | execution-model-analysis | M4 | WU-202, WU-305 | WU-403, WU-500 | [spec](../Specs/M4/WU-400-execution-model-analysis.spec.md) | Ready |
+| WU-401 | folder-role-heuristics-and-rule-compaction | M4 | WU-400 | WU-402, WU-403, WU-500, WU-501 | [spec](../Specs/M4/WU-401-folder-role-heuristics-and-rule-compaction.spec.md) | Ready |
+| WU-402 | capability-assessment | M4 | WU-400 | WU-401, WU-403, WU-500, WU-501 | [spec](../Specs/M4/WU-402-capability-assessment.spec.md) | Ready |
+| WU-403 | appspec-validation-engine | M4 | WU-305, WU-202 | WU-400–WU-402, WU-500, WU-501 | [spec](../Specs/M4/WU-403-appspec-validation-engine.spec.md) | Ready |
+| WU-404 | cli-analyse-validate | M4 | WU-401, WU-402, WU-403, WU-105, WU-103 | WU-502, WU-503 | [spec](../Specs/M4/WU-404-cli-analyse-validate.spec.md) | Ready |
+| WU-405 | regression-harness | M4 | WU-404, WU-003, WU-002 | WU-406, M5, WU-1002 | [spec](../Specs/M4/WU-405-regression-harness.spec.md) | Ready |
+| WU-406 | cli-inspect | M4 | WU-404, WU-305 | WU-405, M5, WU-1002 | [spec](../Specs/M4/WU-406-cli-inspect.spec.md) | Ready |
+| WU-500 | selector-engine | M5 | WU-305, WU-102 | WU-400–WU-403 | [spec](../Specs/M5/WU-500-selector-engine.spec.md) | Ready |
+| WU-501 | rule-precedence-and-conflicts | M5 | WU-500 | WU-400–WU-403 | [spec](../Specs/M5/WU-501-rule-precedence-and-conflicts.spec.md) | Ready |
+| WU-502 | transformspec-validation | M5 | WU-501, WU-403, WU-104 | WU-404, WU-405 | [spec](../Specs/M5/WU-502-transformspec-validation.spec.md) | Ready |
+| WU-503 | planner-core | M5 | WU-502 | WU-404, WU-405 | [spec](../Specs/M5/WU-503-planner-core.spec.md) | Ready |
+| WU-504 | filtering-symbols-resources-layout-handlers | M5 | WU-503 | WU-507, WU-601, WU-702 | [spec](../Specs/M5/WU-504-filtering-symbols-resources-layout-handlers.spec.md) | Ready |
+| WU-505 | projected-appspec-and-output-assertions | M5 | WU-503, WU-504 | WU-507, WU-601, WU-702 | [spec](../Specs/M5/WU-505-projected-appspec-and-output-assertions.spec.md) | Ready |
+| WU-506 | plan-artefacts-and-cli-plan | M5 | WU-504, WU-505, WU-404, WU-507 | WU-602, WU-604 | [spec](../Specs/M5/WU-506-plan-artefacts-and-cli-plan.spec.md) | Ready |
+| WU-507 | additions-handler | M5 | WU-503 | WU-504, WU-505, WU-601, WU-702 | [spec](../Specs/M5/WU-507-additions-handler.spec.md) | Ready |
+| WU-600 | output-safety-and-staging | M6 | WU-100 | M2–M5 | [spec](../Specs/M6/WU-600-output-safety-and-staging.spec.md) | Ready |
+| WU-601 | action-executor-and-symbols-output | M6 | WU-600, WU-503 | WU-504, WU-505, WU-507 | [spec](../Specs/M6/WU-601-action-executor-and-symbols-output.spec.md) | Ready |
+| WU-602 | post-execution-validation | M6 | WU-601, WU-505 | WU-506, WU-604 | [spec](../Specs/M6/WU-602-post-execution-validation.spec.md) | Ready |
+| WU-603 | cli-apply-and-e2e | M6 | WU-602, WU-506, WU-405, WU-604 | WU-702, WU-703 | [spec](../Specs/M6/WU-603-cli-apply-and-e2e.spec.md) | Ready |
+| WU-604 | depsjson-asset-pruning | M6 | WU-202, WU-601 | WU-505, WU-506, WU-602, WU-702 | [spec](../Specs/M6/WU-604-depsjson-asset-pruning.spec.md) | Ready |
+| WU-700 | nuget-acquisition-service | M7 | WU-007, WU-100 | M2–M6 | [spec](../Specs/M7/WU-700-nuget-acquisition-service.spec.md) | Ready |
+| WU-701 | runtime-pack-catalogue | M7 | WU-700, WU-006 | M3–M6 | [spec](../Specs/M7/WU-701-runtime-pack-catalogue.spec.md) | Ready |
+| WU-702 | r2r-eligibility-planner | M7 | WU-503, WU-200, WU-701 | WU-504, WU-505, M6 | [spec](../Specs/M7/WU-702-r2r-eligibility-planner.spec.md) | Ready |
+| WU-703 | crossgen2-invoker | M7 | WU-702, WU-004 | M6, M8 | [spec](../Specs/M7/WU-703-crossgen2-invoker.spec.md) | Ready |
+| WU-704 | r2r-e2e | M7 | WU-703, WU-603 | M8 | [spec](../Specs/M7/WU-704-r2r-e2e.spec.md) | Ready |
+| WU-800 | apphost-service | M8 | WU-005, WU-700 | M3–M7 | [spec](../Specs/M8/WU-800-apphost-service.spec.md) | Ready |
+| WU-801 | runtimeconfig-transformer | M8 | WU-202, WU-003 | M3–M7 | [spec](../Specs/M8/WU-801-runtimeconfig-transformer.spec.md) | Ready |
+| WU-802 | depsjson-transformer | M8 | WU-202, WU-701, WU-003, WU-604 | WU-603, M7, WU-800, WU-801 | [spec](../Specs/M8/WU-802-depsjson-transformer.spec.md) | Ready |
+| WU-803 | fd-to-sc-handler | M8 | WU-800, WU-801, WU-802, WU-503 | WU-603, M7 | [spec](../Specs/M8/WU-803-fd-to-sc-handler.spec.md) | Ready |
+| WU-804 | sc-to-fd-handler | M8 | WU-801, WU-802, WU-503, WU-803 | WU-603, M7 | [spec](../Specs/M8/WU-804-sc-to-fd-handler.spec.md) | Ready |
+| WU-805 | deployment-model-e2e | M8 | WU-803, WU-804, WU-603 | WU-704, WU-900–WU-902 | [spec](../Specs/M8/WU-805-deployment-model-e2e.spec.md) | Ready |
+| WU-900 | runtime-patching | M9 | WU-803, WU-702, WU-703 | WU-901, WU-902, WU-805 | [spec](../Specs/M9/WU-900-runtime-patching.spec.md) | Ready |
+| WU-901 | tfm-retargeting-and-compat-analysis | M9 | WU-801, WU-802, WU-701, WU-503, WU-201, WU-800, WU-702 | WU-703, WU-704, WU-803–WU-805, WU-900, WU-902 | [spec](../Specs/M9/WU-901-tfm-retargeting-and-compat-analysis.spec.md) | Ready |
+| WU-902 | library-patching | M9 | WU-700, WU-802, WU-503, WU-305 | WU-603, M7, WU-803–WU-805, WU-900, WU-901 | [spec](../Specs/M9/WU-902-library-patching.spec.md) | Ready |
+| WU-903 | combined-transform-e2e | M9 | WU-900, WU-901, WU-902, WU-704 | WU-1000–WU-1002 | [spec](../Specs/M9/WU-903-combined-transform-e2e.spec.md) | Ready |
+| WU-1000 | tool-config-and-precedence | M10 | WU-105 | M2–M9 | [spec](../Specs/M10/WU-1000-tool-config-and-precedence.spec.md) | Ready |
+| WU-1001 | diagnostics-catalogue | M10 | WU-603 | M7–M9 | [spec](../Specs/M10/WU-1001-diagnostics-catalogue.spec.md) | Ready |
+| WU-1002 | packaging-and-release-workflow (**Scheduled: immediately after WU-404, enables v0.1.0-preview**) | M10 | WU-002, WU-404 | WU-405, WU-406, M5–M9 | [spec](../Specs/M10/WU-1002-packaging-and-release-workflow.spec.md) | Ready |
+| WU-1003 | user-guides-and-templates | M10 | WU-903, WU-1000, WU-1001 | WU-1004 | [spec](../Specs/M10/WU-1003-user-guides-and-templates.spec.md) | Ready |
+| WU-1004 | performance-and-determinism-hardening | M10 | WU-903 | WU-1003 | [spec](../Specs/M10/WU-1004-performance-and-determinism-hardening.spec.md) | Ready |
 
 ## Milestones
 
@@ -104,7 +104,7 @@ Dashed nodes are dependencies from other milestones.
 
 ### M0 Foundation & Repo Bootstrap
 
-- **WU-000** scaffold: git init, `.gitignore`, `.gitattributes` (CRLF working tree for source files; LF for `*.sh`, `tests/**/Golden/**`, `schemas/**` and `Docs/Guides/diagnostics.md`), `.editorconfig`, `global.json` (net10 SDK + MTP runner), `Directory.Build.props`, `Directory.Packages.props`, `.slnx` with the empty project layout from the architecture document (incl. the `tests/Tailor.Testing` support library), README, CONTRIBUTING, LICENSE placeholder.
+- **WU-000** scaffold: git init, root build/config files, net10 SDK + MTP runner, `DotNetTailor.slnx` with the [§3 project layout](../Architecture/Tailor.architecture.md#3-solution-layout) including `tests/Tailor.Testing`, README, CONTRIBUTING and Apache-2.0 LICENSE. Line endings follow [§15](../Architecture/Tailor.architecture.md#15-determinism).
 - **WU-001** AI enablement: `AGENTS.md`, `.github/copilot-instructions.md`, scoped instructions (C#, tests, specs/docs), prompts (`plan-work`, `new-work-unit-spec`, `implement-work-unit`, `review-changes`, `address-review`, `verify-work-unit`), skills (`work-unit-workflow`, `planning-artifacts`, `code-review`, `test-evidence`, `devops-pipelines`, `schema-change`, `test-apps`), and repo agents (contributor, planner, implementer, code-reviewer, reviewer/verifier, probe, research).
 - **WU-002** CI: GitHub Actions on `windows-latest` running build, test (MTP, TRX upload) and `dotnet format --verify-no-changes`. Dependabot for NuGet and Actions.
 - **WU-003** Test apps: sources under `tests/TestApps/` + `build/Build-TestApps.ps1` publishing the matrix `{net8.0, net10.0} × {FD, SC} × {R2R off, on}` into `artifacts/testapps/` with `manifest.json`. CI cache.
@@ -334,7 +334,7 @@ WU-1002 keeps its M10 ID and file but is **scheduled immediately after WU-404**;
 | v0.5.0-preview | M9 | Retargeting, runtime and library patching |
 | v1.0.0 | M10 | Config file, diagnostics catalogue, guides, hardening |
 
-Previews need the release workflow. WU-1002 is scheduled immediately after WU-404 so that v0.1.0-preview and all later previews publish through it (risk R11, resolved).
+All releases use WU-1002's workflow, available immediately after WU-404.
 
 ## Critical Path
 
@@ -363,8 +363,6 @@ Provisional defaults apply until the user decides.
 
 | Question | Provisional default | Affected WUs |
 |---|---|---|
-| Final product name, tool command, namespace and package id | Working names (`Tailor`, `dotnet-tailor`, `dotnet-tailor`) | WU-000, WU-105, WU-1002 |
-| Licence | Placeholder; nuget.org publishing blocked until set | WU-000, WU-1002 |
 | `knownUnresolved` references in the AppSpec (architecture §19 item 20) | Implement; mark dependent ACs `Blocked (#20)` if rejected | WU-101, WU-303, WU-401 |
 | Own apphost patcher relying on the undocumented placeholder format (architecture §19 item 12) | Accept, isolated in `Platform.Windows`, per-major tests | WU-005, WU-800 |
 | WCF / ASP.NET / AspNetCore runtime pack scope (architecture §19 item 15) | AspNetCore handled generically; test apps cover console/WinForms/WPF only | WU-003, WU-701, WU-803 |
@@ -374,22 +372,8 @@ Provisional defaults apply until the user decides.
 
 Other open items owned by work units: JSON Schema validator library (WU-007); `$schema` URI hosting; `apply --plan` replay (not in v1).
 
-## Resolved Decisions (reconciliation pass)
+## Resolved Decisions
 
-Recorded in [architecture §19](../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies) items 23–36:
+Design decisions are recorded in [architecture §19](../Architecture/Tailor.architecture.md#19-resolved--open-inconsistencies); contract ownership is in [§3.2](../Architecture/Tailor.architecture.md#32-cross-layer-contracts), test rules in [Test Conventions](#test-conventions), and identity in [the naming plan](Tailor-naming.plan.md).
 
-- Include paths are relative to the including file.
-- Cross-layer contracts ([architecture §3.2](../Architecture/Tailor.architecture.md#32-cross-layer-contracts)): `IFrameworkCatalogue` in Inspection (WU-701 implements), `IPackageLocator` and `TreeFingerprint` in Core (WU-100), apphost binding read owned by WU-202, detection primitives in Model (WU-305).
-- Folder matching: `**` = one or more levels; least-specific-segment ranking then segment count; no implicit child re-application below recursed folders (provisional).
-- Exit codes: 130 cancelled; 5 output-assertion failure after execution; 1 path violations; 70 stub verbs.
-- `--permissive` / `--strict` semantics ([architecture §13](../Architecture/Tailor.architecture.md#13-diagnostics-failure-policy-and-exit-codes)).
-- Dry-run may write only `--artefacts` and the package cache (not with `--offline`).
-- NuGet credentials via the standard `nuget.config` hierarchy only.
-- Test command and category convention ([Test Conventions](#test-conventions)).
-- Tool config `dotnet-tailor.json` and precedence.
-- R2R: runtime-pack framework assemblies not recompiled in v1; satellites ineligible.
-- No implicit runtime version; explicit version or policy required.
-- `expectedInvalid` fixtures excluded from "zero errors".
-- WU-805 defines the SDK-equivalence normalisation.
-- Runtime and library version policies are separate types over one range resolver.
 - Owners assigned: `inspect` (WU-406), `additions[]` (WU-507), minimal deps.json pruning for v0.2.0 (WU-604), shared deployment-model dispatcher and ConfigGeneration handler (WU-803).

@@ -5,7 +5,7 @@
 | ID | WU-700 |
 | Title | nuget-acquisition-service |
 | Milestone | M7 Acquisition & ReadyToRun (v0.3.0-preview) |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-007, WU-100 |
 | Parallel with | M2–M6 |
 | Target | `src/Tailor.Acquisition/` (`Packages/`), `tests/Tailor.Acquisition.Tests/` |

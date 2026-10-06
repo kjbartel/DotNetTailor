@@ -5,7 +5,7 @@
 | ID | WU-103 |
 | Title | multi-document-loader |
 | Milestone | M1 Core Primitives & Specification Documents |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-101, WU-102 |
 | Parallel with | WU-105, M2, WU-300 |
 | Target project(s)/paths | `src/Tailor.Specifications/Loading/`, `tests/Tailor.Specifications.Tests/Loading/`, `tests/Tailor.Specifications.Tests/Fixtures/Includes/` |

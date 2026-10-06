@@ -4,11 +4,12 @@
 
 ## 1. Summary
 
-Tailor is a binary-first .NET CLI tool. It analyses, validates and transforms compiled .NET application folder trees. It never modifies the input tree, and it produces a new tree plus a new Application Specification (AppSpec) ([RQ §1](../Requirements/Repackage_tool_Requirements_v1.1.md), [RQ §4](../Requirements/Repackage_tool_Requirements_v1.1.md)).
+.NET Tailor is a binary-first CLI that analyses, validates and transforms compiled .NET application trees. It never modifies input application files; transformations produce a new tree and Application Specification (AppSpec) ([RQ §1](../Requirements/Repackage_tool_Requirements_v1.1.md), [RQ §4](../Requirements/Repackage_tool_Requirements_v1.1.md)).
 
 | Item | Value |
 |---|---|
-| Working names (placeholder, see [§20](#20-open-questions)) | Product `Tailor`, command `dotnet-tailor`, root namespace `Tailor`, package id `dotnet-tailor` |
+| Identity | `.NET Tailor`; command/package `dotnet-tailor`; namespaces `Tailor.*` ([naming plan](../Plans/Tailor-naming.plan.md)) |
+| Licence | Apache License 2.0 ([LICENSE](../../LICENSE)) |
 | Tool runtime | `net10.0` (LTS), C#, packaged with `dotnet tool`, SemVer ([RQ §10](../Requirements/Repackage_tool_Requirements_v1.1.md), [RQ §11](../Requirements/Repackage_tool_Requirements_v1.1.md)) |
 | Target runtimes | Configured independently of the tool runtime: `net8.0` and later |
 | Platform v1 | Windows host, `win-x64` output. Linux and other RIDs are possible later through the platform abstraction ([AS §8.3](../Requirements/Application_Specification.md)) |
@@ -22,8 +23,8 @@ Tailor is a binary-first .NET CLI tool. It analyses, validates and transforms co
 | RQ | [Repackage_tool_Requirements_v1.1.md](../Requirements/Repackage_tool_Requirements_v1.1.md) | Authoritative |
 | AS | [Application_Specification.md](../Requirements/Application_Specification.md) | Authoritative |
 | TS | [Transformation_Specification.md](../Requirements/Transformation_Specification.md) | Authoritative |
-| RD | [R2R_tool_Design.md](../Requirements/R2R_tool_Design.md) | Historical. Used only for details that the authoritative documents do not cover |
-| CK | [Read_to_run_Cake.md](../Requirements/Read_to_run_Cake.md) | Historical. Used only for details that the authoritative documents do not cover |
+| RD | [R2R_tool_Design.md](../Requirements/R2R_tool_Design.md) | Historical; supplements authoritative documents only |
+| CK | [Read_to_run_Cake.md](../Requirements/Read_to_run_Cake.md) | Historical; supplements authoritative documents only |
 | FS | [folderspec.json](../Requirements/folderspec.json) | Mock format only. Not an input format |
 
 ### 1.2 Non-goals (v1)
@@ -239,7 +240,7 @@ Capability assessment ([AS §19](../Requirements/Application_Specification.md)) 
                "libraries": [{ "package": "Newtonsoft.Json", "allow": "patch" }] },
     "deploymentModel": { "target": "selfContained", "rid": "win-x64" },
     "optimisation": { "readyToRun": { "select": { "all": [ { "assemblyRole": ["application", "plugin"] },
-                                                       { "not": { "name": "Legacy.*" } } ] } } } },
+                                                       { "not": { "name": "Excluded.*" } } ] } } } },
   "rules": [
     { "id": "no-xml-docs", "action": "exclude", "select": { "association": "xmlDoc" } },
     { "id": "english-only", "action": "exclude", "select": { "not": { "culture": ["en", "en-*"] }, "classification": "resource" } } ],
@@ -426,15 +427,15 @@ The CLI follows dotnet conventions and uses Australian spelling for canonical re
   3. Repo config: the first `dotnet-tailor.json` found from the current directory upwards; discovery stops at the git root.
   4. User config (`%APPDATA%\dotnet-tailor\dotnet-tailor.json` via `IPlatformKnowledge`).
   5. Built-in defaults.
-- The historical `tool plugin <command>` namespace ([RD §10](../Requirements/R2R_tool_Design.md)) is dropped. Plugin scoping uses selectors and `inspect --plugin`.
+- Plugin scoping uses selectors and `inspect --plugin` ([§8](#8-selectors-precedence-and-actions)).
 
 ## 15. Determinism
 
 - Enumeration is sorted ordinal-ignore-case. Dictionaries are serialised sorted, and JSON is canonical.
 - There are no timestamps, machine paths or GUIDs in canonical artefacts. The tree fingerprint is a hash over the sorted `(relativePath, size, sha256)` entries.
 - External inputs (package versions and hashes, crossgen2 version) are pinned in the plan. Equal inputs plus an equal environment produce byte-identical plans and artefacts ([TS §3.6](../Requirements/Transformation_Specification.md), [CK §4.3](../Requirements/Read_to_run_Cake.md)).
-- Line endings of tool-generated artefacts (AppSpec and TransformSpec canonical writes, plans, reports, derived artefacts) are always LF with a fixed canonical form, independent of host OS and git settings. This keeps bytes and hashes identical across machines and platforms; Windows tooling (VS, VS Code, Notepad, PowerShell) reads LF JSON fine. **Decided (provisional)**, [§19](#19-resolved--open-inconsistencies) item 38.
-- Repository source files are the opposite: CRLF in the working tree (Windows-first), LF in the git index. `.gitattributes` forces `eol=crlf` per source extension so checkout is CRLF regardless of `core.autocrlf`, keeping `dotnet format` and byte-level diffs consistent on every machine and CI runner. Exceptions forced to LF: `*.sh`, golden files under `tests/**/Golden/**`, and committed tool-generated files (`schemas/**`, `Docs/Guides/diagnostics.md`), which must byte-match canonical tool output. `.editorconfig` mirrors this (`end_of_line = crlf` at root; `lf` for `[*.sh]`, `[tests/**/Golden/**]`, `[schemas/**]` and `[Docs/Guides/diagnostics.md]`). Delivered by WU-000.
+- Tool-generated artefacts (canonical specifications, plans, reports and derived artefacts) always use LF, independent of OS and git settings, for byte-stable output. **Decided (provisional)**, [§19](#19-resolved--open-inconsistencies) item 38.
+- Repository sources use CRLF in the working tree and LF in the git index. WU-000 configures `.gitattributes` and `.editorconfig` accordingly, independent of `core.autocrlf`. LF exceptions: `*.sh`, `tests/**/Golden/**`, `schemas/**` and `Docs/Guides/diagnostics.md`; committed generated files must byte-match canonical output.
 
 ## 16. Testing Strategy
 
@@ -469,7 +470,7 @@ The CLI follows dotnet conventions and uses Australian spelling for canonical re
 | 5 | [FS](../Requirements/folderspec.json) `other` `**` overlapping siblings vs "no ambiguous matches" ([RD §3.4](../Requirements/R2R_tool_Design.md)) | Sibling specificity precedence ([§7.1](#71-folder-matching)) | Keeps the catch-all concise | Decided |
 | 6 | Config and response file ([CK §3.2](../Requirements/Read_to_run_Cake.md)) absent from RQ | Keep both: response files early, config file in M10 | CI ergonomics | Decided |
 | 7 | [CK §12](../Requirements/Read_to_run_Cake.md) fail-fast / warn-and-continue vs [TS §24](../Requirements/Transformation_Specification.md) policies | Global `--strict`/`--permissive` + per-condition policies | One consistent model | Decided |
-| 8 | [RD §10](../Requirements/R2R_tool_Design.md) `tool plugin` namespace | Dropped. Selectors + `inspect --plugin` instead | Plugins are selectors in TS | Decided |
+| 8 | Plugin command scoping ([RD §10](../Requirements/R2R_tool_Design.md)) | Selectors + `inspect --plugin` | Plugins are selectors in TS | Decided |
 | 9 | [RQ §6](../Requirements/Repackage_tool_Requirements_v1.1.md) fixed ordering vs [TS §23](../Requirements/Transformation_Specification.md) planner-derived ordering | Fixed phase sequence, planner-derived order within each phase, recorded in the plan | Satisfies both | Decided |
 | 10 | FD framework references vs "no SDK fallback" ([RD §5.3](../Requirements/R2R_tool_Design.md)) | Framework catalogue from RuntimeList, else "unverified" warning | Deterministic, no global probing | Decided |
 | 11 | Linux / future RIDs | Abstraction only in v1 | [RQ §11](../Requirements/Repackage_tool_Requirements_v1.1.md) | Decided |
@@ -484,7 +485,7 @@ The CLI follows dotnet conventions and uses Australian spelling for canonical re
 | 20 | [RD §5.3](../Requirements/R2R_tool_Design.md) "missing references are structural errors" vs real apps with never-loaded optional references | Error by default. The AppSpec may declare `knownUnresolved` references (a state fact), which downgrades them to a warning | Keeps the state/intent split | **Open, confirm** |
 | 21 | [RQ §2.2](../Requirements/Repackage_tool_Requirements_v1.1.md) no runtime execution vs milestone launch smoke tests | Launching happens only in the test harness | Tool scope unchanged | Decided |
 | 22 | [AS §5.2](../Requirements/Application_Specification.md) optional creation timestamps vs byte-identical artefacts | Never emitted in canonical artefacts. Timings appear only in the execution report | Determinism | Provisional |
-| 23 | §6.1 "root-relative" include paths vs WU-103 resolution relative to the including file | Include paths are relative to the including file ([§6.1](#61-common-rules)) | Shared documents can include their own neighbours | Decided |
+| 23 | Include path base | Relative to the including file ([§6.1](#61-common-rules)) | Shared documents can include their own neighbours | Decided |
 | 24 | Contract ownership across layers (framework catalogue, package locator, fingerprint, apphost binding read, FD/SC/TFM detection) | Table in [§3.2](#32-cross-layer-contracts) | Keeps §3.1 reference rules intact | Decided |
 | 25 | `**` zero-level matches, multi-segment mask ranking, child definitions below recursed folders | `**` = one or more levels; rank by least-specific segment, then segment count; no implicit re-application below recursed folders ([§7.1](#71-folder-matching)) | Terminating `idRef` recursion, predictable ranking | Provisional |
 | 26 | Undefined exit codes for cancellation, post-execution assertion failure, path violations, stub verbs | 130 cancelled; 5 output-assertion failure after execution; 1 path violations; 70 stubs ([§13](#13-diagnostics-failure-policy-and-exit-codes)) | Conventional codes; path violations are structural ([TS §24.4](../Requirements/Transformation_Specification.md)) | Decided |
@@ -507,8 +508,6 @@ Awaiting user decision (provisional defaults apply until decided):
 
 | Question | Provisional default |
 |---|---|
-| Final product name, tool command, root namespace and NuGet package id | Working names in [§1](#1-summary) |
-| Licence | Placeholder LICENSE; nuget.org publishing blocked until set |
 | `knownUnresolved` references in the AppSpec (item 20) | Implement as specified; mark dependent ACs `Blocked (#20)` if rejected |
 | Own apphost patcher relying on the undocumented placeholder format (item 12) | Accept, isolated in `Platform.Windows`, per-major tests |
 | WCF / ASP.NET / AspNetCore runtime pack scope (item 15) | AspNetCore handled generically; test apps cover console/WinForms/WPF only |
@@ -520,7 +519,7 @@ Owned by work units or deferred:
 
 - JSON Schema validator library (JsonSchema.Net licence vs Corvus.JsonSchema vs NJsonSchema). Decided by WU-007.
 - Snapshot testing library: deferred; in-repo golden-file helper used ([§19](#19-resolved--open-inconsistencies) item 37). Alternatives: Verify (SC021 licence/sponsorship check required), Shouldly `ShouldMatchApproved`, Snapshooter, ApprovalTests.Net. May be revisited.
-- **Resolved** — committed tool-generated files are LF-exempt like golden files: `.gitattributes` adds `schemas/** text eol=lf` and `Docs/Guides/diagnostics.md text eol=lf`; `.editorconfig` mirrors them. Drift tests stay byte-wise. Any future committed generated file gets the same exception (WU-000 D4).
+- Future committed generated files must use the LF exception in [§15](#15-determinism); drift tests compare bytes.
 - `$schema` URI hosting (repo raw URL vs versioned docs site).
 - Should `apply --plan <file>` replay a pinned plan exactly (stronger reproducibility, [TS §3.6](../Requirements/Transformation_Specification.md))? Not in v1 scope.
 - Default artefacts location for `apply` when the AppSpec lives in the read-only input: provisional `<output>.tailor/` sibling of the output.

@@ -5,7 +5,7 @@
 | ID | WU-102 |
 | Title | transformspec-model-and-schema |
 | Milestone | M1 Core Primitives & Specification Documents |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-100, WU-007 (consumes `Specifications.Common` from WU-101, see Agent Notes) |
 | Parallel with | WU-101, WU-105, M2 |
 | Target project(s)/paths | `src/Tailor.Specifications/TransformSpec/`, `schemas/transformspec/v1/transformspec.schema.json`, `tests/Tailor.Specifications.Tests/` (`TransformSpec/`, `Fixtures/TransformSpec/`) |

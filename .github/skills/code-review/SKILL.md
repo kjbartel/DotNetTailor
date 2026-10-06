@@ -12,8 +12,8 @@ description: "Use when reviewing .NET Tailor changes or resolving review feedbac
 3. **Boundaries**: project references and responsibilities follow architecture §3.1. Packages are added only through CPM.
 4. **Safety**: input trees are never mutated, paths are confined, reparse points are rejected, processes use no shell (`ArgumentList`), and no secrets appear in logs, arguments or artefacts.
 5. **Determinism**: canonical JSON goes only through the Core writer, ordering is ordinal-ignore-case, output has LF, and there are no timestamps, GUIDs or machine paths.
-6. **Tests**: tests carry the WU trait (and `AC` trait for `(T)` criteria) and follow the naming rules, cover the ACs and failure paths, commit only intended golden updates, and make no network calls.
-7. **Docs**: user-facing changes are documented, and an architecture change comes with an ADR.
+6. **Tests**: WU/AC traits and naming rules hold; ACs and failure paths are covered; golden updates are intentional; no network calls by default. Tests assert current contracts, not removal of code or superseded behaviour; temporary mid-feature checks are removed or converted to durable coverage.
+7. **Docs/comments**: concise, current and free of chat narrative or resolved clarification notes; planned work is labelled, stale text removed, user-facing changes documented, and architecture changes have an ADR. Required evidence and released compatibility guidance are retained.
 8. **Evidence**: Test Evidence is present and matches the reviewed state.
 
 ## Severity

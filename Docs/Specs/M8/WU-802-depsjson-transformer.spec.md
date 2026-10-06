@@ -5,7 +5,7 @@
 | ID | WU-802 |
 | Title | depsjson-transformer |
 | Milestone | M8 Deployment Model Conversion (v0.4.0-preview) |
-| Status | Not started |
+| Status | Ready |
 | Depends on | WU-202, WU-701, WU-003, WU-604 |
 | Parallel with | WU-603, M7, WU-800, WU-801 |
 | Target | `src/Tailor.Transforms/Configuration/DepsJson/`, `tests/Tailor.Transforms.Tests/Configuration/` |
@@ -80,4 +80,3 @@ Pure, deterministic transformation of `*.deps.json` between FD and SC: set the `
 
 - **Resolved** — RID-specific asset flattening vs SDK SC output: the tool preserves assets; SDK-equivalence comparisons use the normalisation defined in WU-805 (architecture §19 item 35).
 - SC→FD `runtimeTarget`: portable (no RID) or RID-specific when the TransformSpec names a `rid`?
-- **Resolved** — WU-003 matrix dependency: added to the plan (with WU-604).
