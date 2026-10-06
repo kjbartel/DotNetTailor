@@ -457,7 +457,7 @@ The CLI follows dotnet conventions and uses Australian spelling for canonical re
 
 ## 18. Repository AI Enablement
 
-`AGENTS.md`, `.github/copilot-instructions.md`, `.github/instructions/*.instructions.md` (C#, tests, specs/docs), `.github/prompts/` (`plan-work`, `new-work-unit-spec`, `implement-work-unit`, `review-changes`, `address-review`, `verify-work-unit`), `.github/skills/` (`work-unit-workflow`, `planning-artifacts`, `code-review`, `test-evidence`, `devops-pipelines`, `schema-change`, `test-apps`), and `.github/agents/` (contributor, planner, implementer, code-reviewer, reviewer/verifier, probe, research). Delivered by WU-001.
+`AGENTS.md`, `.github/copilot-instructions.md`, `.github/instructions/*.instructions.md` (C#, tests, specs/docs), `.github/prompts/` (`plan-work`, `new-work-unit-spec`, `implement-work-unit`, `review-changes`, `address-review`, `verify-work-unit`), `.github/skills/` (`work-unit-workflow`, `planning-artifacts`, `architecture-change`, `code-review`, `test-evidence`, `devops-pipelines`, `schema-change`, `test-apps`), and `.github/agents/` (contributor, planner, implementer, code-reviewer, verifier, probe, research). Delivered by WU-001.
 
 ## 19. Resolved / Open Inconsistencies
 

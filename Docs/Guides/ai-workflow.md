@@ -1,54 +1,77 @@
 # AI Contribution Workflow
 
-This guide covers the agents, skills and prompts for contributing to .NET Tailor. Rules live in [AGENTS.md](../../AGENTS.md), sequencing in [the plan](../Plans/Tailor.plan.md), and the WU contract in its spec. The agents link to these sources rather than copying them.
+Use this guide for agent roles and handoffs. [AGENTS.md](../../AGENTS.md) owns repository conventions, [the master plan](../Plans/Tailor.plan.md) owns WU sequencing and status, and each WU spec owns scope and acceptance criteria. Keep those sources authoritative; link to them rather than copying their rules.
 
-## Flow
+## Standard flow
 
 ```mermaid
 flowchart LR
-  P[Tailor Planner\nepic/milestone/WU spec] -->|user approves| I[Tailor Implementer]
-  I -->|In review| R[Tailor Code Reviewer]
+  C[Tailor Contributor\nread-only router] --> P[Tailor Planner]
+  P -->|Draft; user approves| I[Tailor Implementer]
+  C -->|approved WU exists| I
+  I -->|In review + Test Evidence| R[Tailor Code Reviewer]
   R -->|Request changes| I
-  R -->|Approve| V[Tailor Verifier]
-  V -->|ACs ticked, Completion note, Done| D((Done))
-  U[User / PR comments] -->|fix mode| I
+  R -->|Approve at HEAD SHA| V[Tailor Verifier]
+  V -->|Evidence passes; status recorded| D((Done))
+  U[User / PR feedback] -->|exact findings| I
 ```
 
-Start with **Tailor Contributor**, which routes each task to one of six lanes: plan, implement, devops, docs, review and fix. You can also invoke an agent or prompt directly.
+Start with **Tailor Contributor** unless the task clearly targets a specific agent or prompt. The Contributor only reads enough to route work; it does not edit, run checks or update status. A review `Approve` is not completion: explicitly hand off to the Verifier, who checks evidence and only then records status. If the reviewed SHA or evidence is stale, the Verifier reports the blocker and leaves the WU incomplete.
 
-## Levels and gates
+## Lanes
 
-Epic → Feature → Work unit → Step, with milestones grouping features for release. Each level has acceptance criteria tagged with a verification method (`T`/`I`/`A`/`D`), and `(T)` criteria are linked to tests by `[Trait("AC", "<artifact>/<ID>")]`. Gates G1–G8 (epic ready → milestone released) and templates are in the [`planning-artifacts` skill](../../.github/skills/planning-artifacts/SKILL.md). Implementers never tick their own steps or criteria; the Verifier does.
-
-## Repo agents (`.github/agents/`)
-
-| Agent | Does | Edits |
+| Request | Route | Boundary |
 |---|---|---|
-| Tailor Contributor | Routes lanes and handoffs; small doc edits | Docs only when needed |
-| Tailor Planner | Epics, features, milestones, WU specs and steps, ADRs; gates G1–G4 | `Docs/{Epics,Features,Plans,Specs,Decisions,Spikes}` |
-| Tailor Implementer | Implements a WU's steps (code, tests, CI, docs); fix mode for review findings | WU scope |
-| Tailor Code Reviewer | Read-only review; verdict `Approve` or `Request changes` | None |
-| Tailor Verifier | Ticks proven steps and criteria; Completion notes; `Done` for WU, and feature/epic when complete | Specs, features, epics, plan status |
-| Tailor Probe | Behaviour checks with evidence (subagent only) | Scratch or test files |
-| Tailor Research | Sourced options and trade-offs for a decision (subagent only) | None |
+| Epic, feature, milestone, WU, ADR or spike | Tailor Planner | Planning artefacts only; new work stops at `Draft` until user approval. |
+| Approved WU implementation or fix | Tailor Implementer | WU scope only; dependencies must be `Done`; no ticking steps/ACs or setting `Done`. |
+| CI, nightly, Dependabot, packaging or release change | Planner if no approved spec; otherwise Implementer | WU must name `devops-pipelines`; optional DevOps review does not replace code review. |
+| Planning-doc change | Tailor Planner | Planning artefacts only. |
+| Docs owned by a WU | Tailor Implementer | Included in that WU's scope and review. |
+| Standalone docs edit | `SE: Tech Writer` if available | If unavailable, report the missing editor and ask the user how to proceed; Contributor does not edit. |
+| Staleness audit | `docs-sync-audit` if installed | Read-only findings; do not edit unless separately requested and routed. |
+| Branch, PR or diff review | Tailor Code Reviewer | Read-only; returns findings and `Approve` or `Request changes` at a specific HEAD. |
+| Verification after approval | Tailor Verifier | Checks the exact WU, evidence and reviewed HEAD; only this role records verified completion. |
 
-## Skills and prompts
+## Handoffs and evidence
 
-- Skills (`.github/skills/`): `work-unit-workflow`, `planning-artifacts`, `code-review`, `test-evidence`, `devops-pipelines`, `schema-change`, `test-apps`.
-- Prompts (`/` commands): `plan-work`, `new-work-unit-spec`, `implement-work-unit`, `review-changes`, `address-review`, `verify-work-unit`.
+- Delegate only a distinct, bounded task. Do not delegate simple lookups or split one continuous investigation across agents.
+- Each handoff states the goal, exact WU/spec or target paths, allowed edits, required inherited evidence, expected result and stop condition. Pass only necessary context; do not ask another agent to repeat completed work.
+- The receiving agent returns changed paths (if any), checks and exact results, status changes, blockers and the next handoff. Report observed status only; do not speculate or narrate deliberation.
+- Any agent that plans, runs, delegates, receives or verifies tests or probes loads the [`test-evidence` skill](../../.github/skills/test-evidence/SKILL.md). Pass inherited Test Evidence records verbatim; summaries do not replace them. Reuse only exact matching state and environment.
+- Keep research, probes and security reviews bounded to the assigned question. Probe answers one behaviour question; Research reports sourced options; neither takes over implementation.
 
-## Review feedback
+## Instructions, skills and prompts
 
-Agent reviews use `CR-n` IDs, and GitHub PR comments use `PR-n`. The Implementer answers each finding with a resolution table (`code-review` skill). Agents never post PR comments or push without approval. They also never merge.
+- Start with [`AGENTS.md`](../../AGENTS.md) and `.github/copilot-instructions.md`; applicable `.github/instructions/*.instructions.md` add scoped conventions.
+- Load the matching skill for the task. The WU, planning, architecture-change, review, DevOps, schema and test-app skills define their respective procedures; [`test-evidence`](../../.github/skills/test-evidence/SKILL.md) is required whenever tests or probes are planned, run, delegated, received or verified.
+- Prompts in `.github/prompts/` route planning, spec creation, implementation, review, fixes and verification to the corresponding repo agent. They do not override the plan, spec or agent permissions.
+
+## Roles and edit rights
+
+| Agent | Purpose | May edit |
+|---|---|---|
+| Tailor Contributor (`contributor.agent.md`) | Read-only router and handoff coordinator | None |
+| Tailor Planner (`planner.agent.md`) | Plan and gate planning artefacts | `Docs/Epics`, `Features`, `Plans`, `Specs`, `Decisions`, `Spikes` |
+| Tailor Implementer (`implementer.agent.md`) | Implement one approved WU or resolve its review findings | Files in the agreed WU scope; never verification status |
+| Tailor Code Reviewer (`code-reviewer.agent.md`) | Read-only review | None |
+| Tailor Verifier (`verifier.agent.md`) | Verify exact evidence and record completion | Selected WU spec, its parent feature/epic and necessary master-plan status/criteria |
+| Tailor Probe (`probe.agent.md`) | Answer one behaviour question with evidence | Scratch or test files only; no production code |
+| Tailor Research (`research.agent.md`) | Provide sourced options for one decision | None |
+
+## Planning and review gates
+
+Epic → Feature → Work unit → Step, with milestones grouping features for release. Criteria use verification methods (`T`/`I`/`A`/`D`); each `(T)` criterion links to tests using `[Trait("AC", "<artifact>/<ID>")]`. See the [`planning-artifacts` skill](../../.github/skills/planning-artifacts/SKILL.md) for gates G1–G8 and templates. Only the Verifier ticks proven steps and criteria.
+
+Agent reviews use stable `CR-n` IDs; GitHub PR comments use `PR-n`. The Implementer returns a resolution table for every finding; the Code Reviewer re-checks affected findings. Agents do not post PR comments, push or merge without user approval.
 
 ## Optional local dependencies
 
-When one of these is missing, the repo agents carry on without it.
+Optional external agents or skills improve specific lanes but never replace repo-agent responsibilities. If one is unavailable, follow the fallback above or report the limitation; do not silently skip a required gate.
 
-| Used by | Asset | Type | Source (marketplace / id / url) | Version |
-|---|---|---|---|---|
-| Contributor, Code Reviewer | `SE: Security`, `SE: DevOps/CI`, `SE: Tech Writer` | Agents | awesome-copilot ([github/awesome-copilot](https://github.com/github/awesome-copilot)) / `software-engineering-team` plugin | 1.0.0 |
-| Contributor (docs lane) | `docs-sync-audit`, `documentation-writer` | Skills | awesome-copilot ([github/awesome-copilot](https://github.com/github/awesome-copilot)) / skills | 2026-09-07, 2026-02-19 |
-| Contributor (commit) | `git-commit` | Skill | awesome-copilot ([github/awesome-copilot](https://github.com/github/awesome-copilot)) / skills | 2026-01-23 |
+| Used by | Optional asset |
+|---|---|
+| Contributor / Code Reviewer | `SE: Security`, `SE: DevOps/CI`, `SE: Tech Writer` |
+| Contributor (staleness audit) | `docs-sync-audit` |
+| Contributor (standalone docs) | `SE: Tech Writer` |
 
-The `test-evidence` skill and the Probe and Research agents are vendored into the repo, so contributors need no local copies.
+Repo-local skills, agents and prompts are in `.github/skills/`, `.github/agents/` and `.github/prompts/`.
