@@ -14,7 +14,7 @@ $resolvedRoot = (Resolve-Path -LiteralPath $Root).Path
 function ConvertTo-NormalizedPath {
     param([string]$Path)
 
-    return $Path.Replace("\", "/").TrimStart("./")
+    return $Path -replace "\\", "/" -replace "^./", ""
 }
 
 function Test-IsDocumentation {
