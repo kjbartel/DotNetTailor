@@ -28,6 +28,8 @@ For one WU, use `dotnet test --project <project> --filter-trait "WU=<id>"`. Foll
 ## Agent Tooling
 
 - Prefer PowerShell, the .NET CLI and repository scripts. Use Python or other runtimes only when needed and confirmed available; do not install tools to satisfy assumed dependencies.
+- All installation of modules, packages, scripts and other executables (PowerShell, .Net, Python, Node.js, etc.), not already recorded as dependencies in the repo, must explicitly be confirmed before download and installation.
+- For YAML, use the pinned `powershell-yaml` dependency and commands in the [test-evidence skill](.github/skills/test-evidence/SKILL.md#yaml-validation). Validate customization frontmatter with `Test-YamlFrontmatter.ps1`; do not create disposable Python environments or use PyYAML for YAML checks.
 - Before first use of an unfamiliar command, run `Get-Command <name> -ErrorAction SilentlyContinue`; confirm its path and relevant version. Use an available equivalent if missing.
 - Linux/Bash commands and syntax require explicitly invoked, verified Git Bash and confirmed utilities; Git alone is not enough. Never use them in PowerShell. This terminal-only exception does not relax application process safety below.
 - Never invent arguments. Use repo-documented commands or check the installed subcommand's help, `Get-Help`, or version-matched official docs; options vary by version and test runner.
