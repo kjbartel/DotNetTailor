@@ -34,7 +34,7 @@ A milestone is a release grouping, not a start gate. A WU may start as soon as i
 | ID | Title | MS | Depends on | Parallel with | Spec | Status |
 |---|---|---|---|---|---|---|
 | WU-000 | repository-scaffold | M0 | — | — | [spec](../Specs/M0/WU-000-repository-scaffold.spec.md) | Done |
-| WU-001 | ai-enablement | M0 | WU-000 | WU-002, WU-003, WU-006, WU-007, WU-100 | [spec](../Specs/M0/WU-001-ai-enablement.spec.md) | In review |
+| WU-001 | ai-enablement | M0 | WU-000 | WU-002, WU-003, WU-006, WU-007, WU-100 | [spec](../Specs/M0/WU-001-ai-enablement.spec.md) | Done |
 | WU-002 | ci-pipeline | M0 | WU-000 | WU-001, WU-003, WU-006, WU-007, WU-100 | [spec](../Specs/M0/WU-002-ci-pipeline.spec.md) | Ready |
 | WU-003 | test-app-suite | M0 | WU-000 | WU-001, WU-002, WU-006, WU-007, WU-100 | [spec](../Specs/M0/WU-003-test-app-suite.spec.md) | Ready |
 | WU-004 | spike-crossgen2 | M0 | WU-003 | WU-005, WU-006, WU-007, M1, M2 | [spec](../Specs/M0/WU-004-spike-crossgen2.spec.md) | Ready |
